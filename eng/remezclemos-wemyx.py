@@ -189,27 +189,27 @@ def contractionAction(contraction, qLine):  #  Switches contractions between pho
 
 def rhymeGrab(pWord):
     theseRhymes = []
-    print(lineno(), pWord, rhymes)
+    print(lineno(), 'rhymeGrab:', pWord)
     try:
-        rhymeList = rhyDic[pWord]
+        rhymeList = rhyDic[pWord]  #  If we've already looked it up, it'll be ready in the dictionary
         return rhymeList
     except KeyError: # means we haven't looked it up yet
         #print(lineno(), 'kE')
         totalSyls = 1
         while totalSyls < 10:  #  Rhyming dictionary was only built up to 10 syllables
-            theseSyls = rSyls
+            theseSyls = rSyls  #  rSyls means the number of syllables that should match starting from right ('marination' and 'procreation' would have 2 rSyls of their 4 each)
             if totalSyls < theseSyls:
                 theseSyls = totalSyls
             rhyData = totalSyls, theseSyls
             if (rSyls <= totalSyls):
-                print(lineno(), 'B')
+                print(lineno(), 'rhymeGrab found')
                 tName, rName = str(totalSyls), str(rSyls)  #  Turn into strings so we can open the file that we need
                 if totalSyls < 10:
                     tName = '0'+tName
                 if rSyls < 10:
                     rName = '0'+rName
                 try:
-                    dicFile = csv.reader(open('data/USen/rhymes/rhymeLib-t'+tName+"r"+rName+".csv", "r"))
+                    dicFile = csv.reader(open('data/USen/rhymes/rhymeLib-t'+tName+"r"+rName+".csv", "r"))  #  The rhymes are stored in a file named after their matching properties
                     for line in dicFile:
                         keyChain = line[0].split('^')
                         if pWord in keyChain:
@@ -582,27 +582,26 @@ def meterLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineI
           #superPopList, qAnteLine, qLine, usedList, redButton
             
 
-def rhymeLiner(empLine, qLineIndexList, proxDicIndexList, qAnteLine, ):
+def rhymeLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineIndexList, proxDicIndexList, qLine, qAnteLine):
     print(lineno(), 'rhymeLiner start\nPrevious:', qAnteLine, '\nempLine:', empLine)
     for all in rhymeList:
         expressList.append(all)
     superPopList, superBlackList, usedList, qLine, qAnteLine, redButton = meterLiner(empLine, usedList, expressList, rhymeList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)  #  First, let it build a line, then if it doesn't happen to rhyme, send it back
     while qLine[0][-1] not in rhymeList:  #  Unless we find a rhyme to escape this loop, it'll subtract the word every time it gets to the beginning of the loop
-        for each in superPopList[-1]:  #  Let's see if there was a rhyme in our popList to add. If we don't return anything, it leaves this section like an moves on, like an implied "else"
+        print(lineno(), 'rhymeLiner w/o rhyming line')
+        for each in superPopList[len(qLine[0])]:  #  Let's see if there was a rhyme in our popList to add. If we don't return anything, it leaves this section like an moves on, like an implied "else"
             if each in rhymeList:  #  If there's a rhyme, then we can switch out the last word for that instead
-                qLine = subtractWordR(qLine)
-                qLine.append(each)
-                return qLine  #  We've found a rhyming line, and we're done building
-        if len(expressList) > 0:  #
-            while (len(qAnteLine[0]) > 0) and (len(qLine[0]) > 0):  #  Make sure there are both rhymes and non-empty lines, otherwise it's failed
-                qLine = subtractWordL(qAnteLine)  #  Take away a word from the previous line's beginning, because this line didn't yield anything
-                qLine = subtractWordR(qLine)  #  And take away the word that didn't work
-            if len(expressList) > 0:  #  Use the expressList with rhyming words created at the beginning of this function
-                superPopList, superBlackList, usedList, qLine, qAnteLine, redButton = meterLiner(empLine, usedList, expressList, rhymeList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)
-        elif len(qLine[0]) > 0:  #  Subtract from
-            qLine = subtractWordR(qLine)
+                print(lineno(), 'gotRhyme')
+                pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine)  #  Remove the last 
+                superBlackList, qLineIndexList, proxDicIndexList, qLine = acceptWordR(superBlackList, qLineIndexList, proxDicIndexList, qLine, qWord)
+                return qLine, usedList, False  #  We've found a rhyming line, and we're done building
+        if (len(qLine[0]) > 0) and (len(superPopList[qLine[0]]) > 0):  #  If it gets to this line, there was no rhyming matches
+            print(lineno(), 'rhymeLiner out')
+            blackListLine = qLine[0]  #  So we don't make the same line again, we'll make sure to blackList some words
+            superPopList, superBlackList, rhymeList, qLineIndexList, proxDicIndexList, qLine, qAnteLine, redButton = vetoLine(qAnteLine, superBlackList)  #  Start over again
             superPopList, superBlackList, usedList, qLine, qAnteLine, redButton = meterLiner(empLine, usedList, expressList, rhymeList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)  #  Here and below, meterLiner now has an expressList with the rhyming words, to increase their preference
         else:
+            print(lineno(), 'rhymeLiner redButton')
             return qLine, usedList, True
     return qLine, usedList, False
 
@@ -613,7 +612,7 @@ def lineGovernor(superBlackList, qAnteLine, usedList, expressList, rhymeThisLine
     if rhymeThisLine == True:
         print(lineno(), rhymeThisLine)
         if (len(rhymeList) > 0):  #  This dictates whether stanzaGovernor sent a rhyming line. An empty line indicates metered-only, or else it would've been a nonzero population
-            usedList, qLine, redButton = rhymeLiner(qAnteLine, usedList, expressList, rhymeList, qLineIndexList, proxDicIndexList, empLine)
+            usedList, qLine, redButton = rhymeLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)
         else:
             print(lineno(), 'no rhymes')
             return [], ([],[]), True  #  usedList, qLine, redButton
@@ -677,11 +676,12 @@ def stanzaGovernor(usedList):
                 print(each)
             if anteRhyme < lineCt:  #  If you hit a matching letter that comes before current line, grab rhys from that line. Otherwise, go straight to forming a metered line
                 rhymeLine = stanza[anteRhyme]
-                lastWordIndex = int(0)
-                while rhymeLine[lastWordIndex] in punx:  #  Start from the end and bypass all punctuation
+                lastWordIndex = int(-1)
+                rhymeWord = rhymeLine[lastWordIndex]
+                while rhymeLine[lastWordIndex] in allPunx:  #  Start from the end and bypass all punctuation
                     try:
-                        lastWordIndex-=1
-                        rhymeWord = rhymeLine[lastWordIndex]
+                        lastWordIndex-=1  #  Subtraction pulls the index back until we're not looking at a puncuation mark
+                        rhymeWord = rhymeLine[lastWordIndex]  #  Picking the last word
                     except IndexError:
                         print(lineno(), "iE:", rhymeLine, lastWordIndex)
                         return  [], [], True  #  redButton event
@@ -797,7 +797,7 @@ def main__init():
     stanza, usedList = [], []
 
     global rhyMap, empMap
-    rhyMap = 'abcd'
+    rhyMap = 'aa'
     empMap = [[bool(1), bool(0), bool(1), bool(0), bool(1), bool(0), bool(1), bool(0), bool(1), bool(0)],
               [bool(1), bool(0), bool(1), bool(0), bool(1), bool(0), bool(1), bool(0), bool(1), bool(0)],
               [bool(1), bool(0), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0)],
