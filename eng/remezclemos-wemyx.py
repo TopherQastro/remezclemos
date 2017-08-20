@@ -115,24 +115,7 @@ def loadmakeData(textFile, proxPlusLista, proxMinusLista):
         print(lineno(), 'prox load complete')
             
     except FileNotFoundError:
-        rawText = str(open('data/textLibrary/'+textFile+'.txt', 'r', encoding='latin-1').read())
         firstFile = open('data/textLibrary/textData/'+textFile+'-firstFile.txt', 'w+')
-        rawText = rawText.replace('\n', ' ')  #  First clean up some meta-bits that inhibit text digestion
-        rawText = rawText.replace('_', " ")
-        rawText = rawText.replace('``', '"')
-        rawText = rawText.replace("''", '"')
-        rawText = rawText.replace('`', "'")
-        rawText = rawText.replace('&', ' and ')
-        for all in allPunx:  #  Put a space around punctuation to tokenize later
-            rawText = rawText.replace(all, ' '+all+' ')
-        rawText = rawText.replace("     ", ' ')  #  Makes 5 whitespace characters shrink into 1 in text
-        rawText = rawText.replace("    ", ' ')  #  Makes 4 into 1
-        rawText = rawText.replace("   ", ' ')  #  Makes 3 into 1
-        rawText = rawText.replace("  ", ' ')  #  Then 2 to 1 for good measure, overall 120:1. Every significant token should still have one space between the adjacent
-        rawText = rawText.lower()
-
-        #  Tokenizes raw text, grooms into lists of words
-        splitText = rawText.split(' ')  # The reason for placing a space between all tokens to be grabbed
         splitTIndex = int(0)
         splitTLen = len(splitText)
         proxMaxDial = 19
@@ -188,40 +171,49 @@ def contractionAction(contraction, qLine):  #  Switches contractions between pho
 
 
 def rhymeGrab(pWord):
-    theseRhymes = []
-    print(lineno(), 'rhymeGrab:', pWord)
+    print(lineno(), 'rhyGrab:', pWord)
     try:
-        rhymeList = rhyDic[pWord]  #  If we've already looked it up, it'll be ready in the dictionary
-        return rhymeList
-    except KeyError: # means we haven't looked it up yet
-        #print(lineno(), 'kE')
+        emps[pWord+'(0)']  #  Check if the word has two pronunciations
+        print(lineno(), 'doubWord')
+        pWord+='(0)'  #  Only using one pronunciation for now, need to expand this capability
+    except KeyError:  #  If there's only one way to say the word, no changes will be made
+        pWord = pWord
+    if len(rhyDic[pWord]) == 0:  #  Means we haven't looked it up yet
+        print(lineno(), 'rhymeGrab search')
         totalSyls = 1
         while totalSyls < 10:  #  Rhyming dictionary was only built up to 10 syllables
             theseSyls = rSyls  #  rSyls means the number of syllables that should match starting from right ('marination' and 'procreation' would have 2 rSyls of their 4 each)
-            if totalSyls < theseSyls:
-                theseSyls = totalSyls
-            rhyData = totalSyls, theseSyls
-            if (rSyls <= totalSyls):
-                print(lineno(), 'rhymeGrab found')
-                tName, rName = str(totalSyls), str(rSyls)  #  Turn into strings so we can open the file that we need
+            if totalSyls < theseSyls:  #  rSyls is a global variable, so it must be converted to be manipulated
+                theseSyls = totalSyls  #  We can't have more syllables from the right than exist in the word, so reduce to totalSyls, which is all that exist in the word
+            if (theseSyls <= totalSyls):
+                print(lineno(), 'rhymeGrab going', theseSyls, totalSyls)
+                tName, rName = str(totalSyls), str(theseSyls)  #  Turn into strings so we can open the file that we need
                 if totalSyls < 10:
                     tName = '0'+tName
-                if rSyls < 10:
+                if theseSyls < 10:
                     rName = '0'+rName
                 try:
                     dicFile = csv.reader(open('data/USen/rhymes/rhymeLib-t'+tName+"r"+rName+".csv", "r"))  #  The rhymes are stored in a file named after their matching properties
                     for line in dicFile:
                         keyChain = line[0].split('^')
                         if pWord in keyChain:
+                            print(lineno(), 'rhymes found')
                             theseRhymes = line[1].split('^')
                             for all in theseRhymes:
-                                if all not in rhyDic[pWord]:
-                                    rhyDic[pWord].append(all)
+                                if '(' in all:  #  A doubWord
+                                    rhymeWord = all[:-3]
+                                else:  #  Append normally
+                                    rhymeWord = all
+                                if rhymeWord not in rhyDic[pWord]:
+                                    rhyDic[pWord].append(rhymeWord)
                 except IOError:
                     print(lineno(), 'ioE: rhyDic', rhyData, 'not found')
                     return str()
-                totalSyls+=1
-        return rhyDic(pWord)
+            totalSyls+=1
+        if len(rhyDic[pWord]) == 0:  #  If, at this point, the rhyming dictionary returned nothing, we add a nonsense word so the dictionary entry is non-zero and this function won't search again
+            rhyDic[pWord] = ['rhyfuckt']
+    
+    return rhyDic[pWord]
 
 
 def removeWordL(superPopList, qLine):  #  Remove the leftmost word from line
@@ -308,7 +300,7 @@ def listSorter(mainList, frontList, rearList):  # places words in the front or b
             switchList.append(all)
             mainList.remove(all)
     for all in switchList:
-        mainList.insert(all, 0)
+        mainList.insert(0, all)
     return mainList
 
 
@@ -370,17 +362,17 @@ def superPopListMaker(pLEmps, superPopList, superBlackList, expressList, qLineIn
                     for all in allPunx:
                         testString = testString.replace(' '+all, all)  #  Get rid of whitespace characters in front of puncuation
                     for all in keepList:
-                        if all not in allPunx:
-                            testString+=all+' '  #  Add the new word to the string, plus a space so we don't see a false positive with a partial word ('you' mistaken for 'your')
-                        else:
-                            testString = testString[:-1]+all+' '  #  Shave off a whitespace character because puncuation is attached
+##                        if all not in allPunx:
+                        testString+=all+' '  #  Add the new word to the string, plus a space so we don't see a false positive with a partial word ('you' mistaken for 'your')
+##                        else:
+##                            testString = testString[:-1]+all+' '  #  Shave off a whitespace character because puncuation is attached
                         #print(lineno(),  testString)
                         if (all not in testList) or (testString not in rawText) or (all in superBlackList[len(qLine[0])]):  #  Add blackList screening later
                             burnList.append(all)  #  Screen it with a burnList so we don't delete as we iterate thru list
-                        if all in allPunx:  #  Add whitespace character if not puncuation, because we subtracted one earlier
-                            testString = testString[:-2]+' '
-                        else:
-                            testString = testString[:-(len(all)+1)]  #  Remove the word to prepare for another testString addition
+##                        if all in allPunx:  #  Add whitespace character if not puncuation, because we subtracted one earlier
+##                            testString = testString[:-2]+' '
+##                        else:
+                        testString = testString[:-(len(all)+1)]  #  Remove the word to prepare for another testString addition
                     #print(lineno(), 'len(keepList):', len(keepList), 'len(burnList):', len(burnList))
                     if len(keepList) > 0:
                         for all in burnList:
@@ -406,7 +398,7 @@ def superPopListMaker(pLEmps, superPopList, superBlackList, expressList, qLineIn
     #input('waiting...')
 ##    if len(keepList) > 0:
     print(lineno(), 'sPM - appendKeep', len(keepList))
-    if len(superPopList) != len(testLine[0]) + 1:  #  If we don't have a proper amount to pop from
+    while len(superPopList) <= len(testLine[0]) + 1:  #  If we don't have a proper amount to pop from
         superPopList.append([])
     for all in keepList:
         superPopList[len(qLine[0])].append(all)  #  If we didn't find anything, append an empty set
@@ -434,7 +426,7 @@ def metPopDigester(empLine, superPopList, superBlackList, qLineIndexList, proxDi
     print(lineno(), "len(superPopList):", len(superPopList), "| len(superPopList[len(qLine[0])]):", len(superPopList[len(qLine[0])]), 'qLine:', qLine)
     while len(superPopList[len(qLine[0])]) > 0:
         print(lineno(), "len(superPopList[len(qLine[0])]):", len(superPopList[len(qLine[0])]))
-        pWord = superPopList[len(qLine[0])].pop(0)  #  Used random in past, but organized lists put preferential stuff in front / superPopList[-1].index(random.choice(superPopList[-1]))
+        pWord = superPopList[len(qLine[0])].pop(random.choice(range(0, len(superPopList[len(qLine[0])]))))  #  Used random in past, but organized lists put preferential stuff in front / superPopList[-1].index(random.choice(superPopList[-1]))
         pWEmps = gF.empsLine([pWord], emps, doubles)
         if len(pWEmps) != 0 and pWord not in allPunx:  #  Probably a KeyError:
             testEmps = pLEmps + pWEmps
@@ -511,8 +503,8 @@ def vetoLine(qAnteLine, superBlackList):  #  Resets values in a line to
     for each in qAnteLine[1]:  #  Re-create any qAnteLinesuperPopList, superBlackList, qLine, qLineIndexList, proxDicIndexList as a mutable variable
         runLine[1].append(each)
     superPopList = firstWordSuperPopList(superBlackList)
-    return superPopList, superBlackList, [], [], [], ([],[]), runLine, False
-          #superPopList, superBlackList, rhymeList, qLineIndexList, proxDicIndexList, qLine, qAnteLine, redButton
+    return superPopList, superBlackList, [], [], ([],[]), runLine, False
+          #superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine, redButton
 
 
 def plainLinerLtoR(vars):
@@ -564,7 +556,7 @@ def meterLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineI
                 return superPopList, superBlackList, usedList, qLine, qAnteLine, True  #  redButton event, as nothing in the list worked
         else:  #  No runLine, no qLine, and superPopList[0] is out of firstWords
             print(lineno(), 'met if3')
-            superPopList, superBlackList, rhymeList, qLineIndexList, proxDicIndexList, qLine, qAnteLine, redButton = vetoLine(qAnteLine, superBlackList)
+            superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine, redButton = vetoLine(qAnteLine, superBlackList)
             return [[]], superBlackList, usedList, qLine, qAnteLine, True
         print(lineno(), 'end of meterLiner while')
         if len(qLine[0]) > 0:  #  Make sure there's a line to analyze
@@ -586,31 +578,34 @@ def rhymeLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineI
     print(lineno(), 'rhymeLiner start\nPrevious:', qAnteLine, '\nempLine:', empLine)
     for all in rhymeList:
         expressList.append(all)
-    superPopList, superBlackList, usedList, qLine, qAnteLine, redButton = meterLiner(empLine, usedList, expressList, rhymeList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)  #  First, let it build a line, then if it doesn't happen to rhyme, send it back
+    superPopList, superBlackList, usedList, qLine, qAnteLine, redButton = meterLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)  #  First, let it build a line, then if it doesn't happen to rhyme, send it back
+    pLEmps = gF.empsLine(qLine[0], emps, doubles)
     while qLine[0][-1] not in rhymeList:  #  Unless we find a rhyme to escape this loop, it'll subtract the word every time it gets to the beginning of the loop
         print(lineno(), 'rhymeLiner w/o rhyming line')
-        for each in superPopList[len(qLine[0])]:  #  Let's see if there was a rhyme in our popList to add. If we don't return anything, it leaves this section like an moves on, like an implied "else"
+        for each in superPopList[len(qLine[0])-1]:  #  Let's see if there was a rhyme in our popList to add. If we don't return anything, it leaves this section like an moves on, like an implied "else"
             if each in rhymeList:  #  If there's a rhyme, then we can switch out the last word for that instead
                 print(lineno(), 'gotRhyme')
-                pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine)  #  Remove the last 
-                superBlackList, qLineIndexList, proxDicIndexList, qLine = acceptWordR(superBlackList, qLineIndexList, proxDicIndexList, qLine, qWord)
-                return qLine, usedList, False  #  We've found a rhyming line, and we're done building
-        if (len(qLine[0]) > 0) and (len(superPopList[qLine[0]]) > 0):  #  If it gets to this line, there was no rhyming matches
+                pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)  #  Remove the last 
+                superBlackList, qLineIndexList, proxDicIndexList, qLine = acceptWordR(superBlackList, qLineIndexList, proxDicIndexList, qLine, (each, each))
+                return usedList, qLine, False  #  We've found a rhyming line, and we're done building
+        if (len(qLine[0]) > 0) and (len(superPopList[len(qLine[0])-1]) > 0):  #  If it gets to this line, there was no rhyming matches
             print(lineno(), 'rhymeLiner out')
-            blackListLine = qLine[0]  #  So we don't make the same line again, we'll make sure to blackList some words
-            superPopList, superBlackList, rhymeList, qLineIndexList, proxDicIndexList, qLine, qAnteLine, redButton = vetoLine(qAnteLine, superBlackList)  #  Start over again
-            superPopList, superBlackList, usedList, qLine, qAnteLine, redButton = meterLiner(empLine, usedList, expressList, rhymeList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)  #  Here and below, meterLiner now has an expressList with the rhyming words, to increase their preference
+##            blackListLine = qLine[0]  #  So we don't make the same line again, we'll make sure to blackList some words
+##            superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine, redButton = vetoLine(qAnteLine, superBlackList)  #  Start over again
+            pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)  #  Remove the last 
+            superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine = superPopListMaker(pLEmps, superPopList, superBlackList, expressList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)
+            superPopList, superBlackList, usedList, qLine, qAnteLine, redButton = meterLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)  #  Here and below, meterLiner now has an expressList with the rhyming words, to increase their preference
         else:
             print(lineno(), 'rhymeLiner redButton')
-            return qLine, usedList, True
-    return qLine, usedList, False
+            return usedList, qLine, True
+    return usedList, qLine, False
 
 
 def lineGovernor(superBlackList, qAnteLine, usedList, expressList, rhymeThisLine, rhymeList, empLine):
     print(lineno(), 'lineGovernor start', rhymeThisLine)
-    superPopList, superBlackList, rhymeList, qLineIndexList, proxDicIndexList, qLine, qAnteLine, redButton = vetoLine(qAnteLine, superBlackList)  #  Start with empty variables declared. This function is also a reset button if lines are to be scrapped.
+    superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine, redButton = vetoLine(qAnteLine, superBlackList)  #  Start with empty variables declared. This function is also a reset button if lines are to be scrapped.
     if rhymeThisLine == True:
-        print(lineno(), rhymeThisLine)
+        print(lineno(), 'len(rhymeList):', len(rhymeList))
         if (len(rhymeList) > 0):  #  This dictates whether stanzaGovernor sent a rhyming line. An empty line indicates metered-only, or else it would've been a nonzero population
             usedList, qLine, redButton = rhymeLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)
         else:
@@ -624,9 +619,10 @@ def lineGovernor(superBlackList, qAnteLine, usedList, expressList, rhymeThisLine
         usedList, qLine, redButton = plainLinerLtoR(qAnteLine, usedList, expressList, rhymeList, qLineIndexList, proxDicIndexList, empLine)
     if redButton == True:
         print(lineno(), 'lineGov - redButton')
-        superPopList, superBlackList, rhymeList, qLineIndexList, proxDicIndexList, qLine, qAnteLine, redButton = vetoLine(qAnteLine, superBlackList)
+        superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine, redButton = vetoLine(qAnteLine, superBlackList)
         return [], [], True
     else:
+        print(lineno(), 'lineGov - last else', qLine)
         return usedList, qLine, False  #  usedList, qLine, redButton
             
 
@@ -675,7 +671,7 @@ def stanzaGovernor(usedList):
             for each in stanza:
                 print(each)
             if anteRhyme < lineCt:  #  If you hit a matching letter that comes before current line, grab rhys from that line. Otherwise, go straight to forming a metered line
-                rhymeLine = stanza[anteRhyme]
+                rhymeLine = stanza[anteRhyme][0]  #  Find line tuple, then select the first part of the tuple
                 lastWordIndex = int(-1)
                 rhymeWord = rhymeLine[lastWordIndex]
                 while rhymeLine[lastWordIndex] in allPunx:  #  Start from the end and bypass all punctuation
@@ -685,10 +681,11 @@ def stanzaGovernor(usedList):
                     except IndexError:
                         print(lineno(), "iE:", rhymeLine, lastWordIndex)
                         return  [], [], True  #  redButton event
+                print(lineno(), 'stanzaGov - rhymeWord:', rhymeWord)
                 rhymeList = rhymeGrab(rhymeWord)
                 rhymeThisLine = True
                 if len(rhymeList) > 0:  #  Ensure that this produced some rhymes
-                    print(lineno(), 'stanzaGov - rhymer')
+                    print(lineno(), 'stanzaGov - rhymer', len(rhymeList))
                     usedList, newLine, redButton = lineGovernor(superBlackList, qAnteLine, usedList, expressList, rhymeThisLine, rhymeList, empMap[lineCt])  #  If so, we try to create rhyming lines
                 else:  #  Our lines created nothing, so we hit a redbutton event
                     return [], [], True
@@ -761,8 +758,9 @@ def poemGovernor(usedList):  #  Outlines the parameters of the poem
 
 
 def main__init():
-
-    print(lineno(), 'initializing program')
+    
+    textFile = 'shkspr'
+    print(lineno(), 'initializing program\ntextFile:', textFile)
 
     #########################
     #  Static data, will change with GUI and testVals progs
@@ -775,9 +773,25 @@ def main__init():
     poemQuota = 20
     stanzaQuota = 4
      
-    textFile = 'bibleZ'
     global rawText
     rawText = str(open('data/textLibrary/'+textFile+'.txt', 'r', encoding='latin-1').read())
+    rawText = rawText.replace('\n', ' ')  #  First clean up some meta-bits that inhibit text digestion
+    rawText = rawText.replace('_', " ")
+    rawText = rawText.replace('``', '"')
+    rawText = rawText.replace("''", '"')
+    rawText = rawText.replace('`', "'")
+    rawText = rawText.replace('&', ' and ')
+    for all in allPunx:  #  Put a space around punctuation to tokenize later
+        rawText = rawText.replace(all, ' '+all+' ')
+    rawText = rawText.replace("     ", ' ')  #  Makes 5 whitespace characters shrink into 1 in text
+    rawText = rawText.replace("    ", ' ')  #  Makes 4 into 1
+    rawText = rawText.replace("   ", ' ')  #  Makes 3 into 1
+    rawText = rawText.replace("  ", ' ')  #  Then 2 to 1 for good measure, overall 120:1. Every significant token should still have one space between the adjacent
+    rawText = rawText.lower()
+
+    #  Tokenizes raw text, grooms into lists of words
+    global splitText
+    splitText = rawText.split(' ')  # The reason for placing a space between all tokens to be grabbed
 
     global proxP1, proxP2, proxP3, proxP4, proxP5, proxP6, proxP7, proxP8, proxP9, proxP10, proxP11, proxP12, proxP13, proxP14, proxP15, proxP16, proxP17, proxP18, proxP19, proxP20
     global proxM1, proxM2, proxM3, proxM4, proxM5, proxM6, proxM7, proxM8, proxM9, proxM10, proxM11, proxM12, proxM13, proxM14, proxM15, proxM16, proxM17, proxM18, proxM19, proxM20
@@ -797,7 +811,7 @@ def main__init():
     stanza, usedList = [], []
 
     global rhyMap, empMap
-    rhyMap = 'aa'
+    rhyMap = 'axax'
     empMap = [[bool(1), bool(0), bool(1), bool(0), bool(1), bool(0), bool(1), bool(0), bool(1), bool(0)],
               [bool(1), bool(0), bool(1), bool(0), bool(1), bool(0), bool(1), bool(0), bool(1), bool(0)],
               [bool(1), bool(0), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0)],
@@ -816,7 +830,7 @@ def main__init():
         contractionDic[line[0]] = line[1]
         
         
-
+    global rSyls
     rSyls = 2
 
     global usedSwitch, rhySwitch, metSwitch, thesSwitch
