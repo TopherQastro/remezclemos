@@ -235,7 +235,7 @@ def globalOpen(name, mode):
     for key, val in newAdds.items():
         lib[key] = val
 
-    print('\nresults:\ndoubsame:', doubSame, '\ndoubDiff:', doubDiff)
+    #$print('\nresults:\ndoubsame:', doubSame, '\ndoubDiff:', doubDiff)
     #input('continue...')
                 
         
@@ -311,7 +311,8 @@ def empsLine(pLine, emps, doubles):
                     for each in emps[eWord]:
                         empsLine.append(each)
                 except:
-                    print('gF gotfukt')
+                    #$print('gF gotfukt')
+                    this = 'that'
         elif (all not in silentPunx) and (len(all) > 0):
             try:
                 for each in emps[eWord]:
@@ -323,10 +324,10 @@ def empsLine(pLine, emps, doubles):
                     #print('empsLine0')
                 except KeyError:
                     empsLine.append('2')
-                    print('kE empsLine:', all)
+                    #$print('kE empsLine:', all)
                     continue
                 except IndexError:
-                    print('wut?', eWord)
+                    #$print('wut?', eWord)
                     continue
 
     #print('gF gotHere', empsLine)
