@@ -794,7 +794,7 @@ def main__init():
 
     global poemQuota, stanzaQuota
     poemQuota = 20
-    stanzaQuota = 1
+    stanzaQuota = 1 
      
     global rawText
     rawText = str(open('data/textLibrary/'+textFile+'.txt', 'r', encoding='latin-1').read())
