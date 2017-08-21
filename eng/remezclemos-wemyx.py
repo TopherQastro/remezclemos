@@ -61,8 +61,8 @@ def lineno():     ##  Returns the current line number in our program.
 
 unknownWords = open('data/unknownWords.txt', 'a')
 
-quantumList = ['and', 'to', 'for', 'a', 'the', 'in', 'at', 'but']  #  List of words used for quantum emp patterns
-nonEnders = ['and', 'or', 'a']
+quantumList = ['and', 'to', 'for', 'a', 'the', 'in', 'at', 'but', 'an']  #  List of words used for quantum emp patterns
+nonEnders = ['and', 'or', 'a', 'but', 'the', 'an', ',', ';', ':', '--']
 
 allPunx = ['.', ',', ';', ',', ':', '!', '?', '--', '"', "''", '-', '\\', '+', '=', '/', '<', '>', '(', ')']  #  Doesn't include apostrophe, because that could be part of a contraction
 midPunx = [',', ';', ':', '--']
@@ -581,7 +581,7 @@ def meterLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineI
             superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine = superPopListMaker(pLEmps, superPopList, superBlackList, expressList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)
         if pLEmps == empLine:
             superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine = superPopListMaker(pLEmps, superPopList, superBlackList, expressList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)
-            if qLine[0][-1] in quantumList:  #  Words that don't sound good as the last word of a line, such as conjunctions without something else to connect
+            if qLine[0][-1] in nonEnders:  #  Words that don't sound good as the last word of a line, such as conjunctions without something else to connect
                 pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine)
             else:
                 for all in allPunx:
@@ -602,7 +602,7 @@ def rhymeLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineI
     while qLine[0][-1] not in rhymeList:  #  Unless we find a rhyme to escape this loop, it'll subtract the word every time it gets to the beginning of the loop
         print(lineno(), 'rhymeLiner w/o rhyming line')
         for each in superPopList[len(qLine[0])-1]:  #  Let's see if there was a rhyme in our popList to add. If we don't return anything, it leaves this section like an moves on, like an implied "else"
-            if (each in rhymeList) and (each not in quantumList):  #  If there's a rhyme, then we can switch out the last word for that instead
+            if (each in rhymeList) and (each not in nonEnders):  #  If there's a rhyme, then we can switch out the last word for that instead
                 print(lineno(), 'gotRhyme')
                 pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)  #  Remove the last 
                 superBlackList, qLineIndexList, proxDicIndexList, qLine = acceptWordR(superBlackList, qLineIndexList, proxDicIndexList, qLine, (each, each))
@@ -755,9 +755,11 @@ def poemGovernor(usedList):  #  Outlines the parameters of the poem
             for all in each[0]:
                 thisString= thisString+' '+all
             for all in allPunx:
-                if ' '+all in thisString:
+                try:  #  Get rid of whitespace character in front of puncuation
                     thisString.replace(' '+all, all)
-            print(thisString)
+                except:  #  If the puncuation doesn't exist, it'll keep going
+                    continue
+            print(thisString[1].upper()+thisString[2:])
         input('press enter to continue')
         print('\n')
         if usedSwitch == 1:
