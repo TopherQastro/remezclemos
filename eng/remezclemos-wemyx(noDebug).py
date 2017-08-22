@@ -749,19 +749,24 @@ def poemGovernor(usedList):  #  Outlines the parameters of the poem
     while len(poem) < stanzaQuota:
         stanza, usedList, redButton = stanzaGovernor(usedList)
         #$print(lineno(), 'gotStanza\n')
+        writtenStanza = str()
         for each in stanza:
             thisString = str()
             for all in each[0]:
                 thisString= thisString+' '+all
             for all in allPunx:
-                try:  #  Get rid of whitespace character in front of puncuation
-                    thisString.replace(' '+all, all)
-                except:  #  If the puncuation doesn't exist, it'll keep going
-                    continue
+                thisString.replace(' '+all, all)  #  Get rid of whitespace character in front of puncuation
             if each == stanza[-1]:
                 thisString+='.'  #  Add a period to the last line
+            for all in endPunx:
+                try:
+                    endPunkI = thisString.index(all)
+                    thisString = thisString[:endPunkI+2]+thisString[endPunkI+2].upper()+thisString[endPunkI+3:]
+                except:
+                    continue
             #$print(thisString[1].upper()+thisString[2:])
 #        input('press enter to continue')
+            writtenStanza+=thisString[1].upper()+thisString[2:]+'\n'
         #$print('\n')
         if usedSwitch == 1:
             usedList = ['']
@@ -770,7 +775,7 @@ def poemGovernor(usedList):  #  Outlines the parameters of the poem
         elif len(stanza) == 0 and len(poem) > 0:
             poem = poem[:-1]
         else:
-            poem.append(stanza)
+            poem.append(writtenStanza)
         if len(poem) == stanzaQuota:
             return poem, usedList
         
@@ -782,7 +787,7 @@ def poemGovernor(usedList):  #  Outlines the parameters of the poem
 
 def main__init():
     
-    textFile = 'shkspr'
+    textFile = 'ulysses'
     print(lineno(), 'initializing program', str(time.ctime())[11:20], '\ntextFile:', textFile)
 
     #########################
