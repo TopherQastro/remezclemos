@@ -292,36 +292,67 @@ def dataLine(pLine, dic):
             pData.extend(dic[each])
     return pData
         
-        
 
-def empsLine(pLine, emps, doubles):
-    #print('gF empsLine:', pLine)
+def empAdder(empKey):
+    return data
+
+
+def empsLine(empKey, pLine, emps, doubles, quantumWords):
+    #$print('gF empsLine:', pLine)
     empsLine = []
+##    for all in allPunx:
+##        if all in pLine:
+##            pLine.remove(all)
     #empHost = pLine.split(' ')
     for all in pLine:
         eWord = all.lower()
         if eWord in doubles:
             try:
-                for each in emps[eWord]:
-                    empsLine.append(each)
+                if eWord in quantumWords:
+                    #$print('gF qW:', eWord, empsLine, empKey)
+                    empsLine.append(empKey[len(empsLine)])  #  Could be either 1 or 0, so just match empKey
+                else:
+                    for each in emps[eWord]:
+                        empsLine.append(each)
             except KeyError:
                 try:
                     doubInt = int(0)  #  This only tries one pronounciation of a word, for the sake of ease
                     eWord = eWord+'('+str(doubInt)+')'
-                    for each in emps[eWord]:
-                        empsLine.append(each)
+                    if eWord in quantumWords:
+                        #$print('gF qW:', eWord, empsLine, empKey)
+                        empsLine.append(empKey[len(empsLine)])  #  Could be either 1 or 0, so just match empKey
+                    else:
+                        for each in emps[eWord]:
+                            empsLine.append(each)
                 except:
                     #$print('gF gotfukt')
                     this = 'that'
+            except IndexError:
+                #$print('gF iE0', eWord)
+                try:
+                    for each in emps[eWord]:
+                        empsLine.append(each)
+                except KeyError:
+                    for each in emps[eWord+'(0)']:
+                        empsLine.append(each)
         elif (all not in silentPunx) and (len(all) > 0):
             try:
-                for each in emps[eWord]:
-                    empsLine.append(each)
+                if eWord in quantumWords:
+                    #$print('gF qW:', eWord, empsLine, empKey)
+                    empsLine.append(empKey[len(empsLine)])  #  Could be either 1 or 0, so just match empKey
+                else:
+                    for each in emps[eWord]:
+                        empsLine.append(each)
             except KeyError:
                 try:
                     eWord = eWord[0].upper()+eWord[1:]
-                    empsLine.append(emps[eWord])
-                    #print('empsLine0')
+                    if eWord in quantumWords:
+                        #$print('gF qW:', eWord, empsLine, empKey)
+                        empsLine.append(empKey[len(empsLine)])  #  Could be either 1 or 0, so just match empKey
+                    else:
+                        for each in emps[eWord]:
+                            empsLine.append(each)
+                    #$print('empsLine0')
                 except KeyError:
                     empsLine.append('2')
                     #$print('kE empsLine:', all)
@@ -329,8 +360,16 @@ def empsLine(pLine, emps, doubles):
                 except IndexError:
                     #$print('wut?', eWord)
                     continue
-
-    #print('gF gotHere', empsLine)
+            except IndexError:
+                #$print('gF iE1', eWord)
+                try:
+                    for each in emps[eWord]:
+                        empsLine.append(each)
+                except KeyError:
+                    for each in emps[eWord+'(0)']:
+                        empsLine.append(each)
+                        
+    #$print('gF gotHere', empsLine)
     return empsLine
 
 
