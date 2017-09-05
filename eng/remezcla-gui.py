@@ -1,5 +1,10 @@
-import tkinter as tk
+#test.py
+try:
+    import tkinter as tk  # for python 3
+except:
+    import Tkinter as tk  # for python 2
 import pygubu
+
 
 class Application:
     def __init__(self, master):
@@ -11,12 +16,10 @@ class Application:
         builder.add_from_file('wemyx-pygubuGUI.ui')
 
         #3: Create the widget using a master as parent
-        self.mainwindow = builder.get_object('mainwindow', master)
+        self.mainwindow = builder.get_object('Toplevel_2', master)
 
-__name__ = '__main__'
 
 if __name__ == '__main__':
     root = tk.Tk()
     app = Application(root)
     root.mainloop()
-
