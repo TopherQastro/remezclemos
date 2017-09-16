@@ -174,12 +174,10 @@ def contractionAction(contraction, qLine):  #  Switches contractions between pho
 
 def rhymeGrab(pWord):
     print(lineno(), 'rhyGrab:', pWord)
-    try:
-        emps[pWord+'(0)']  #  Check if the word has two pronunciations
-        print(lineno(), 'doubWord')
-        pWord+='(0)'  #  Only using one pronunciation for now, need to expand this capability
-    except KeyError:  #  If there's only one way to say the word, no changes will be made
-        pWord = pWord
+##    try:
+##        emps[pWord]  #  Check if the word has two pronunciations
+##    except KeyError:  #  If there's only one way to say the word, no changes will be made\
+##        return []
     if len(rhyDic[pWord]) == 0:  #  Means we haven't looked it up yet
         print(lineno(), 'rhymeGrab search')
         totalSyls = 1
@@ -214,10 +212,15 @@ def rhymeGrab(pWord):
             totalSyls+=1
         if len(rhyDic[pWord]) == 0:  #  If, at this point, the rhyming dictionary returned nothing, we add a nonsense word so the dictionary entry is non-zero and this function won't search again
             rhyDic[pWord] = ['rhyfuckt']
-
-    if '(' in pWord:
-        if pWord[:-3] in rhyDic[pWord]:
-            rhyDic[pWord].remove(pWord[:-3])
+    print(lineno(), 'got rhys:', rhyDic[pWord])
+    burnList = []
+    for all in rhyDic[pWord]:
+        print(lineno(), 'rhytest:', all)
+        if ('(' in pWord) and (all == pWord[:-3]):
+            print(lineno(), 'rhyMatch:', all)
+            burnList.append(all)
+    for all in burnList:
+        rhyDic[pWord].remove(all)
     print(lineno(), 'rhys for', pWord, rhyDic[pWord])
     return rhyDic[pWord]
 
@@ -337,6 +340,8 @@ def superPopListMaker(pLEmps, superPopList, superBlackList, expressList, qLineIn
         testLine[0].append(each)
     for each in qLine[1]:
         testLine[1].append(each)
+    while len(superPopList) < len(qLine[1]):  #  If we receive a line that isn't aligned with the popList
+        superPopList.append([])
     print(lineno(), 'superPopMaker start |', len(superPopList), '|', testLine, 'proxData:', qLineIndexList, proxDicIndexList)
     # qLineIndexList: List of positions on the qLine
     # proxDicIndexList: List of positions for the qLine to find in proxDics
@@ -470,15 +475,19 @@ def metPopDigester(empLine, superPopList, superBlackList, qLineIndexList, proxDi
         print(contractionWords)
         for each in contractionWords:
             contWord = contractionDic[each]
+            print(lineno(), 'contraction attempt:', each, contWord)
             checkStr = isinstance(contWord, str)  #  Sometimes contWord goes thru as list instead, not sure why
             if checkStr == True:
                 contLine = gF.stringToLine(contWord)  #  Dealing with a string of two words, which needs to go thru as line
-            print(lineno(), 'contraction attempt:', each, contWord, contLine)
+                print(lineno(), 'cont stringToLine:')
+            else:
+                contLine = contWord
             testLine = []
             for each in qLine[0]:
                 testLine.append(each)
             for each in contLine:
                 testLine.append(each)
+            print(lineno(), 'contLine:', contLine)
             testEmps = gF.empsLine(empLine, testLine, emps, doubles, quantumList)
             print(lineno(), testEmps, '|', empLine[:len(testEmps)])
             if len(testEmps) <= len(empLine):  #  This is to screen against an error
@@ -614,7 +623,8 @@ def meterLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineI
 def rhymeLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineIndexList, proxDicIndexList, qLine, qAnteLine):
     print(lineno(), 'rhymeLiner start\nPrevious:', qAnteLine, '\nempLine:', empLine)
     for all in rhymeList:
-        expressList.append(all)
+        if all not in expressList:
+            expressList.append(all)
     superPopList, superBlackList, usedList, qLine, qAnteLine, redButton = meterLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)  #  First, let it build a line, then if it doesn't happen to rhyme, send it back
     print(lineno(), 'redButton:', redButton)
     if redButton == True:
@@ -630,7 +640,7 @@ def rhymeLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineI
                 return usedList, qLine, False  #  We've found a rhyming line, and we're done building
         if (len(qLine[1]) > 0) and (len(superPopList[len(qLine[1])-1]) > 0):  #  If it gets to this line, there was no rhyming matches
             print(lineno(), 'rhymeLiner out')
-            pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)  #  Remove the last 
+            pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)  #  Remove the last word
             superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine = superPopListMaker(pLEmps, superPopList, superBlackList, expressList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)
             superPopList, superBlackList, usedList, qLine, qAnteLine, redButton = meterLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)  #  Here and below, meterLiner now has an expressList with the rhyming words, to increase their preference
             if redButton == True:
@@ -678,9 +688,11 @@ def vetoStanza(usedList):
 
 def removeLine(stanza, superBlackList):
     print(lineno(), 'removeLine in | len(stanza):', len(stanza))
-    stanzaSnip = stanza.pop()  #  Remove the last line of the stanza
-    superBlackList[0].append(stanzaSnip[0][0])  #  Add the first word of the line to blacklist to ensure the repeat doesn't happen
-    print(lineno(), 'removeLine', stanzaSnip, len(superBlackList))
+    if len(stanza) > 0:
+        stanzaSnip = stanza.pop()  #  Remove the last line of the stanza
+        superBlackList[0].append(stanzaSnip[0][0])  #  Add the first word of the line to blacklist to ensure the repeat doesn't happen
+        print(lineno(), 'stanzaSnip:', stanzaSnip)
+    print(lineno(), 'removeLine', len(superBlackList))
     qAnteLine = ([],[])  #  Rebuild qAnteLine, meant to direct the proceeding line(s). Returns empty if stanza empty
     if len(stanza) > 1:
         for each in stanza[-1][0]:
@@ -724,6 +736,8 @@ def stanzaGovernor(usedList):
                         return  [], [], True  #  redButton event
                 print(lineno(), 'stanzaGov - rhymeWord:', rhymeWord)
                 rhymeList = rhymeGrab(rhymeWord)
+                if len(rhymeList) == 0 or 'rhyfuckt' in rhymeList:
+                    rhymeList = rhymeGrab(rhymeWord+'(0)')
                 rhymeThisLine = True
                 if len(rhymeList) > 0:  #  Ensure that this produced some rhymes
                     print(lineno(), 'stanzaGov - rhymer', rhymeWord, '|', rhymeList)
@@ -811,7 +825,7 @@ def poemGovernor(usedList):  #  Outlines the parameters of the poem
 
 def main__init():
     
-    textFile = 'beyondGoodAndEvil'
+    textFile = 'shkspr'
     print(lineno(), 'initializing program', str(time.ctime())[11:20], '\ntextFile:', textFile, '\n')
 
     #########################
@@ -823,7 +837,7 @@ def main__init():
 
     global poemQuota, stanzaQuota
     poemQuota = 20
-    stanzaQuota = 2
+    stanzaQuota = 1
      
     global rawText
     rawText = str(open('data/textLibrary/'+textFile+'.txt', 'r', encoding='latin-1').read())
@@ -864,10 +878,10 @@ def main__init():
     stanza, usedList = [], []
 
     global rhyMap, empMap
-    rhyMap = 'aba'
-    empMap = [[bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1), bool(0)],
-              [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1), bool(0)],
-              [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1), bool(0)]]
+    rhyMap = 'aaa'
+    empMap = [[bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
+              [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
+              [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)]]
 
     empMode = 0
 
