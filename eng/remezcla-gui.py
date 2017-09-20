@@ -49,6 +49,8 @@ class Application:
         self.metSwitch.set(True)
         self.rhySwitch = self.builder.get_variable('rhySwitch')
         self.rhySwitch.set(True)
+        self.thesSwitch = self.builder.get_variable('thesSwitch')
+        self.thesSwitch.set(True)
         self.usedSwitch = self.builder.get_variable('usedSwitch')
 
         self.proxMinDial = self.builder.get_object('proxMinDial')
@@ -114,6 +116,7 @@ class Application:
  
         metSwitch = self.metSwitch.get()
         rhySwitch = self.rhySwitch.get()
+        thesSwitch = self.thesSwitch.get()
         usedSwitch = self.usedSwitch.get()
 
         proxMinDial = self.proxMinDial.get()
@@ -123,7 +126,7 @@ class Application:
         punxDial = self.punxDial.get()
         punxDial = int(punxDial)
         
-        remezclemos.main__init(defaultSwitch, textFile, poemQuota, stanzaQuota, rhyMap, empMap, usedSwitch, rhySwitch, metSwitch, proxMinDial, proxMaxDial, punxDial)
+        remezclemos.main__init(defaultSwitch, textFile, poemQuota, stanzaQuota, rhyMap, empMap, usedSwitch, rhySwitch, metSwitch, thesSwitch, proxMinDial, proxMaxDial, punxDial)
 
 
 if __name__ == '__main__':

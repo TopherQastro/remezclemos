@@ -432,6 +432,7 @@ def metPopDigester(empLine, superPopList, superBlackList, qLineIndexList, proxDi
     #elif len(superPopList) < len(qLine[1]):
         
     print(lineno(), "len(superPopList):", len(superPopList), "| len(superPopList):", len(superPopList), 'qLine:', qLine)
+    thesWords = []
     while len(superPopList[len(qLine[1])]) > 0:
         print(lineno(), "len(superPopList):", len(superPopList), 'qLine:', qLine)
         #print(lineno(), 'mPD - testBlack', superBlackList[len(qLine[1])])
@@ -441,6 +442,7 @@ def metPopDigester(empLine, superPopList, superBlackList, qLineIndexList, proxDi
         elif pWord in allPunx:
             punxList.append(pWord)
         if pWord not in allPunx:  #  A zero-length emps value is an unrecognized word
+            thesWords.append(pWord)
             testLine = []
             for each in qLine[0]:
                 testLine.append(each)
@@ -465,7 +467,6 @@ def metPopDigester(empLine, superPopList, superBlackList, qLineIndexList, proxDi
                 superBlackList, qLineIndexList, proxDicIndexList, qLine = acceptWordR(superBlackList, qLineIndexList, proxDicIndexList, qLine, ([pWord], [pWord]))
                 print(lineno(), 'mPD acceptR', qLine, pLEmps)
                 return pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine        
-
 ##            else:
 ##                ##print(lineno(), 'fuckt')
 ##                pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine)
@@ -500,6 +501,36 @@ def metPopDigester(empLine, superPopList, superBlackList, qLineIndexList, proxDi
 ##                else:
 ##                    ##print(lineno(), 'fuckt')
 ##                    pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine)
+    print(lineno, 'thesSwitch:', thesSwitch)
+    if thesSwitch == True:
+        while len(thesWords) > 0:
+            print(lineno(), 'thesCheck | len(thesWords):', len(thesWords))
+            thesWord = thesWords.pop()
+            try:
+                syns = thesDic[thesWord]
+            except KeyError:
+                syns = []
+                print(lineno(), 'kE:synWord')
+                continue
+            print(lineno(), 'syns:', syns)
+            while len(syns) > 0:
+                testLine = []
+                synonym = syns.pop()
+                for each in qLine[0]:
+                    testLine.append(each)
+                testLine.append(synonym)
+                testEmps = gF.empsLine(empLine, testLine, emps, doubles, quantumList)
+                if len(testEmps) <= len(empLine):  #  This is to screen against an error
+                    print(lineno(), 'synWord testEmp0 |', pWord, testEmps, empLine[:len(testEmps)])
+                    if testEmps == empLine[:len(testEmps)]:  #  Check if the word is valid
+                        print(lineno(), 'synWord testEmp pass')
+                        qWord = ([synonym], [pWord])  #  pWord is the same word unless the phonetic data doesn't match the 'real' data
+                        superBlackList, qLineIndexList, proxDicIndexList, qLine = acceptWordR(superBlackList, qLineIndexList, proxDicIndexList, qLine, qWord)
+                        print(lineno(), 'synWord acceptR', qLine, testEmps)
+                        return testEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine
+                    
+#############################################
+            
     print(lineno(), "len(superPopList):", len(superPopList), "| len(superPopList[-1]):", len(superPopList[-1]), 'qLine:', qLine)
     if len(qLine[1]) > 0 or len(runLine[1]) > 0: #and len(qLine[1]) > proxMinDial:  #  If we have enough words, then we can remove rightmost element and metadata, then try again
         try:
@@ -823,17 +854,16 @@ def poemGovernor(usedList):  #  Outlines the parameters of the poem
 #  MAIN SECTION
 
 
-def main__init(defaultSwitch0, textFile0, poemQuota0, stanzaQuota0, rhyMap0, empMap0, usedSwitch0, rhySwitch0, metSwitch0, proxMinDial0, proxMaxDial0, punxProxNum0):
+def main__init(defaultSwitch0, textFile0, poemQuota0, stanzaQuota0, rhyMap0, empMap0, usedSwitch0, rhySwitch0, metSwitch0, thesSwitch0, proxMinDial0, proxMaxDial0, punxProxNum0):
 
     #  Returns error if these are declared global directly, so this is just a switch to make these global
-    global defaultSwitch, textFile, poemQuota, stanzaQuota, rhyMap, empMap, usedSwitch, rhySwitch, metSwitch, proxMinDial, proxMaxDial, punxProxNum
-    defaultSwitch, textFile, poemQuota, stanzaQuota, rhyMap, empMap, usedSwitch, rhySwitch, metSwitch, proxMinDial, proxMaxDial, punxProxNum = defaultSwitch0, textFile0, poemQuota0, stanzaQuota0, rhyMap0, empMap0, usedSwitch0, rhySwitch0, metSwitch0, proxMinDial0, proxMaxDial0, punxProxNum0
+    global defaultSwitch, textFile, poemQuota, stanzaQuota, rhyMap, empMap, usedSwitch, rhySwitch, metSwitch, thesSwitch, proxMinDial, proxMaxDial, punxProxNum
+    defaultSwitch, textFile, poemQuota, stanzaQuota, rhyMap, empMap, usedSwitch, rhySwitch, metSwitch, thesSwitch, proxMinDial, proxMaxDial, punxProxNum = defaultSwitch0, textFile0, poemQuota0, stanzaQuota0, rhyMap0, empMap0, usedSwitch0, rhySwitch0, metSwitch0, thesSwitch0, proxMinDial0, proxMaxDial0, punxProxNum0
 
     
-
     print(lineno(), 'defaultSwitch:', defaultSwitch)
     if defaultSwitch == True:  #  Preset values so you don't have to type everything every time you start the program
-        textFile = 'ulysses'
+        textFile = 'shkspr'
         poemQuota = 20
         stanzaQuota = 1
         proxMinDial = int(2)
@@ -842,14 +872,12 @@ def main__init(defaultSwitch0, textFile0, poemQuota0, stanzaQuota0, rhyMap0, emp
         usedSwitch = False
         rhySwitch = True
         metSwitch = True
-        rhyMap = 'abab'
+        thesSwitch = True
+        rhyMap = 'bb'
         empMap = [[bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
-                  [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
-                  [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
+                  #[bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
+                  #[bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
                   [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)]]
-
-
-    thesSwitch = False
 
         
     #textFile = 'bibleX'
@@ -922,13 +950,20 @@ def main__init(defaultSwitch0, textFile0, poemQuota0, stanzaQuota0, rhyMap0, emp
     global rSyls
     rSyls = 2
 
+    global thesDic 
     thesDic = {}
     try:
         thesaurusFile = csv.reader(open('data/textLibrary/textData/'+textFile+'-thesaurusFile.csv', 'r'))
+        print(lineno(), 'loading thesDic...')
         for line in thesaurusFile:
             thesWords = line[1].split('^')
-            thesDic[line[0]] = thesWords
+            thesDic[line[0]] = []
+            for all in thesWords:
+                if (len(all) > 0) and (all not in allPunx) and (all != line[0]):
+                    thesDic[line[0]].append(all)
+        
     except FileNotFoundError:
+        print(lineno(), 'building thesDic...')
         thesaurusFile = csv.writer(open('data/textLibrary/textData/'+textFile+'-thesaurusFile.csv', 'w+'))
         for all in splitText:
             finalList = []
@@ -942,17 +977,16 @@ def main__init(defaultSwitch0, textFile0, poemQuota0, stanzaQuota0, rhyMap0, emp
                         wordData = str(each).split("'")
                         synList = [str(lemma.name()) for lemma in wn.synset(wordData[1]).lemmas()]
                         for syn in synList:
-                            if (syn not in finalList) and (syn != all):
+                            if (syn not in finalList) and (syn != all) and (len(syn) > 0) and (syn not in allPunx):
                                 finalList.append(syn)
                     print('thesaurus['+all+']:', finalList)
                     thesDic[all] = finalList
+                    thesLine = str()
+                    for each in finalList:
+                        thesLine+=(each+'^')
+                    thesaurusFile.writerow([all, thesLine[:-1]])
                 except ValueError:
-                    print('ValueError:', all)
-        for key, val in thesDic.items():
-            thesLine = str()
-            for each in val:
-                thesLine+=(each+'^')
-            thesaurusFile.writerow([key, val[:-1]])
+                    print('ValueError:', all)            
 
     
     #
