@@ -389,8 +389,10 @@
         </child>
         <child>
           <object class="ttk.Checkbutton" id="thesSwitch">
-            <property name="state">disabled</property>
+            <property name="offvalue">False</property>
+            <property name="onvalue">True</property>
             <property name="text" translatable="yes">Thesaurus</property>
+            <property name="variable">boolean:thesSwitch</property>
             <layout>
               <property name="column">0</property>
               <property name="propagate">True</property>

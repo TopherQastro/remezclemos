@@ -685,6 +685,13 @@ def rhymeLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineI
 def lineGovernor(superBlackList, qAnteLine, usedList, expressList, rhymeThisLine, rhymeList, empLine):
     print(lineno(), 'lineGovernor start', rhymeThisLine)
     superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine, redButton = vetoLine(qAnteLine, superBlackList)  #  Start with empty variables declared. This function is also a reset button if lines are to be scrapped.
+    stopTimeM = int(str(datetime.datetime.now())[14:16])
+    stopTimeH = str(datetime.datetime.now())[11:13]
+    if (stopTimeM > (startTimeM + 11)) or ((startTimeH != stopTimeH) and
+                                           (startTimeM < (stopTimeM + 49))):
+        print(lineno(), 'timer redButton', startTimeH, startTimeM, '|', stopTimeH, stopTimeM)
+        return [], [], ([],[]), True
+              #superBlackList, usedList, qLine, redButton
     if rhymeThisLine == True:
         print(lineno(), 'len(rhymeList):', len(rhymeList))
         if (len(rhymeList) > 0):  #  This dictates whether stanzaGovernor sent a rhyming line. An empty line indicates metered-only, or else it would've been a nonzero population
@@ -816,6 +823,8 @@ def poemGovernor(usedList):  #  Outlines the parameters of the poem
     print(rhyMap, '+', empMap, '+', usedList)
     poem, usedList, stanzaCt, redButton = vetoPoem()
     while len(poem) < stanzaQuota:
+        startTimeM = int(str(datetime.datetime.now())[14:16])
+        startTimeH = str(datetime.datetime.now())[11:13]
         stanza, usedList, redButton = stanzaGovernor(usedList)
         print(lineno(), 'gotStanza\n')
         writtenStanza = str()
@@ -860,10 +869,13 @@ def main__init(defaultSwitch0, textFile0, poemQuota0, stanzaQuota0, rhyMap0, emp
     global defaultSwitch, textFile, poemQuota, stanzaQuota, rhyMap, empMap, usedSwitch, rhySwitch, metSwitch, thesSwitch, proxMinDial, proxMaxDial, punxProxNum
     defaultSwitch, textFile, poemQuota, stanzaQuota, rhyMap, empMap, usedSwitch, rhySwitch, metSwitch, thesSwitch, proxMinDial, proxMaxDial, punxProxNum = defaultSwitch0, textFile0, poemQuota0, stanzaQuota0, rhyMap0, empMap0, usedSwitch0, rhySwitch0, metSwitch0, thesSwitch0, proxMinDial0, proxMaxDial0, punxProxNum0
 
+    global startTimeM, startTimeH
+    startTimeM = int(str(datetime.datetime.now())[14:16])
+    startTimeH = str(datetime.datetime.now())[11:13]
     
     print(lineno(), 'defaultSwitch:', defaultSwitch)
     if defaultSwitch == True:  #  Preset values so you don't have to type everything every time you start the program
-        textFile = 'shkspr'
+        textFile = 'bibleX'
         poemQuota = 20
         stanzaQuota = 1
         proxMinDial = int(2)
