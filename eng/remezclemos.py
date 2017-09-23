@@ -142,7 +142,7 @@ def loadmakeData(textFile, proxPlusLista, proxMinusLista):
             while proxDicCounter < proxMax and splitTIndex+proxNumerator < splitTLen:
                 proxWord = splitText[splitTIndex+proxNumerator]
                 if proxWord not in proxPlusLista[proxDicCounter][pWord]:
-                    print(lineno(), 'plusadd = proxP:', proxWord, 'pWord:', pWord)
+                    #print(lineno(), 'plusadd = proxP:', proxWord, 'pWord:', pWord)
                     proxPlusLista[proxDicCounter][pWord].append(proxWord)
                 if pWord not in proxMinusLista[proxDicCounter][proxWord]:
                     #4 print(lineno(), 'minusadd = proxM:', proxWord, 'pWord:', pWord)
@@ -230,7 +230,7 @@ def removeWordL(superPopList, qLine):  #  Remove the leftmost word from line
     return data
 
 
-def removeWordR(pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine):  #  Remove the rightmost word from line
+def removeWordR(empLine, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine):  #  Remove the rightmost word from line
     print(lineno(), 'removeWordR-in', qLine)
     if len(qLine[0]) == 0 and len(runLine[0]) > 0:  #  Cut runLine
         print(lineno(), "rMR - if0")
@@ -250,13 +250,16 @@ def removeWordR(pLEmps, superPopList, superBlackList, qLineIndexList, proxDicInd
                 minusWord0 = qLine[0].pop()  #  This just removes the second word
                 minusWord0 = minusWord1  #  superBlackList will be adding minusWord0 later, and we want that to be the contraction        
         #  Some sort of contractionAction function should go here
-        pWEmps = gF.empsLine(pLEmps, [minusWord0], emps, doubles, quantumList)
+        pWEmps = gF.empsLine(empLine, [minusWord0], emps, doubles, quantumList)
+        pLEmps = gF.empsLine(empLine, qLine[0], emps, doubles, quantumList)
         pLEmps = pLEmps[:-len(pWEmps)]  #  Cut emps from main line
         qLineIndexList = qLineIndexList[1:]
         proxDicIndexList = proxDicIndexList[:-1]
         superBlackList = superBlackList[:(len(qLine[1])+1)]  #  If we leave blacklisted words further down the road, they may negate an otherwise compatible sentence
         superBlackList[len(qLine[1])].append(minusWord0)  #  Add to blackList at correct point
     #superBlackList[-1].append(minusWord0)  #  To avoid a loop, prevent popList from checking branch again
+    else:
+        pLEmps, qLineIndexList, proxDicIndexList = [], [], []
     if len(superPopList) > (len(qLine[1]) + 1):  #  If we've gone further than checking the list of next words
         print(lineno(), 'rMR - snipPopList')
         superPopList = superPopList[:len(qLine[1]) + 1]
@@ -280,15 +283,15 @@ def acceptWordL(qLine, nextWord, qLineIndexList, proxDicIndexList):  #  Add the 
     return qLineIndexList, proxDicIndexList, qLine
 
 
-def acceptWordR(superBlackList, qLineIndexList, proxDicIndexList, qLine, nextWord):  #  Add word to right side of line
-    print('acceptWordR-in:', qLine, '|', nextWord, qLineIndexList, proxDicIndexList)
+def acceptWordR(superBlackList, qLine, nextWord):  #  Add word to right side of line
+    print('acceptWordR-in:', qLine, '|', nextWord)
     for each in nextWord[0]:
         qLine[0].append(each)
     for each in nextWord[1]:
         qLine[1].append(each)
     qLineIndexList, proxDicIndexList = proxDataBuilder(qLine, len(qLine[1]))
-    if len(superBlackList) == len(qLine[1]):  #  We don't have any blackListed words that far ahead
-        superBlackList.append([])
+    #if len(superBlackList) == len(qLine[1]):  #  We don't have any blackListed words that far ahead
+    superBlackList.append([])
     print('acceptWordR-out:', qLine, '|', nextWord, qLineIndexList, proxDicIndexList)
     return superBlackList, qLineIndexList, proxDicIndexList, qLine
 
@@ -327,7 +330,7 @@ def proxDataBuilder(qLine, limitNum):  #  Takes the qLine and builds proxData up
     return qLineIndexList, proxDicIndexList
 
 
-def superPopListMaker(pLEmps, superPopList, superBlackList, expressList, qLineIndexList, proxDicIndexList, qLine, runLine): #  Creates a list-of-lists to pull from
+def superPopListMaker(empLine, superPopList, superBlackList, expressList, qLineIndexList, proxDicIndexList, qLine, runLine): #  Creates a list-of-lists to pull from
     print(lineno(), 'sPLM init | len(superPopList)', len(superPopList))
     keepList = []  #  Will return empty set upon failure
     testLine = ([],[])
@@ -357,10 +360,14 @@ def superPopListMaker(pLEmps, superPopList, superBlackList, expressList, qLineIn
     print(lineno(), 'sPM - len(testLine) >= 1', qLineIndexList, proxDicIndexList)
     try:
         print(lineno(), 'sPM - this blackList:', qLine, len(superBlackList))#, superBlackList[len(qLine[1])])
+        pLEmps = gF.empsLine(empLine, qLine[0], emps, doubles, quantumList)
         while len(qLineIndexList) > 0:
             for all in proxP1[testLine[1][-1]]:
-                if all not in superBlackList[len(qLine[1])]:  #  Screen against the initial superBlackList 
-                    keepList.append(all)  #  Practically an 'else' clause, because the 'if' above returns an answer
+##                if all not in superBlackList[len(qLine[1])]:  #  Screen against the initial superBlackList
+##                    pWEmps = gF.empsLine(empLine, all, emps, doubles, quantumList)
+##                    if (len(pWEmps) + len(pLEmps)) <= len(empLine):
+##                        if (pLEmps+pWEmps) == empLine[:(len(pWEmps) + len(pLEmps))]:
+                keepList.append(all)  #  Practically an 'else' clause, because the 'if' above returns an answer
             #print(lineno(), 'sPM - this keepList:', keepList)
             if len(qLineIndexList) > 1:  #  Only keep going if we need more than 2 words analyzed
                 for each in proxDicIndexList[1:]:  #  Skip first indexNum, we already found it
@@ -391,7 +398,7 @@ def superPopListMaker(pLEmps, superPopList, superBlackList, expressList, qLineIn
                 print(lineno(), 'snipping proxData', qLineIndexList, proxDicIndexList)
                 if len(qLineIndexList) > 0:  #  Ensure that the line has something to check
                     if (qLineIndexList[0] > proxMinDial) and (len(qLineIndexList) < proxMinDial):  #  This keeps the chain longer than a minimum length
-                        pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine)
+                        pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(empLine, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine)
                         return superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine  #  Give up
             else:
                 print(lineno(), 'superPopMaker grown |', len(superPopList), '|', testLine, 'proxData:', qLineIndexList, proxDicIndexList)
@@ -399,7 +406,7 @@ def superPopListMaker(pLEmps, superPopList, superBlackList, expressList, qLineIn
     except KeyError:
         print(lineno(), 'kE:', testLine, 'len(superPopList):', len(superPopList))
         unknownWords.write(testLine[1][-1])
-        pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine)
+        pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(empLine, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine)
         #qLineIndexList, proxDicIndexList = proxDataBuilder(qLine, len(qLine[0]))
         return superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine
     #print(superPopList)
@@ -408,8 +415,8 @@ def superPopListMaker(pLEmps, superPopList, superBlackList, expressList, qLineIn
     while len(superPopList) <= len(testLine[1]):  #  If we don't have a proper amount to pop from
         superPopList.append([])
     for all in keepList:
-        if all not in superPopList[len(qLine[1])]:
-            superPopList[len(qLine[1])].append(all)  #  If we didn't find anything, append an empty set
+        if all not in superPopList[-1]:
+            superPopList[-1].append(all)  #  If we didn't find anything, append an empty set
     return superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine
 
 
@@ -421,132 +428,99 @@ def empPopDigester():  #  Digests words based on the length of their syllables
     return doo, doo
 
 
+def testEmpLine(empLine, superBlackList, qLineIndexList, proxDicIndexList, qLine, qWord):  #  A subfunction of metPopDigester, which tests words given to it
+    print(lineno(), 'testEmpLine:', empLine, qLine, qWord)
+    testLine, hitSwitch = [], False  #  HitSwitch is a boolean that tells whether a word has been found
+    for each in qLine[0]:
+        testLine.append(each)
+    for each in qWord[0]:
+        testLine.append(each)   
+    testEmps = gF.empsLine(empLine, testLine, emps, doubles, quantumList)
+    #superBlackList[len(qLine[1])].append(pWord)  #  Add to blackList at correct point
+    print(lineno(), 'superBlackListLen:', len(superBlackList[len(qLine[1])]))
+    if len(testEmps) <= len(empLine):  #  This is to screen against an error
+        print(lineno(), 'mPD testEmp0 |', qWord)
+        if testEmps == empLine[:len(testEmps)]:  #  Check if the word is valid
+            print(lineno(), 'mPD testEmp pass')
+            hitSwitch = True
+            superBlackList, qLineIndexList, proxDicIndexList, qLine = acceptWordR(superBlackList, qLine, qWord)
+            print(lineno(), 'mPD acceptR', qLine, testEmps)
+            return testEmps, superBlackList, qLineIndexList, proxDicIndexList, qLine, hitSwitch
+    return testEmps, superBlackList, qLineIndexList, proxDicIndexList, qLine, hitSwitch
+
+
 def metPopDigester(empLine, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine):  #  Digests words that fit a particular meter
-    print(lineno(), 'metPopDigester start', 'len(superPopList):', len(superPopList))
-    expressList, contractionWords, punxList = [], [], []  #  The first creates a list of preferential words, the second holds a list of contractions
-    pLEmps = gF.empsLine(empLine, qLine[0], emps, doubles, quantumList)  #  Using 'p' prefix because measuring 'phonetic'
-    print(lineno(), 'mPD pLEmps:', pLEmps, qLine)
-    if len(superPopList) <= len(qLine[1]):
-        print(lineno(), 'mPD not aligned:', "len(superPopList):", len(superPopList), qLine)
-        superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = superPopListMaker(pLEmps, superPopList, superBlackList, [], qLineIndexList, proxDicIndexList, qLine, runLine)
-    #elif len(superPopList) < len(qLine[1]):
-        
-    print(lineno(), "len(superPopList):", len(superPopList), "| len(superPopList):", len(superPopList), 'qLine:', qLine)
-    thesWords = []
-    while len(superPopList[len(qLine[1])]) > 0:
-        print(lineno(), "len(superPopList):", len(superPopList), 'qLine:', qLine)
-        #print(lineno(), 'mPD - testBlack', superBlackList[len(qLine[1])])
-        pWord = superPopList[len(qLine[1])].pop(random.choice(range(0, len(superPopList[len(qLine[1])]))))  #  Used random in past, but organized lists put preferential stuff in front / superPopList[-1].index(random.choice(superPopList[-1]))
-        if (pWord in contractionList) and (pWord[:-2] != "'s") and (pWord[-1] != "'") and (pWord[:2] != "o'"):  #  This line will place contractions in a special list to be switched if nothing works
-            contractionWords.append(pWord)
-        elif pWord in allPunx:
-            punxList.append(pWord)
-        if pWord not in allPunx:  #  A zero-length emps value is an unrecognized word
-            thesWords.append(pWord)
-            testLine = []
-            for each in qLine[0]:
-                testLine.append(each)
-            testLine.append(pWord)
-            testEmps = gF.empsLine(empLine, testLine, emps, doubles, quantumList)
-            if len(testEmps) <= len(empLine):  #  This is to screen against an error
-                print(lineno(), 'mPD testEmp0 |', pWord)
-                if testEmps == empLine[:len(testEmps)]:  #  Check if the word is valid
-                    print(lineno(), 'mPD testEmp pass')
-                    qWord = ([pWord], [pWord])  #  pWord is the same word unless the phonetic data doesn't match the 'real' data
-                    superBlackList, qLineIndexList, proxDicIndexList, qLine = acceptWordR(superBlackList, qLineIndexList, proxDicIndexList, qLine, qWord)
-                    print(lineno(), 'mPD acceptR', qLine, testEmps)
+    print(lineno(), 'mPD start | len(superPopList[0]):', len(superPopList[0]), '| len(superPopList[-1]):', len(superPopList[-1]))
+    while len(superPopList) > 0:
+        contractionWords, punxList, thesWords = [], [], []
+        while len(superPopList[-1]) > 0:
+            pWord = superPopList[-1].pop(random.choice(range(0, len(superPopList[-1]))))
+            qWord = ([pWord], [pWord])  #  pWord is the same word unless the phonetic data doesn't match the 'real' data
+            if (pWord in contractionList) and (pWord[:-2] != "'s") and (pWord[-1] != "'") and (pWord[:2] != "o'"):  #  This line will place contractions in a special list to be switched if nothing works
+                contractionWords.append(pWord)
+            elif pWord in allPunx:
+                punxList.append(pWord)
+            elif pWord not in allPunx:  #  A zero-length emps value is an unrecognized word
+                if thesSwitch == True:
+                    thesWords.append(pWord)
+                superBlackList[len(qLine[1])].append(pWord)  #  Make sure that it doesn't keep going thru the same words over and over
+                print(lineno(), empLine, superBlackList, qLine, qWord)
+                testEmps, superBlackList, qLineIndexList, proxDicIndexList, qLine, hitSwitch = testEmpLine(empLine, superBlackList, qLineIndexList, proxDicIndexList, qLine, qWord)
+                if hitSwitch == True:
                     return testEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine
-        elif (len(qLine[1]) > 2):  #  We want qLine to have more than 2 words before trying punctuation because it sounds better, although it isn't necessary for function. Also, make sure to exhaust all other possibilities first
+        print(lineno(), 'contSwitch:', contSwitch)
+        if (contSwitch == True) and (len(contractionWords) > 0):  #  If any contractions were found in the superPopList we just tried
+            print(lineno(), 'contractionWords:', contractionWords)
+            for each in contractionWords:
+                contWord = contractionDic[each]
+                print(lineno(), 'contWord:', contWord)
+                qWord = (contWord, [pWord])  #  Appending two different words to the line
+                print(lineno(), 'contraction attempt:', each, qWord)
+                testEmps, superBlackList, qLineIndexList, proxDicIndexList, qLine, hitSwitch = testEmpLine(empLine, superBlackList, qLineIndexList, proxDicIndexList, qLine, qWord)
+                if hitSwitch == True:
+                    return testEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine
+        print(lineno, 'thesSwitch:', thesSwitch)
+        if thesSwitch == True:
+            while len(thesWords) > 0:
+                print(lineno(), 'thesCheck | len(thesWords):', len(thesWords))
+                thesWord = thesWords.pop()
+                try:
+                    syns = thesDic[thesWord]
+                except KeyError:
+                    syns = []
+                    print(lineno(), 'kE:synWord')
+                    continue
+                print(lineno(), 'syns:', syns)
+                while len(syns) > 0:
+                    synonym = syns.pop()
+                    qWord = ([synonym], [thesWord])
+                    print(lineno(), 'thes qWord:', qWord)
+                    testEmps, superBlackList, qLineIndexList, proxDicIndexList, qLine, hitSwitch = testEmpLine(empLine, superBlackList, qLineIndexList, proxDicIndexList, qLine, qWord)
+                    if hitSwitch == True:
+                        return testEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine
+        if (len(qLine[1]) > 2):  #  We want qLine to have more than 2 words before trying punctuation because it sounds better, although it isn't necessary for function. Also, make sure to exhaust all other possibilities first
             print(lineno(), 'punxSearch', qLine[1][-(min(punxProxNum, len(qLine[1]))):])
             punxCt = int(0)
             for all in qLine[1][-(min(punxProxNum, len(qLine[1]))):]:
                 if all in allPunx:  #  Will discriminate any puncuation within the designated length of punxProxNum
                     print(lineno(), 'found punk within punxProxNum:', all)
                     punxCt+=1
-            if punxCt == 0:
-                superBlackList, qLineIndexList, proxDicIndexList, qLine = acceptWordR(superBlackList, qLineIndexList, proxDicIndexList, qLine, ([pWord], [pWord]))
-                print(lineno(), 'mPD acceptR', qLine, pLEmps)
-                return pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine        
-##            else:
-##                ##print(lineno(), 'fuckt')
-##                pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine)
-    #  At this point, superPopList is empty, so we try either switching contractions or
-    print(lineno(), "len(contractionWords):", len(contractionWords))
-    if len(contractionWords) > 0:  #  If any contractions were found in the superPopList we just tried
-        print(contractionWords)
-        for each in contractionWords:
-            contWord = contractionDic[each]
-            print(lineno(), 'contraction attempt:', each, contWord)
-            checkStr = isinstance(contWord, str)  #  Sometimes contWord goes thru as list instead, not sure why
-            if checkStr == True:
-                contLine = gF.stringToLine(contWord)  #  Dealing with a string of two words, which needs to go thru as line
-                print(lineno(), 'cont stringToLine:')
-            else:
-                contLine = contWord
-            testLine = []
-            for each in qLine[0]:
-                testLine.append(each)
-            for each in contLine:
-                testLine.append(each)
-            print(lineno(), 'contLine:', contLine)
-            testEmps = gF.empsLine(empLine, testLine, emps, doubles, quantumList)
-            print(lineno(), testEmps, '|', empLine[:len(testEmps)])
-            if len(testEmps) <= len(empLine):  #  This is to screen against an error
-                print(lineno(), 'mPD testContEmp0 |', pWord, testEmps, 'len(superPopList):', len(superPopList))
-                if testEmps == empLine[:len(testEmps)]:  #  Check if the word is valid
-                    qWord = (contLine, [pWord])  #  Appending two different words to the line
-                    superBlackList, qLineIndexList, proxDicIndexList, qLine = acceptWordR(superBlackList, qLineIndexList, proxDicIndexList, qLine, qWord)
-                    print(lineno(), 'mPD acceptR contraction', qLine, testEmps)
-                    return testEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine
-##                else:
-##                    ##print(lineno(), 'fuckt')
-##                    pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine)
-    print(lineno, 'thesSwitch:', thesSwitch)
-    if thesSwitch == True:
-        while len(thesWords) > 0:
-            print(lineno(), 'thesCheck | len(thesWords):', len(thesWords))
-            thesWord = thesWords.pop()
-            try:
-                syns = thesDic[thesWord]
-            except KeyError:
-                syns = []
-                print(lineno(), 'kE:synWord')
-                continue
-            print(lineno(), 'syns:', syns)
-            while len(syns) > 0:
-                testLine = []
-                synonym = syns.pop()
-                for each in qLine[0]:
-                    testLine.append(each)
-                testLine.append(synonym)
-                testEmps = gF.empsLine(empLine, testLine, emps, doubles, quantumList)
-                if len(testEmps) <= len(empLine):  #  This is to screen against an error
-                    print(lineno(), 'synWord testEmp0 |', pWord, testEmps, empLine[:len(testEmps)])
-                    if testEmps == empLine[:len(testEmps)]:  #  Check if the word is valid
-                        print(lineno(), 'synWord testEmp pass')
-                        qWord = ([synonym], [pWord])  #  pWord is the same word unless the phonetic data doesn't match the 'real' data
-                        superBlackList, qLineIndexList, proxDicIndexList, qLine = acceptWordR(superBlackList, qLineIndexList, proxDicIndexList, qLine, qWord)
-                        print(lineno(), 'synWord acceptR', qLine, testEmps)
-                        return testEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine
-                    
-#############################################
-            
-    print(lineno(), "len(superPopList):", len(superPopList), "| len(superPopList[-1]):", len(superPopList[-1]), 'qLine:', qLine)
-    if len(qLine[1]) > 0 or len(runLine[1]) > 0: #and len(qLine[1]) > proxMinDial:  #  If we have enough words, then we can remove rightmost element and metadata, then try again
-        try:
-            print(lineno(), 'snipLine', qLine, '|', runLine)
-            pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine)
-            superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = superPopListMaker(pLEmps, superPopList, superBlackList, [], qLineIndexList, proxDicIndexList, qLine, runLine)
-            pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = metPopDigester(empLine, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine)
-            return pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine
-        except RuntimeError:
+            if (punxCt == 0) and (len(punxList) > 0):
+                punxWord = punxList.pop(random.choice(range(0, len(punxList))))
+                qWord = ([punxWord], [punxWord])
+                superBlackList, qLineIndexList, proxDicIndexList, qLine = acceptWordR(superBlackList, qLine, ([pWord], [pWord]))
+                print(lineno(), 'punxD acceptR', qLine)
+                testEmps = gF.empsLine(empLine, qLine[0], emps, doubles, quantumList)                
+                return testEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine
+        if len(qLine[1]) > 0 or len(runLine[1]) > 0: #and len(qLine[1]) > proxMinDial:  #  If we have enough words, then we can remove rightmost element and metadata, then try again
+            print(lineno(), 'snipLine', qLine, '|', runLine, len(superPopList))
+            pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(empLine, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine)
+        else:
+            print(lineno(), 'no qLine or runLine')
             return [], [[]], [[]], [], [], ([],[]), ([],[])  #  redButton situation
-    else:
-        print(lineno(), 'no qLine or runLine')
-        return [], [[]], [[]], [], [], ([],[]), ([],[])  #  redButton situation
-    print(lineno(), 'mPD end')
-    return pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine
-          #pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine
+        print(lineno(), 'mPD end')
+        return pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine
+              #pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine    
  
         
 def firstWordSuperPopList(superBlackList):  #  Creates a superPopList that reloads the global firstWords list
@@ -556,6 +530,7 @@ def firstWordSuperPopList(superBlackList):  #  Creates a superPopList that reloa
         if all not in superBlackList[0]:
             superPopList[0].append(all)
     print(lineno(), len(superPopList))
+    print(lineno(), 'len(superPopList):', len(superPopList), '| len(superPopList[0]):', len(superPopList[0]))
     return superPopList
 
 
@@ -603,6 +578,7 @@ def meterLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineI
         if (len(runLine[1]) == 0) and (len(qLine[1]) == 0):  #  Check if we're starting with a completely empty line, load firstWords to superPopList if so
             print(lineno(), 'met if0')
             superPopList = firstWordSuperPopList(superBlackList)
+            print(lineno(), 'len(superPopList):', len(superPopList))
             pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine = metPopDigester(empLine, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)
             if len(superPopList[0]) == 0 and len(qLine[1]) == 0:
                 print(lineno(), 'redButton == True')
@@ -612,12 +588,12 @@ def meterLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineI
             while len(superBlackList) <= len(qLine[1]):  #  Make sure superBlackList is long enough to add to w/ runLine
                 superBlackList.append([])
             print(lineno(), 'runLine + qLine:', qLine, ', superBlackList:', len(superBlackList))
-            superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine = superPopListMaker(pLEmps, superPopList, superBlackList, expressList, qLineIndexList, proxDicIndexList, qLine, runLine)
+            superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine = superPopListMaker(empLine, superPopList, superBlackList, expressList, qLineIndexList, proxDicIndexList, qLine, runLine)
             pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine = metPopDigester(empLine, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine)
             print(lineno(), 'qLine - runLine:', qLine)
         elif len(qLine[1]) > 0:
             print(lineno(), 'met if2 qLine:', qLine, 'len(superBlackList):', len(superBlackList), 'len(superPopList):', len(superPopList))
-            superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine = superPopListMaker(pLEmps, superPopList, superBlackList, expressList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)
+            superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine = superPopListMaker(empLine, superPopList, superBlackList, expressList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)
             pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine = metPopDigester(empLine, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)
             if len(superPopList[0]) == 0 and len(qLine[1]) == 0:  #  Nothing seems to work
                 print(lineno(), 'met if2-if')
@@ -635,16 +611,16 @@ def meterLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineI
             return [[]], superBlackList, usedList, qLine, qAnteLine, True
         while len(pLEmps) > len(empLine):  #  If somehow the line went over the numbered lists
             (lineno(), 'meterLiner over emps')
-            pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine)
-            superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine = superPopListMaker(pLEmps, superPopList, superBlackList, expressList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)
+            pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(empLine, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine)
+            superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine = superPopListMaker(empLine, superPopList, superBlackList, expressList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)
         if pLEmps == empLine:
-            superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine = superPopListMaker(pLEmps, superPopList, superBlackList, expressList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)
+            superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine = superPopListMaker(empLine, superPopList, superBlackList, expressList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)
             if qLine[1][-1] in nonEnders:  #  Words that don't sound good as the last word of a line, such as conjunctions without something else to connect
-                pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine)
+                pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(empLine, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine)
             else:
                 for all in allPunx:
                     if all in superPopList[-1]:  #  If puncuation fits, place one on the end of a line (will give the next line an easier start, too)
-                        superBlackList, qLineIndexList, proxDicIndexList, qLine = acceptWordR(superBlackList, qLineIndexList, proxDicIndexList, qLine, ([all], [all]))
+                        superBlackList, qLineIndexList, proxDicIndexList, qLine = acceptWordR(superBlackList, qLine, ([all], [all]))
                         break                        
     print(lineno(), 'meterLiner out:', qLine, 'len(superPopList):', len(superPopList))
     return superPopList, superBlackList, usedList, qLine, qAnteLine, False
@@ -660,19 +636,20 @@ def rhymeLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineI
     print(lineno(), 'redButton:', redButton)
     if redButton == True:
         return usedList, qLine, True
-    pLEmps = gF.empsLine(empLine, qLine[0], emps, doubles, quantumList)
     while qLine[0][-1] not in rhymeList:  #  Unless we find a rhyme to escape this loop, it'll subtract the word every time it gets to the beginning of the loop
         print(lineno(), 'rhymeLiner w/o rhyming line')
-        for each in superPopList[len(qLine[0])-1]:  #  Let's see if there was a rhyme in our popList to add. If we don't return anything, it leaves this section like an moves on, like an implied "else"
-            if (each in rhymeList) and (each not in nonEnders):  #  If there's a rhyme, then we can switch out the last word for that instead
+        while len(superPopList[-1]) > 0:  #  Let's see if there was a rhyme in our popList to add. If we don't return anything, it leaves this section like an moves on, like an implied "else"
+            pWord = superPopList[-1].pop(random.choice(range(0, len(superPopList[-1]))))
+            pLEmps = gF.empsLine(empLine, qLine[0]+[pWord], emps, doubles, quantumList)
+            if (pWord in rhymeList) and (pWord not in nonEnders) and (pLEmps == empLine):  #  If there's a rhyme, then we can switch out the last word for that instead
                 print(lineno(), 'gotRhyme', 'len(superPopList):', len(superPopList))
-                pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)  #  Remove the last 
-                superBlackList, qLineIndexList, proxDicIndexList, qLine = acceptWordR(superBlackList, qLineIndexList, proxDicIndexList, qLine, ([each], [each]))
+                pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(empLine, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)  #  Remove the last 
+                superBlackList, qLineIndexList, proxDicIndexList, qLine = acceptWordR(superBlackList, qLine, ([pWord], [pWord]))
                 return usedList, qLine, False  #  We've found a rhyming line, and we're done building
-        if (len(qLine[1]) > 0) and (len(superPopList[len(qLine[1])-1]) > 0):  #  If it gets to this line, there was no rhyming matches
+        if (len(qLine[1]) > 0):  #  If it gets to this line, there was no rhyming matches
             print(lineno(), 'rhymeLiner out')
-            pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)  #  Remove the last word
-            superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine = superPopListMaker(pLEmps, superPopList, superBlackList, expressList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)
+            pLEmps, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, runLine = removeWordR(empLine, superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)  #  Remove the last word
+            #superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine = superPopListMaker(empLine, superPopList, superBlackList, expressList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)
             superPopList, superBlackList, usedList, qLine, qAnteLine, redButton = meterLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineIndexList, proxDicIndexList, qLine, qAnteLine)  #  Here and below, meterLiner now has an expressList with the rhyming words, to increase their preference
             if redButton == True:
                 return usedList, qLine, True
@@ -685,12 +662,14 @@ def rhymeLiner(empLine, superBlackList, usedList, expressList, rhymeList, qLineI
 def lineGovernor(superBlackList, qAnteLine, usedList, expressList, rhymeThisLine, rhymeList, empLine):
     print(lineno(), 'lineGovernor start', rhymeThisLine)
     superPopList, superBlackList, qLineIndexList, proxDicIndexList, qLine, qAnteLine, redButton = vetoLine(qAnteLine, superBlackList)  #  Start with empty variables declared. This function is also a reset button if lines are to be scrapped.
-    stopTimeM = int(str(datetime.datetime.now())[14:16])
-    stopTimeH = str(datetime.datetime.now())[11:13]
-    if (stopTimeM > (startTimeM + 11)) or ((startTimeH != stopTimeH) and
-                                           (startTimeM < (stopTimeM + 49))):
-        print(lineno(), 'timer redButton', startTimeH, startTimeM, '|', stopTimeH, stopTimeM)
-        return [], [], ([],[]), True
+##    stopTimeM = int(str(datetime.datetime.now())[14:16])
+##    stopTimeH = str(datetime.datetime.now())[11:13]
+##    if (stopTimeM > (startTimeM + 11)) or ((startTimeH != stopTimeH) and
+##                                           (startTimeM < (stopTimeM + 49))):
+##        print(lineno(), 'timer redButton', startTimeH, startTimeM, '|', stopTimeH, stopTimeM)
+##        startTimeM = int(str(datetime.datetime.now())[14:16])
+##        startTimeH = str(datetime.datetime.now())[11:13]
+##        return [], [], ([],[]), True
               #superBlackList, usedList, qLine, redButton
     if rhymeThisLine == True:
         print(lineno(), 'len(rhymeList):', len(rhymeList))
@@ -756,6 +735,9 @@ def stanzaGovernor(usedList):
     superBlackList = [[]]  #  Must be declared separate from vetoStanza because it starts empty but may hold screened words
     stanza, qAnteLine, usedList, lineCt, rhymeThisLine, redButton = vetoStanza([])  #  Creates a fresh stanza, no usedList
     while lineCt < len(rhyMap):
+##        global startTimeM, startTimeH
+##        startTimeM = int(str(datetime.datetime.now())[14:16])
+##        startTimeH = str(datetime.datetime.now())[11:13]
         if rhySwitch == True:
             anteRhyme = rhyMap.index(rhyMap[lineCt])  #  Use the length of the stanza with rhyMap to determine if a previous line should be rhymed with the current
             print(lineno(), 'stanzaGov -', anteRhyme, lineCt)
@@ -793,7 +775,13 @@ def stanzaGovernor(usedList):
             superBlackList, usedList, newLine, redButton = lineGovernor(superBlackList, qAnteLine, usedList, expressList, rhymeThisLine, [], empMap[lineCt])
         if redButton == True:  #  Not an elif because any of the above could trigger this; must be separate if statement
             print(lineno(), 'stanzaGov - redButton')
-            #stanza, qAnteLine, usedList, lineCt, rhymeThisLine, redButton = vetoStanza([])  #  Creates a fresh stanza, no usedList
+##            stopTimeM = int(str(datetime.datetime.now())[14:16])
+##            stopTimeH = str(datetime.datetime.now())[11:13]
+##            if (stopTimeM > (startTimeM + 11)) or ((startTimeH != stopTimeH) and
+##                                           (startTimeM < (stopTimeM + 49))):
+##                print(lineno(), 'timer redButton', startTimeH, startTimeM, '|', stopTimeH, stopTimeM)
+##                stanza, qAnteLine, usedList, lineCt, rhymeThisLine, redButton = vetoStanza([])  #  Creates a fresh stanza, no usedList
+##            else:
             stanza, superBlackList, qAnteLine = removeLine(stanza, superBlackList)
         elif len(newLine[1]) > 0:  #  Line-building functions will either return a valid, nonzero-length line, or trigger a subtraction in the stanza with empty list
             print(lineno(), 'stanzaGov - newLine:', newLine)
@@ -823,8 +811,6 @@ def poemGovernor(usedList):  #  Outlines the parameters of the poem
     print(rhyMap, '+', empMap, '+', usedList)
     poem, usedList, stanzaCt, redButton = vetoPoem()
     while len(poem) < stanzaQuota:
-        startTimeM = int(str(datetime.datetime.now())[14:16])
-        startTimeH = str(datetime.datetime.now())[11:13]
         stanza, usedList, redButton = stanzaGovernor(usedList)
         print(lineno(), 'gotStanza\n')
         writtenStanza = str()
@@ -865,17 +851,15 @@ def poemGovernor(usedList):  #  Outlines the parameters of the poem
 
 def main__init(defaultSwitch0, textFile0, poemQuota0, stanzaQuota0, rhyMap0, empMap0, usedSwitch0, rhySwitch0, metSwitch0, thesSwitch0, proxMinDial0, proxMaxDial0, punxProxNum0):
 
-    #  Returns error if these are declared global directly, so this is just a switch to make these global
-    global defaultSwitch, textFile, poemQuota, stanzaQuota, rhyMap, empMap, usedSwitch, rhySwitch, metSwitch, thesSwitch, proxMinDial, proxMaxDial, punxProxNum
-    defaultSwitch, textFile, poemQuota, stanzaQuota, rhyMap, empMap, usedSwitch, rhySwitch, metSwitch, thesSwitch, proxMinDial, proxMaxDial, punxProxNum = defaultSwitch0, textFile0, poemQuota0, stanzaQuota0, rhyMap0, empMap0, usedSwitch0, rhySwitch0, metSwitch0, thesSwitch0, proxMinDial0, proxMaxDial0, punxProxNum0
 
-    global startTimeM, startTimeH
-    startTimeM = int(str(datetime.datetime.now())[14:16])
-    startTimeH = str(datetime.datetime.now())[11:13]
+    contSwitch0 = True
+    #  Returns error if these are declared global directly, so this is just a switch to make these global
+    global defaultSwitch, textFile, poemQuota, stanzaQuota, rhyMap, empMap, usedSwitch, rhySwitch, metSwitch, thesSwitch, contSwitch, proxMinDial, proxMaxDial, punxProxNum
+    defaultSwitch, textFile, poemQuota, stanzaQuota, rhyMap, empMap, usedSwitch, rhySwitch, metSwitch, thesSwitch, contSwitch, proxMinDial, proxMaxDial, punxProxNum = defaultSwitch0, textFile0, poemQuota0, stanzaQuota0, rhyMap0, empMap0, usedSwitch0, rhySwitch0, metSwitch0, thesSwitch0, contSwitch0, proxMinDial0, proxMaxDial0, punxProxNum0
     
     print(lineno(), 'defaultSwitch:', defaultSwitch)
     if defaultSwitch == True:  #  Preset values so you don't have to type everything every time you start the program
-        textFile = 'bibleX'
+        textFile = 'shkspr'
         poemQuota = 20
         stanzaQuota = 1
         proxMinDial = int(2)
@@ -885,10 +869,10 @@ def main__init(defaultSwitch0, textFile0, poemQuota0, stanzaQuota0, rhyMap0, emp
         rhySwitch = True
         metSwitch = True
         thesSwitch = True
-        rhyMap = 'bb'
+        rhyMap = 'abcb'
         empMap = [[bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
-                  #[bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
-                  #[bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
+                  [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
+                  [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
                   [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)]]
 
         
@@ -939,8 +923,6 @@ def main__init(defaultSwitch0, textFile0, poemQuota0, stanzaQuota0, rhyMap0, emp
 
 
     stanza, usedList = [], []
-
-    
 
     empMode = 0
 

@@ -298,7 +298,7 @@ def empAdder(empKey):
 
 
 def empsLine(empKey, pLine, emps, doubles, quantumWords):
-    print('gF empsLine:', pLine)
+    #print('gF empsLine:', pLine)
     empsLine = []
 ##    for all in allPunx:
 ##        if all in pLine:
