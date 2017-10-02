@@ -1376,6 +1376,7 @@ whereon
 euriphile
 if't
 kings
+obedient
 talk
 happiness
 gone
@@ -1928,6 +1929,7 @@ tennis
 convey
 prologue
 model
+confirm'd
 linger
 nym
 let't
@@ -2460,6 +2462,7 @@ simony
 spirits
 deserve
 capucius
+beseeching
 embalm
 affairs
 denny
@@ -2482,6 +2485,7 @@ chatillon
 elinor
 philip
 robert
+compare
 colbrand
 james
 gurney
@@ -3377,7 +3381,6 @@ gifts
 interjections
 [hero
 griev'd
-confirm'd
 princes
 sex
 bor
@@ -3990,6 +3993,7 @@ alarbus
 remaineth
 lavinia
 upright
+clear
 ransomless
 [seizing
 suum
@@ -4016,6 +4020,7 @@ speechless
 [marcus
 somewhither
 grandsire
+pattern'd
 'stuprum
 magni
 tam
@@ -4198,6 +4203,7 @@ julia's
 launce
 thurio
 unheedful
+shows
 'silvia
 'inprimis
 'item

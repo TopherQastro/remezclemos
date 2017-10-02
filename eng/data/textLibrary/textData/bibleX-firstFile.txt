@@ -474,69 +474,16 @@ incline
 stablish
 horror
 quicken
-0	i
-1	i
-2	i
-3	how
-4	through
-5	thy
-6	i
-7	i
-8	accept
-9	my
-0	the
-1	thy
-3	i
-4	thou
-5	depart
-6	uphold
-7	hold
-8	thou
-9	thou
-0	my
-2	be
-3	mine
-4	deal
-5	i
-6	it
-7	therefore
-8	therefore
-9	thy
-2	look
-3	order
-4	deliver
-5	make
-6	rivers
-7	righteous
-8	thy
-0	thy
-2	thy
-3	trouble
-4	the
-8	mine
-9	hear
-0	they
-1	thou
-2	concerning
-3	consider
-4	plead
-5	salvation
-6	great
-7	many
-8	i
-9	consider
-1	princes
-4	seven
-5	great
-6	lord
-7	my
-9	let
-0	let
-1	my
-2	my
-3	let
-4	i
-5	let
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
 jerusalem
 pray
 peace
