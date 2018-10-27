@@ -678,9 +678,9 @@ def rhymeLiner(empLine, proxExpress, rhymeList, qAnteLine):
                         qLine = acceptWordR(empLine, qLine, runLine, ([punc], [punc]))
                         return qLine, redButton
     print(lineno(), 'rhymeLiner out:', qLine, 'len(superPopList):', len(superPopList), 'redButton:', redButton)
-        if redButton == True:
-            return qLine, redButton
-        print('rhyHere1:', qLine)
+    if redButton == True:
+        return qLine, redButton
+    print('rhyHere1:', qLine)
     return qLine, redButton
 
 
