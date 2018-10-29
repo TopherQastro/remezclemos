@@ -50,8 +50,9 @@ from collections import defaultdict
 csv.field_size_limit(int(9999999))
 
 #  Internal, self-created file
-import __gloFunk as gFunk
-import __proxFunk as pFunk
+import _gloFunk as gFunk
+import _proxFunk as pFunk
+import remezcla_gui as wemyxGUI
 import poemGovernor as poemG
 import stanzaGovernor as stanzaG
 import lineGovernor as lineG
@@ -285,7 +286,7 @@ def main__init(defaultSwitch0, language0, accent0, textFile0, poemQuota0, stanza
         mapInt+=1
 
     poemCt = int(0)
-    print('_m_ |,' lineno(), 'PROGRAM INITIALIZED | ', str(time.ctime())[11:20], '\n')
+    print('_m_ |', lineno(), 'PROGRAM INITIALIZED | ', str(time.ctime())[11:20], '\n')
     while poemCt < poemQuota:
         poem, usedList = poemGovernor(stanzaQuota)
         poemCt+=1
@@ -294,7 +295,9 @@ def main__init(defaultSwitch0, language0, accent0, textFile0, poemQuota0, stanza
             print(each, '\n')
         input('paused')
 
-    print('_m_ |,' lineno(), 'PROGRAM FINISHED')
+    print('_m_ |', lineno(), 'PROGRAM FINISHED')
+
+defaultSwitch0, language0, accent0, textFile0, poemQuota0, stanzaQuota0, rhyMap0, empMap0, usedSwitch0, rhySwitch0, metSwitch0, thesSwitch0, proxMinDial0, proxMaxDial0, punxProxNum0 = wemyxGUI.main()
 
 main__init(defaultSwitch0, language0, accent0, textFile0, poemQuota0, stanzaQuota0, 
            rhyMap0, empMap0, usedSwitch0, rhySwitch0, metSwitch0, thesSwitch0, 
