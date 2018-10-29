@@ -1,19 +1,18 @@
 
+import globalFunctions as gF
 
-def vetoPoem():
+def veto():
     return [], [], 0, False
-          #poem, usedList, stanzaCt, redButton
+          #poem, gF.usedList, stanzaCt, killSwitch
 
 
-def poemGovernor(usedList):  #  Outlines the parameters of the poem
-    print(lineno(), 'poemGovernor initialized\n'+str(time.ctime())+'\n')
-    global startTime
-    startTime = time.time()
-    print(rhyMap, '+', empMap, '+', usedList)
-    poem, usedList, stanzaCt, redButton = vetoPoem()
-    while len(poem) < stanzaQuota:
-        stanza, usedList, redButton = stanzaGovernor(usedList)
-        print(lineno(), 'gotStanza\n')
+def gov():  #  Outlines the parameters of the poem
+    print('poF:', gF.lineno(), 'poemGovernor initialized\n'+str(gF.time.ctime())+'\n')
+    print(gF.rhyMap, '+', gF.empMap, '+', len(gF.usedList))
+    poem, gF.usedList, stanzaCt, killSwitch = veto()
+    while len(poem) < gF.stanzaQuota:
+        stanza, gF.usedList, killSwitch = gF.stanzaFunk.gov()
+        print('poF:', gF.lineno(), 'gotStanza\n')
         writtenStanza = str()
         for each in stanza:
             thisString = str()
@@ -36,12 +35,12 @@ def poemGovernor(usedList):  #  Outlines the parameters of the poem
             writtenStanza+=thisString[1].upper()+thisString[2:]+'\n'
         print('\n')
         if usedSwitch == 1:
-            usedList = ['']
-        if redButton == True:
-            usedList, lastList, stanzaCt, redButton = vetoPoem()
+            gF.usedList = ['']
+        if killSwitch == True:
+            gF.usedList, lastList, stanzaCt, killSwitch = veto()
         elif len(stanza) == 0 and len(poem) > 0:
             poem = poem[:-1]
         else:
             poem.append(writtenStanza)
-        if len(poem) == stanzaQuota:
-            return poem, usedList
+
+    return poem

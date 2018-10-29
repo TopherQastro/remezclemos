@@ -1,18 +1,117 @@
-from string import *
-import random
-import datetime
-import time
+
+"""
+This file allows each file to utilize global variables with 'import',
+Removes a great deal of redundancy and clutter for this set of code.
+"""
+
+#  External, pre-existing libraries
+from collections import defaultdict as dd
 import csv
 csv.field_size_limit(int(9999999))
+import datetime
+import inspect
+import nltk
+from nltk.corpus import wordnet as wn
+import pygubu
+import random
+import shelve
+import sqlite3
+from string import *
+import time
+import tkinter as tk
+from tkinter import messagebox
+
+#  Internal, self-created files
+import guiFunctions as guiFunk
+import lineFunctions as lineFunk
+import meterLineFunctions as meterLineFunk
+import plainLineFunctions as plainLineFunk
+import poemFunctions as poemFunk
+import proximityFunctions as proxFunk
+import rawtextFunctions as rawtextFunk
+import stanzaFunctions as stanzaFunk
 
 
-###################
-#- Categories and lists for characters
+def lineno():     ##  Returns the current line number in our program.
+     return inspect.currentframe().f_back.f_lineno
 
-#-!obsolete?:
 
-#->pass:
-emps, vocs, fono, cons = {}, {}, {}, {}
+def begin():
+    global defaultSwitch, usedSwitch, rhySwitch, metSwitch, thesSwitch, contSwitch
+    global language, lang, accent, textFile, empMode
+    global poemQuota, stanzaQuota, proxMaxDial, proxMinDial, punxDial
+    global rhyMap, empMap, usedList
+    defaultSwitch, usedSwitch, rhySwitch, metSwitch, thesSwitch, contSwitch = True, True, True, True, True, True
+    language, lang, accent, textFile, empMode = str(), str(), str(), str(), str()
+    poemQuota, stanzaQuota, proxMaxDial, proxMinDial, punxDial = int(0), int(0), int(0), int(0), int(0)
+    rhyMap, empMap, usedList = [], [], []
+
+    global quantumList, nonEnders, alphabet, allPunx, midPunx, endPunx #  List of words used for quantum emp patterns
+    quantumList = ['was', 'be', 'and', 'to', 'for', 'a', 'the', 'in', 'at', 'but', 'an',
+                'not', 'is', 'do', 'did', 'can', 'could', 'will', 'does', 'of', 'as',
+                'when', 'than', 'then', 'my', 'your', 'too', 'would', 'should'] 
+    nonEnders = ['and', 'or', 'a', 'but', 'the', 'an', ',', ';', ':', '--'] #  Words that don't sound well ending a sentence
+    alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+                'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    allPunx = ['.', ',', ';', ',', ':', '!', '?', '--', '"', "''", '-', '\\', '+',
+            '=', '/', '<', '>', '(', ')']  #  Doesn't include apostrophe, because
+                                            #  that could be part of a contraction
+    midPunx = [',', ';', ':', '--']
+    endPunx = ['.', '!', '?']  #  To gather which words immediately thereafter should start 
+                            #  a sentence
+
+    global rawText
+    global splitText
+    rawText = str()
+    splitText = []
+
+    global proxP1, proxP2, proxP3, proxP4, proxP5, proxP6, proxP7, proxP8, proxP9
+    global proxP10, proxP11, proxP12, proxP13, proxP14, proxP15, proxP16, proxP17
+    global proxP18, proxP19, proxP20
+    global proxM1, proxM2, proxM3, proxM4, proxM5, proxM6, proxM7, proxM8, proxM9
+    global proxM10, proxM11, proxM12, proxM13, proxM14, proxM15, proxM16, proxM17
+    global proxM18, proxM19, proxM20
+    global proxPlusLista, proxMinusLista, proxLib # gramProxLib, gramProxPlusLista, gramProxMinusLista
+    proxP1, proxP2, proxP3, proxP4, proxP5 = dd(list), dd(list), dd(list), dd(list), dd(list) 
+    proxP6, proxP7, proxP8, proxP9, proxP10 = dd(list), dd(list), dd(list), dd(list), dd(list)
+    proxP11, proxP12, proxP13, proxP14, proxP15 = dd(list), dd(list), dd(list), dd(list), dd(list)
+    proxP16, proxP17, proxP18, proxP19, proxP20 = dd(list), dd(list), dd(list), dd(list), dd(list)
+    proxM1, proxM2, proxM3, proxM4, proxM5 = dd(list), dd(list), dd(list), dd(list), dd(list) 
+    proxM6, proxM7, proxM8, proxM9, proxM10 = dd(list), dd(list), dd(list), dd(list), dd(list)
+    proxM11, proxM12, proxM13, proxM14, proxM15 = dd(list), dd(list), dd(list), dd(list), dd(list)
+    proxM16, proxM17, proxM18, proxM19, proxM20 = dd(list), dd(list), dd(list), dd(list), dd(list)
+    proxPlusLista = [proxP1, proxP2, proxP3, proxP4, proxP5, proxP6, proxP7, proxP8, 
+                        proxP9, proxP10, proxP11, proxP12, proxP13, proxP14, proxP15, 
+                        proxP16, proxP17, proxP18, proxP19, proxP20]
+    proxMinusLista = [proxM1, proxM2, proxM3, proxM4, proxM5, proxM6, proxM7, proxM8, 
+                        proxM9, proxM10, proxM11, proxM12, proxM13, proxM14, proxM15, 
+                        proxM16, proxM17, proxM18, proxM19, proxM20]
+
+
+    global startTime, stopTime
+    startTime = time.time()
+    stopTime = time.time()
+
+    global rSyls
+    rSyls = 2
+
+    global unknownWords, doubles
+    unknownWords, doubles = [], []
+
+    global contDic, contractionList  #  These are immutable and should be accessed wherever
+    contDic = dd(list)  #  Use a dictionary to look up contraction switches
+    contractionList = []  #  Use a list to check if the contraction exists (circumvents excepting KeyErrors)
+
+    global thesDic 
+    thesDic = {}
+
+    print('opening fonoFiles')  #  These are global values, so they need to be opened regardless
+    global emps, vocs, cons, fono
+    emps, vocs, cons, fono = dd(list), dd(list), dd(list), dd(list)
+
+
+
+
 
 pLine, pWord, pWLen = str(), str(), int(0)
 
@@ -577,3 +676,6 @@ def testAlts(pWord, altNum):
         altNum = 2000
 
     return altEmps, altNum
+
+
+begin()

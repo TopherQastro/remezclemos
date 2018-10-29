@@ -1,6 +1,8 @@
 
-def vetoLine(qAnteLine, proxExpress):  #  Resets values in a line to
-    print(lineno(), 'vetoLine() | qAnteLine:', qAnteLine)
+import globalFunctions as gF
+
+def veto(qAnteLine, proxExpress):  #  Resets values in a line to
+    print(gF.lineno(), 'veto() | qAnteLine:', qAnteLine)
     runLine = ([],[])
     for each in qAnteLine[0]:  #  Re-create any qAnteLinesuperPopList, qLine, qLineIndexList, proxDicIndexList as a mutable variable
         runLine[0].append(each)
@@ -12,7 +14,8 @@ def vetoLine(qAnteLine, proxExpress):  #  Resets values in a line to
             mList.pop()
     printGlobalData(([],[]))
     return ([],[]), runLine, False
-          #qLine, qAnteLine, redButton
+          #qLine, qAnteLine, killSwitch
+
 
 def removeWordL(superPopList, qLine):  #  Remove the leftmost word from line
     # do something
@@ -20,33 +23,33 @@ def removeWordL(superPopList, qLine):  #  Remove the leftmost word from line
 
 
 def removeWordR(empLine, qLine, runLine):  #  Remove the rightmost word from line
-    print(lineno(), 'removeWordR-in', 'qLine:', qLine, 'runLine:', runLine)
+    print(gF.lineno(), 'removeWordR-in', 'qLine:', qLine, 'runLine:', runLine)
     if len(qLine[0]) == 0 and len(runLine[0]) > 0:  #  Cut runLine
-        print(lineno(), "rMR - if0")
+        print(gF.lineno(), "rMR - if0")
         minusWordX = runLine[0].pop(0)  #  Since the previous line didn't yield any following line
         minusWordY = runLine[1].pop(0)  #  minusWordX just holds whatever is getting popped
     if len(qLine[0]) > 0:
-        print(lineno(), "rMR - if1")
+        print(gF.lineno(), "rMR - if1")
         minusWord0 = qLine[0].pop()  #  Remove word from first part of line
         minusWord1 = qLine[1].pop()  #  Until better method introduced, cut rLine here
         pWEmps = gF.empsLine(empLine, [minusWord0], emps, doubles, quantumList)
         pLEmps = gF.empsLine(empLine, qLine[0], emps, doubles, quantumList)
         pLEmps = pLEmps[:-len(pWEmps)]  #  Cut emps from main line)
         superBlackList.pop()  #  If we leave blacklisted words further down the road, they may negate an otherwise compatible sentence
-        print(lineno(), 'minusWord0:', minusWord0)
+        print(gF.lineno(), 'minusWord0:', minusWord0)
         superBlackList[-1].append(minusWord0)  #  Add to blackList at correct point
     else:
         pLEmps = []
     #if len(superPopList) > (len(qLine[1]) + 1):  #  If we've gone further than checking the list of next words
-    print(lineno(), 'rMR - snipPopList')
+    print(gF.lineno(), 'rMR - snipPopList')
     global mList
     for mList in metaList:
         if len(mList) > 0:
             mList.pop()
         elif len(qLine[1]) > 0:
-            print(lineno(), qLine)
+            print(gF.lineno(), qLine)
             printGlobalData(qLine)
-    print(lineno(), 'removeWordR-out', qLine)
+    print(gF.lineno(), 'removeWordR-out', qLine)
     printGlobalData(qLine)
     return pLEmps, qLine, runLine
 
@@ -84,11 +87,11 @@ def acceptWordR(empLine, qLine, runLine, nextWord):  #  Add word to right side o
     return qLine
 
 
-def lineGovernor(empLine, rhymeThisLine, rhymeList, qAnteLine):
-    print(lineno(), 'lineGovernor start', rhymeThisLine)
-    qLine, qAnteLine, redButton = vetoLine(qAnteLine, [])  #  Start with empty variables declared. This function is also a reset button if lines are to be scrapped.
+def gov(empLine, rhymeThisLine, rhymeList, qAnteLine):
+    print(gF.lineno(), 'lineGovernor start', rhymeThisLine)
+    qLine, qAnteLine, killSwitch = veto(qAnteLine, [])  #  Start with empty variables declared. This function is also a reset button if lines are to be scrapped.
     if rhymeThisLine == True:
-        print(lineno(), 'len(rhymeList):', len(rhymeList))
+        print(gF.lineno(), 'len(rhymeList):', len(rhymeList))
         if (len(rhymeList) > 0):  #  This dictates whether stanzaGovernor sent a rhyming line. An empty line indicates metered-only, or else it would've been a nonzero population
             proxExpress = []
             for each in rhymeList:  #  Find words that come before rhymeWords, so you direct it towards that one
@@ -100,21 +103,21 @@ def lineGovernor(empLine, rhymeThisLine, rhymeList, qAnteLine):
                                 proxExpress.append(proxWord)
                 except KeyError:
                     continue
-            print(lineno(), 'len(proxExpress):', len(proxExpress))
-            qLine, redButton = rhymeLiner(empLine, proxExpress, rhymeList, qAnteLine)
+            print(gF.lineno(), 'len(proxExpress):', len(proxExpress))
+            qLine, killSwitch = rhymeLiner(empLine, proxExpress, rhymeList, qAnteLine)
         else:
-            print(lineno(), 'no rhymes')
-            return superBlackList, [], ([],[]), True  #  usedList, qLine, redButton
-    elif metSwitch == True:  #  If metSwitch is off, then we wouldn't have either rhyme or meter
-        print(lineno(), 'lineGov - meterLiner activate')
-        qLine, redButton = meterLiner(empLine, [], qAnteLine)
+            print(gF.lineno(), 'no rhymes')
+            return superBlackList, [], ([],[]), True  #  usedList, qLine, killSwitch
+    elif gF.metSwitch == True:  #  If metSwitch is off, then we wouldn't have either rhyme or meter
+        print(gF.lineno(), 'lineGov - meterLiner activate')
+        qLine, killSwitch = meterLiner(empLine, [], qAnteLine)
     else:
-        print(lineno(), 'lineGov - plainLiner activate')
-        usedList, qLine, redButton = plainLinerLtoR(empLine, qAnteLine)
-    if redButton == True:
-        print(lineno(), 'lineGov - redButton')
-        qLine, qAnteLine, redButton = vetoLine(qAnteLine, [])
+        print(gF.lineno(), 'lineGov - plainLiner activate')
+        usedList, qLine, killSwitch = plainLinerLtoR(empLine, qAnteLine)
+    if killSwitch == True:
+        print(gF.lineno(), 'lineGov - killSwitch')
+        qLine, qAnteLine, killSwitch = veto(qAnteLine, [])
         return qLine, True
     else:
-        print(lineno(), 'lineGov - last else', qLine)
-        return qLine, False  #  usedList, qLine, redButton
+        print(gF.lineno(), 'lineGov - last else', qLine)
+        return qLine, False  #  usedList, qLine, killSwitch
