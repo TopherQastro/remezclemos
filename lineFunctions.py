@@ -4,17 +4,17 @@ import globalFunctions as gF
 def veto(qAnteLine, proxExpress):  #  Resets values in a line to
     print(gF.lineno(), 'veto() | qAnteLine:', qAnteLine)
     runLine = ([],[])
-    for each in qAnteLine[0]:  #  Re-create any qAnteLinesuperPopList, qLine, qLineIndexList, proxDicIndexList as a mutable variable
+    for each in qAnteLine[0]:  #  Re-create any qAnteLinegF.superPopList, qLine, qLineIndexList, proxDicIndexList as a mutable variable
         runLine[0].append(each)
-    for each in qAnteLine[1]:  #  Re-create any qAnteLinesuperPopList, qLine, qLineIndexList, proxDicIndexList as a mutable variable
+    for each in qAnteLine[1]:  #  Re-create any qAnteLinegF.superPopList, qLine, qLineIndexList, proxDicIndexList as a mutable variable
         runLine[1].append(each)
     global mList
-    for mList in metaList:
+    for mList in gF.metaList:
         while len(mList) > 0:
             mList.pop()
-    printGlobalData(([],[]))
-    return ([],[]), runLine, False
-          #qLine, qAnteLine, killSwitch
+    gF.printGlobalData(([],[]))
+    return ([],[]), runLine, [], False
+          #qLine, qAnteLine, pLEmps, killSwitch
 
 
 def removeWordL(superPopList, qLine):  #  Remove the leftmost word from line
@@ -40,17 +40,17 @@ def removeWordR(empLine, qLine, runLine):  #  Remove the rightmost word from lin
         superBlackList[-1].append(minusWord0)  #  Add to blackList at correct point
     else:
         pLEmps = []
-    #if len(superPopList) > (len(qLine[1]) + 1):  #  If we've gone further than checking the list of next words
+    #if len(gF.superPopList) > (len(qLine[1]) + 1):  #  If we've gone further than checking the list of next words
     print(gF.lineno(), 'rMR - snipPopList')
     global mList
-    for mList in metaList:
+    for mList in gF.metaList:
         if len(mList) > 0:
             mList.pop()
         elif len(qLine[1]) > 0:
             print(gF.lineno(), qLine)
-            printGlobalData(qLine)
+            gF.printGlobalData(qLine)
     print(gF.lineno(), 'removeWordR-out', qLine)
-    printGlobalData(qLine)
+    gF.printGlobalData(qLine)
     return pLEmps, qLine, runLine
 
 
@@ -82,22 +82,23 @@ def acceptWordR(empLine, qLine, runLine, nextWord):  #  Add word to right side o
     qLineIndexList.append([])
     proxDicIndexList.append([])
     proxDataBuilder((runLine[0]+qLine[0], runLine[1]+qLine[1]), len(runLine[1]+qLine[1]))
-    qLine, runLine = superPopListMaker(empLine, [], qLine, runLine)
+    qLine, runLine = gF.superPopListMaker(empLine, [], qLine, runLine)
     print('acceptWordR-out:', qLine, '|', nextWord, qLineIndexList, proxDicIndexList)
     return qLine
 
 
 def gov(empLine, rhymeThisLine, rhymeList, qAnteLine):
     print(gF.lineno(), 'lineGovernor start', rhymeThisLine)
-    qLine, qAnteLine, killSwitch = veto(qAnteLine, [])  #  Start with empty variables declared. This function is also a reset button if lines are to be scrapped.
+    qLine, qAnteLine, pLEmps, killSwitch = veto(qAnteLine, [])  #  Start with empty variables declared. This function is also a reset button if lines are to be scrapped.
+    proxExpress = []
     if rhymeThisLine == True:
         print(gF.lineno(), 'len(rhymeList):', len(rhymeList))
         if (len(rhymeList) > 0):  #  This dictates whether stanzaGovernor sent a rhyming line. An empty line indicates metered-only, or else it would've been a nonzero population
             proxExpress = []
-            for each in rhymeList:  #  Find words that come before rhymeWords, so you direct it towards that one
+            for rhymers in rhymeList:  #  Find words that come before rhymeWords, so you direct it towards that one
                 try:
-                    for all in proxMinusLista[:len(empLine)]:  #  Only go as far as the empLine, as if all words are one-syllable long
-                        thisProxList = all[each]
+                    for words in proxMinusLista[:len(empLine)]:  #  Only go as far as the empLine, as if all words are one-syllable long
+                        thisProxList = words[rhymers]
                         for proxWord in thisProxList:
                             if proxWord not in proxExpress and proxWord not in quantumList:
                                 proxExpress.append(proxWord)
@@ -109,14 +110,15 @@ def gov(empLine, rhymeThisLine, rhymeList, qAnteLine):
             print(gF.lineno(), 'no rhymes')
             return superBlackList, [], ([],[]), True  #  usedList, qLine, killSwitch
     elif gF.metSwitch == True:  #  If metSwitch is off, then we wouldn't have either rhyme or meter
-        print(gF.lineno(), 'lineGov - meterLiner activate')
-        qLine, killSwitch = meterLiner(empLine, [], qAnteLine)
+        print(gF.lineno(), 'lineGov - gF.meterLineFunk.gov activate')
+        qLine, killSwitch = gF.meterLineFunk.gov(empLine, [[], []], [], qAnteLine, proxExpress)
+                                              #  empLine, qLine, pLEmps, runLine, proxExpress
     else:
         print(gF.lineno(), 'lineGov - plainLiner activate')
-        usedList, qLine, killSwitch = plainLinerLtoR(empLine, qAnteLine)
+        qLine, killSwitch = plainLinerLtoR(empLine, qAnteLine)
     if killSwitch == True:
         print(gF.lineno(), 'lineGov - killSwitch')
-        qLine, qAnteLine, killSwitch = veto(qAnteLine, [])
+        qLine, qAnteLine, pLEmps, killSwitch = veto(qAnteLine, [])
         return qLine, True
     else:
         print(gF.lineno(), 'lineGov - last else', qLine)

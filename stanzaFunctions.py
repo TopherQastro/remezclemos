@@ -2,8 +2,8 @@
 import globalFunctions as gF
 
 def veto():
-    return [], ([],[]), [], int(0), False, False
-          #stanza, qAnteLine, usedList, lineCt, killSwitch
+    return [], ([],[]), int(0), False, False
+          #stanza, qAnteLine, lineCt, rhymeThisLine, killSwitch
 
 
 def removeLine(stanza):
@@ -35,9 +35,7 @@ def acceptLine(stanza, newLine):
 def gov():
     print('stF:', gF.lineno(), '| gov begin len(rhyMap):', len(gF.rhyMap), 
           'len(gF.empMap):', len(gF.empMap))
-    expressList = []  #  A list of words that go to the front of the line. Declared and left empty, for now
-    superBlackList = [[]]  #  Must be declared separate from vetoStanza because it starts empty but may hold screened words
-    stanza, qAnteLine, usedList, lineCt, rhymeThisLine, killSwitch = veto()  #  Creates a fresh stanza, no usedList
+    stanza, qAnteLine, lineCt, rhymeThisLine, killSwitch = veto()  #  Creates a fresh stanza, no usedList
     while lineCt < len(gF.rhyMap):
         anteRhyme = lineCt
         if gF.rhySwitch == True:
@@ -75,7 +73,7 @@ def gov():
                     return [], [], True
             else:  #  Then you don't need rhymes
                 rhymeList = []
-                print('stF:', gF.lineno(), '| -', qAnteLine, usedList, False, rhymeList, gF.empMap[lineCt])
+                print('stF:', gF.lineno(), '| -', qAnteLine, gF.usedList, False, rhymeList, gF.empMap[lineCt])
                 newLine, killSwitch = gF.lineFunk.gov(gF.empMap[lineCt], False, rhymeList, qAnteLine)  #
         elif gF.metSwitch == False:
             newLine, killSwitch = plainLinerLtoR(qAnteLine,  rhymeList, gF.empMap[lineCt])
@@ -99,7 +97,7 @@ def gov():
             stanza, qAnteLine = removeLine(stanza)
         else:  #  Redundant, as the stanza should logically be vetoed already, but just to clean house
             print('stF:', gF.lineno(), '| - vetoStanza')
-            #stanza, qAnteLine, usedList, lineCt, rhymeThisLine, killSwitch = vetoStanza([])
+            #stanza, qAnteLine, gF.usedList, lineCt, rhymeThisLine, killSwitch = vetoStanza([])
             stanza, qAnteLine = removeLine(stanza)
         lineCt = len(stanza)  #  Count the length of the stanza, provided no killSwitch events occurred...
         print('stF:', gF.lineno(), 'end whileloop', lineCt)

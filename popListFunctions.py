@@ -2,9 +2,9 @@
 import globalFunctions as gF
 
 def superPopListMaker(empLine, proxExpress, qLine, runLine): #  Creates a list-of-lists to pull from
-    print(gF.lineno(), 'sPLM init | len(superPopList)', len(superPopList))
+    print(gF.lineno(), 'sPLM init | len(gF.superPopList)', len(gF.superPopList))
     global qLineIndexList, proxDicIndexList
-    printGlobalData(qLine)
+    gF.printGlobalData(qLine)
     keepList = []  #  Will return empty set upon failure
     testLine = ([],[])
     if len(runLine[0]) > 0:  #  If there's a previous line, add it into testLine
@@ -19,14 +19,14 @@ def superPopListMaker(empLine, proxExpress, qLine, runLine): #  Creates a list-o
     global mList
     for mList in metaList[:-2]:  #  Everything except proxData
         mList.append([])
-    print(gF.lineno(), 'superPopListMaker() | start', len(superPopList), testLine, 
+    print(gF.lineno(), 'superPopListMaker() | start', len(gF.superPopList), testLine, 
           'proxData:', qLineIndexList, proxDicIndexList)
     testLineLen = len(testLine[1])
     if testLineLen == 0:  #  If we've received a totally empty line, populate it with firstWords, but not directly or corrupt global bank
         print(gF.lineno(), 'superPopListMaker() | zeroLine')
         pLEmps, qLine, runLine = meterLinerStarter(empLine, proxExpress, qAnteLine)
         return qLine, runLine
-              #superPopList, etc
+              #gF.superPopList, etc
     print(gF.lineno(), 'superPopListMaker() | len(testLine) >= 1', qLineIndexList, proxDicIndexList)
     try:
         print(gF.lineno(), 'superPopListMaker() | this blackList:', qLine, len(superBlackList))#[len(qLine[1])])
@@ -63,23 +63,23 @@ def superPopListMaker(empLine, proxExpress, qLine, runLine): #  Creates a list-o
                               proxDicIndexList[-1])
                         break
             else:
-                print(gF.lineno(), 'superPopListMaker() | grown', len(superPopList), '|', testLine, 'proxData:', qLineIndexList, proxDicIndexList)
+                print(gF.lineno(), 'superPopListMaker() | grown', len(gF.superPopList), '|', testLine, 'proxData:', qLineIndexList, proxDicIndexList)
                 for keepWords in keepList:
-                    if keepWords in proxExpress and keepWords not in expressList[-1] and keepWords not in quantumList:
-                        expressList[-1].append(keepWords)
-                    elif all not in superPopList[-1]:
-                        superPopList[-1].append(keepWords)
+                    if keepWords in proxExpress and keepWords not in gF.expressList[-1] and keepWords not in quantumList:
+                        gF.expressList[-1].append(keepWords)
+                    elif all not in gF.superPopList[-1]:
+                        gF.superPopList[-1].append(keepWords)
                 break
-        printGlobalData(qLine)
+        gF.printGlobalData(qLine)
         return qLine, runLine
     except KeyError:
-        print(gF.lineno(), 'kE:', testLine, 'len(superPopList):', len(superPopList))
+        print(gF.lineno(), 'kE:', testLine, 'len(gF.superPopList):', len(gF.superPopList))
         unknownWords.write(qLine[1][-1])
         pLEmps, qLine, runLine = removeWordR(empLine, qLine, runLine)
         #proxDataBuilder(qLine, len(qLine[0]))
         return qLine, runLine
     print(gF.lineno(), 'sPM lastfinish')
-    printGlobalData(qLine)
+    gF.printGlobalData(qLine)
     return qLine, runLine
 
 

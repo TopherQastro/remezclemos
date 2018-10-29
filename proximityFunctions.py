@@ -6,13 +6,12 @@ fonoConn = gF.sqlite3.connect(fono_file)
 fonoCursor = fonoConn.cursor()
 
 def loadmakeData():
-    firstWords, firstPopList = [], []
     try:
         filepath = (gF.lang+'/data/textLibrary/textData/'+gF.textFile+'-firstFile.txt')
         print(gF.lineno(), 'begin fwFile load', filepath) 
         firstFile = open(filepath, 'r')
         for line in firstFile:
-            firstWords.append(line[:-1])
+            gF.firstWords.append(line[:-1])
             firstPopList.append(line[:-1])
         print(gF.lineno(), 'begin prox load')
         #  Take a look at gpDataOpener. Consider moving more code there, or bring some here
@@ -30,7 +29,6 @@ def loadmakeData():
         #  Libs declared here, made into lists of dics of lists, and called using indices on     #  The maximum length of theseslists are truncated based on the user's initial input
         proxPlusLista = proxPlusLista[:proxMaxDial]
         proxMinusLista = proxMinusLista[:proxMaxDial]
-        firstWords = []
         for all in range(0, (len(proxPlusLista))):  #  Now that we've got an exhaustive list of real words, we'll create empty lists for all of them (could this get pre-empted for common words?)
             for each in splitText:
                 proxPlusLista[all][each] = []
@@ -41,8 +39,8 @@ def loadmakeData():
             proxNumerator, proxDicCounter, proxMax = int(1), int(0), len(proxPlusLista)
             if pWord in endPunx:
                 firstWord = splitText[splitTIndex+1]
-                if firstWord not in firstWords:
-                    firstWords.append(firstWord)
+                if firstWord not in gF.firstWords:
+                    gF.firstWords.append(firstWord)
                     firstFile.write(firstWord+'\n')
             while proxDicCounter < proxMax and splitTIndex+proxNumerator < splitTLen:
                 proxWord = splitText[splitTIndex+proxNumerator]
@@ -89,7 +87,6 @@ def proxNewBuild():
     #  Prox and gramprox store Markov chains and build in -Liner() functions
     #  Libs declared here, made into lists of dics of lists, and called using indices on     #  The maximum length of theseslists are truncated based on the user's initial input
     print(gF.lineno(), 'builing proxLibs...')
-    firstWords = []
     for all in range(0, (len(proxPlusLista))):  #  Now that we've got an exhaustive list of real words, we'll create empty lists for all of them (could this get pre-empted for common words?)
         for each in splitText:
             proxPlusLista[all][each] = []
@@ -115,8 +112,8 @@ def proxNewBuild():
                     dataCheck = 'rawr'
                 if pWord in endPunx:
                     firstWord = splitText[splitTIndex+1]
-                    if firstWord not in firstWords:
-                        firstWords.append(firstWord)
+                    if firstWord not in gF.firstWords:
+                        gF.firstWords.append(firstWord)
                         firstFile.write(firstWord+'\n')
                 #print(gF.lineno(), dataCheck)
                 if len(dataCheck) > 0:

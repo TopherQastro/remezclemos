@@ -40,11 +40,15 @@ def begin():
     global defaultSwitch, usedSwitch, rhySwitch, metSwitch, thesSwitch, contSwitch
     global language, lang, accent, textFile, empMode
     global poemQuota, stanzaQuota, proxMaxDial, proxMinDial, punxDial
-    global rhyMap, empMap, usedList
+    global rhyMap, empMap, usedList, firstWords
     defaultSwitch, usedSwitch, rhySwitch, metSwitch, thesSwitch, contSwitch = True, True, True, True, True, True
     language, lang, accent, textFile, empMode = str(), str(), str(), str(), str()
     poemQuota, stanzaQuota, proxMaxDial, proxMinDial, punxDial = int(0), int(0), int(0), int(0), int(0)
-    rhyMap, empMap, usedList = [], [], []
+    rhyMap, empMap, usedList, firstWords = [], [], [], []
+
+    global metaList, superPopList, expressList, thesList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList
+    metaList, superPopList, expressList, thesList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList = [], [], [], [], [], [], [], [[], []], [[], []] 
+    metaList = superPopList, expressList, thesList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList
 
     global quantumList, nonEnders, alphabet, allPunx, midPunx, endPunx #  List of words used for quantum emp patterns
     quantumList = ['was', 'be', 'and', 'to', 'for', 'a', 'the', 'in', 'at', 'but', 'an',
@@ -109,7 +113,21 @@ def begin():
     global emps, vocs, cons, fono
     emps, vocs, cons, fono = dd(list), dd(list), dd(list), dd(list)
 
-
+ 
+def printGlobalData(qLine):
+    print(lineno(), 'printGlobalData() |', len(qLine[1]), qLine[1])
+    print(lineno(), 'printGlobalData() | superPop, express, thes, cont, punx, proxData')
+    indInt = int(0)
+    for each in metaList:
+        if len(each) > 0:
+            eachListLenLine = []
+            for all in each:
+                eachListLenLine.append(len(all))
+            print(lineno(), indInt, 'len:', len(eachListLenLine), '|', eachListLenLine)
+            qInt = len(qLine[1]) + 2
+            if len(eachListLenLine) > qInt:
+                input(lineno(), 'printGlobalData() | fuckery'+str(len(eachListLenLine))+str(qInt))
+        indInt+=1
 
 
 
