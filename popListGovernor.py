@@ -87,3 +87,5 @@ def plainPopDigester():  #  Digests words from list without regard to their syll
 
 def empPopDigester():  #  Digests words based on the length of their syllables
     return doo, doo
+
+

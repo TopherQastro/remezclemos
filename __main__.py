@@ -116,21 +116,6 @@ def main__init(defaultSwitch0, language0, accent0, textFile0, poemQuota0, stanza
         lang = 'eng'
     elif language == 'Espanol':
         lang = 'esp'
-
-        
-    #textFile = 'bibleX'
-    print(lineno(), 'initializing program', str(time.ctime())[11:20], '\ntextFile:', textFile, '\npoem template:')
-    mapInt = int(0)
-    while mapInt < len(rhyMap):
-        mapWriteLine = str()
-        mapWriteLine+=(rhyMap[mapInt]+' | ')
-        for each in empMap[mapInt]:
-            if each == True:
-                mapWriteLine+='1'
-            else:
-                mapWriteLine+='0'
-        print(mapWriteLine)
-        mapInt+=1
           
     #########################
     #  Static data, will change with GUI and testVals progs
@@ -252,7 +237,7 @@ def main__init(defaultSwitch0, language0, accent0, textFile0, poemQuota0, stanza
 
     print('opening fonoFiles')  #  These are global values, so they need to be opened regardless
     global emps
-    emps = gF.globalOpen(lang+'/data/'+accent+'/empDic-'+empMode+'.csv', 'lista')
+    emps = gFunk.globalOpen(lang+'/data/'+accent+'/empDic-'+empMode+'.csv', 'lista')
     for key, val in emps.items():  #  Stored as ints because could be numbers up to 2. Change to bools
         boolSwitch = []
         for each in val:
@@ -261,9 +246,9 @@ def main__init(defaultSwitch0, language0, accent0, textFile0, poemQuota0, stanza
             else:
                 boolSwitch.append(bool(False))
         emps[key] = boolSwitch
-    vocs = gF.globalOpen(lang+'/data/'+accent+'/vocDic-USen-MAS.csv', 'lista')
-    cons = gF.globalOpen(lang+'/data/'+accent+'/conDic-USen-MAS.csv', 'lista')
-    fono = gF.globalOpen(lang+'/data/'+accent+'/fonDic-USen-MAS.csv', 'lista')
+    vocs = gFunk.globalOpen(lang+'/data/'+accent+'/vocDic-USen-MAS.csv', 'lista')
+    cons = gFunk.globalOpen(lang+'/data/'+accent+'/conDic-USen-MAS.csv', 'lista')
+    fono = gFunk.globalOpen(lang+'/data/'+accent+'/fonDic-USen-MAS.csv', 'lista')
     
     # if rhySwitch == on, load rhyming dictionary here
     # write it in __gloFunk
@@ -285,8 +270,22 @@ def main__init(defaultSwitch0, language0, accent0, textFile0, poemQuota0, stanza
     global metaList
     metaList = superPopList, expressList, thesList, contList, punxList, qLineIndexList, proxDicIndexList
     
+    print(lineno(), '_m_ | initializing program', str(time.ctime())[11:20], 
+          '\ntextFile:', textFile, '\npoem template:')
+    mapInt = int(0)
+    while mapInt < len(rhyMap):
+        mapWriteLine = str()
+        mapWriteLine+=(rhyMap[mapInt]+' | ')
+        for each in empMap[mapInt]:
+            if each == True:
+                mapWriteLine+='1'
+            else:
+                mapWriteLine+='0'
+        print(mapWriteLine)
+        mapInt+=1
+
     poemCt = int(0)
-    print('PROGRAM INITIALIZED | ', str(time.ctime())[11:20], '\n')
+    print('_m_ |,' lineno(), 'PROGRAM INITIALIZED | ', str(time.ctime())[11:20], '\n')
     while poemCt < poemQuota:
         poem, usedList = poemGovernor(stanzaQuota)
         poemCt+=1
@@ -295,7 +294,7 @@ def main__init(defaultSwitch0, language0, accent0, textFile0, poemQuota0, stanza
             print(each, '\n')
         input('paused')
 
-    print('PROGRAM FINISHED')
+    print('_m_ |,' lineno(), 'PROGRAM FINISHED')
 
 main__init(defaultSwitch0, language0, accent0, textFile0, poemQuota0, stanzaQuota0, 
            rhyMap0, empMap0, usedSwitch0, rhySwitch0, metSwitch0, thesSwitch0, 

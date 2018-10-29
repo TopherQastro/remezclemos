@@ -1,94 +1,87 @@
 
-def meterGovernor(empLine, proxExpress, pLEmps, qLine, runLine):
-    print(lineno(), 'meterGovernor() | runLine:', runLine, '| qLine:', qLine)
-    global startTime
-    stopTime = time.time()
-    if stopTime > (startTime + 300):
-        qLine, runLine, redButton = vetoLine(runLine, [])
-        startTime = time.time()
-        print(lineno(), 'meterGovernor() | timeout restart |', str(time.ctime())[11:20])
-        return pLEmps, qLine, runLine, True  
-    while pLEmps != empLine:
-        print(lineno(), 'meterGovernor() | metGov while start')
-        if len(qLine[1]) == 0:  #  Check if we're starting with a completely empty line, load firstWords to superPopList if so
-            print(lineno(), 'meterGovernor() | meterGov if0')
-            pLEmps, qLine, runLine = meterLinerStarter(empLine, proxExpress, runLine) 
+def vetoLine(qAnteLine, proxExpress):  #  Resets values in a line to
+    print(lineno(), 'vetoLine() | qAnteLine:', qAnteLine)
+    runLine = ([],[])
+    for each in qAnteLine[0]:  #  Re-create any qAnteLinesuperPopList, qLine, qLineIndexList, proxDicIndexList as a mutable variable
+        runLine[0].append(each)
+    for each in qAnteLine[1]:  #  Re-create any qAnteLinesuperPopList, qLine, qLineIndexList, proxDicIndexList as a mutable variable
+        runLine[1].append(each)
+    global mList
+    for mList in metaList:
+        while len(mList) > 0:
+            mList.pop()
+    printGlobalData(([],[]))
+    return ([],[]), runLine, False
+          #qLine, qAnteLine, redButton
+
+def removeWordL(superPopList, qLine):  #  Remove the leftmost word from line
+    # do something
+    return data
+
+
+def removeWordR(empLine, qLine, runLine):  #  Remove the rightmost word from line
+    print(lineno(), 'removeWordR-in', 'qLine:', qLine, 'runLine:', runLine)
+    if len(qLine[0]) == 0 and len(runLine[0]) > 0:  #  Cut runLine
+        print(lineno(), "rMR - if0")
+        minusWordX = runLine[0].pop(0)  #  Since the previous line didn't yield any following line
+        minusWordY = runLine[1].pop(0)  #  minusWordX just holds whatever is getting popped
+    if len(qLine[0]) > 0:
+        print(lineno(), "rMR - if1")
+        minusWord0 = qLine[0].pop()  #  Remove word from first part of line
+        minusWord1 = qLine[1].pop()  #  Until better method introduced, cut rLine here
+        pWEmps = gF.empsLine(empLine, [minusWord0], emps, doubles, quantumList)
+        pLEmps = gF.empsLine(empLine, qLine[0], emps, doubles, quantumList)
+        pLEmps = pLEmps[:-len(pWEmps)]  #  Cut emps from main line)
+        superBlackList.pop()  #  If we leave blacklisted words further down the road, they may negate an otherwise compatible sentence
+        print(lineno(), 'minusWord0:', minusWord0)
+        superBlackList[-1].append(minusWord0)  #  Add to blackList at correct point
+    else:
+        pLEmps = []
+    #if len(superPopList) > (len(qLine[1]) + 1):  #  If we've gone further than checking the list of next words
+    print(lineno(), 'rMR - snipPopList')
+    global mList
+    for mList in metaList:
+        if len(mList) > 0:
+            mList.pop()
         elif len(qLine[1]) > 0:
-            print(lineno(), 'meterGovernor() | meterGov if2 qLine:', qLine, 'len(superBlackList):', 
-                  len(superBlackList), 'meterGovernor() | len(superPopList):', len(superPopList))
-            if len(qLine[1]) == len(superPopList):
-                qLine, runLine = superPopListMaker(empLine, proxExpress, qLine, runLine)                
-            pLEmps, qLine, runLine = metPopDigester(empLine, proxExpress, qLine, runLine)
-        elif len(runLine[0]) == 1 and runLine[-1] in endPunx:                
-            print(lineno(), 'meterGovernor() |  if3', runLine)
-            pLEmps, qLine, runLine = meterLinerStarter(empLine, proxExpress, ([], []))
-        try:  
-            if len(superPopList) == 0 and len(qLine[1]) == 0 and len(runLine[0]) == 0:
-                print(lineno(), 'meterGovernor() | redButton == True')
-                return pLEmps, qLine, runLine, True #  redButton event
-        except IndexError:  #  Either the lists are empty, or they don't exist at all
-            print(lineno(), 'meterGovernor() | iE:', qLine, runLine)
+            print(lineno(), qLine)
             printGlobalData(qLine)
-            return pLEmps, qLine, runLine, True #  redButton event
-        print(lineno(), 'meterGovernor() | end of meterGov ifchecks')
-        while len(pLEmps) > len(empLine):  #  If somehow the line went over the numbered lists
-            print(lineno(), 'meterGovernor() | meterGov over emps')
-            pLEmps, qLine, runLine = removeWordR(empLine, qLine, runLine)
-    return pLEmps, qLine, runLine, False    
+    print(lineno(), 'removeWordR-out', qLine)
+    printGlobalData(qLine)
+    return pLEmps, qLine, runLine
 
 
-def meterLiner(empLine, proxExpress, qAnteLine):  #
-    print(lineno(), 'meterLiner() | start\nPrevious:', qAnteLine, '\nempLine:', empLine)
-    pLEmps, qLine, runLine = meterLinerStarter(empLine, proxExpress, qAnteLine)
-    while (pLEmps != empLine) or (qLine[0][-1] in nonEnders):  #  Keep going until the line is finished or returns blank answer
-        pLEmps, qLine, runLine, redButton = meterGovernor(empLine, proxExpress, pLEmps, qLine, runLine)
-        if redButton == True:
-            return qLine, redButton
-        if pLEmps == empLine:
-            print(lineno(), 'meterLiner() | pLEmps == empLine | superPopList:',
-                  len(superPopList), len(superPopList[-1]))
-            if qLine[1][-1] in nonEnders:  #  Words that don't sound good as the last word of a line, such as conjunctions without something else to connect
-                pLEmps, qLine, runLine = removeWordR(empLine, qLine, runLine)
-            else:
-                for all in allPunx:
-                    if all in superPopList[-1]:  #  If puncuation fits, place one on the end of a line (will give the next line an easier start, too)
-                        qLine = acceptWordR(empLine, qLine, runLine, ([all], [all]))
-                        break
-        if redButton == True:
-            return qLine, redButton
-    print(lineno(), 'meterLiner() | out:', qLine, 'len(superPopList):', len(superPopList), 'redButton:', redButton)
-    return qLine, redButton
-          #qLine, redButton
-            
+def acceptWordL(qLine, nextWord, qLineIndexList, proxDicIndexList):  #  Add the rightmost word to line
 
-def rhymeLiner(empLine, proxExpress, rhymeList, qAnteLine):
-    print(lineno(), 'rhymeLiner() | start\nPrevious:', qAnteLine, '\nempLine:', empLine)
-    pLEmps, qLine, runLine = meterLinerStarter(empLine, proxExpress, qAnteLine)
-    if len(qLine[1]) == 0:
-        return qLine, True
-    while (qLine[0][-1] not in rhymeList) or (qLine[0][-1] in nonEnders) or (pLEmps != empLine):
-        pLEmps, qLine, runLine, redButton = meterGovernor(empLine, proxExpress, pLEmps, qLine, runLine)
-        if redButton == True:
-            return qLine, redButton
-        if pLEmps == empLine:
-            print(lineno(), 'rhymeLiner() | pLEmps == empLine | qLine[0]:', qLine[0])
-            if (qLine[0][-1] in allPunx):
-                pLEmps, qLine, runLine = removeWordR(empLine, qLine, runLine)
-            if (qLine[0][-1] in nonEnders) or (qLine[0][-1] not in rhymeList):  #  Words that don't sound good as the last word of a line, such as conjunctions without something else to connect
-                pLEmps, qLine, runLine = removeWordR(empLine, qLine, runLine)
-                pLEmps, qLine, runLine, redButton = meterGovernor(empLine, rhymeList, pLEmps, qLine, runLine)  #  Switch proxExpress to rhymeList to get them preferred
-            else:
-                for punc in allPunx:
-                    if punc in superPopList[-1]:  #  If puncuation fits, place one on the end of a line (will give the next line an easier start, too)
-                        qLine = acceptWordR(empLine, qLine, runLine, ([punc], [punc]))
-                        return qLine, redButton
-        if redButton == True:
-            return qLine, redButton
-    print(lineno(), 'rhymeLiner() | out:', qLine, 'len(superPopList):', len(superPopList), 'redButton:', redButton)
-    if redButton == True:
-        return qLine, redButton
-    print(lineno(), 'rhymeLiner() | rhyHere1:', qLine)
-    return qLine, redButton
+##  INVERT THESE VALUES
+
+    print('acceptWord:', qLine, '|', nextWord)
+    pLine.append(nextWord)
+    if len(proxNumList) > 0:
+        proxNum = proxNumList[-1] + 1
+    else:
+        proxNum = 0
+    proxNumList.append(proxNum)
+    proxLineNum = proxLineNumList[0] + 1
+    proxLineNumList.insert(0, proxLineNum)
+    return qLineIndexList, proxDicIndexList, qLine
+
+
+def acceptWordR(empLine, qLine, runLine, nextWord):  #  Add word to right side of line
+    print('acceptWordR-in:', runLine, qLine, '|', nextWord)
+    for each in nextWord[0]:
+        qLine[0].append(each)
+    for each in nextWord[1]:
+        qLine[1].append(each)
+    #proxDataBuilder(qLineIndexList, proxDicIndexList, qLine, len(qLine[1]))
+    #if len(superBlackList) == len(qLine[1]):  #  We don't have any blackListed words that far ahead
+    superBlackList.append([])
+    qLineIndexList.append([])
+    proxDicIndexList.append([])
+    proxDataBuilder((runLine[0]+qLine[0], runLine[1]+qLine[1]), len(runLine[1]+qLine[1]))
+    qLine, runLine = superPopListMaker(empLine, [], qLine, runLine)
+    print('acceptWordR-out:', qLine, '|', nextWord, qLineIndexList, proxDicIndexList)
+    return qLine
 
 
 def lineGovernor(empLine, rhymeThisLine, rhymeList, qAnteLine):
