@@ -131,7 +131,9 @@ class Application:
         punxDial = self.punxDial.get()
         punxDial = int(punxDial)
         
-        remezclemos.main__init(defaultSwitch, language, accent, textFile, poemQuota, stanzaQuota, rhyMap, empMap, usedSwitch, rhySwitch, metSwitch, thesSwitch, proxMinDial, proxMaxDial, punxDial)
+        remezclemos.main__init(defaultSwitch, language, accent, textFile, poemQuota,
+                               stanzaQuota, rhyMap, empMap, usedSwitch, rhySwitch,
+                               metSwitch, thesSwitch, proxMinDial, proxMaxDial, punxDial)
 
 
 if __name__ == '__main__':
