@@ -12,7 +12,7 @@ def gov():
         gF.stanzaQuota = 1
         gF.proxMinDial = int(3)
         gF.proxMaxDial = int(20)
-        gF.punxProxNum = int(3)
+        gF.punxDial = int(3)
         gF.usedSwitch = False
         gF.rhySwitch = True
         gF.metSwitch = True
@@ -134,3 +134,5 @@ def gov():
             gF.doubles.append(key)
 
     print(gF.lineno(), "rhySwitch =", gF.rhySwitch)
+    
+    gF.proxFunk.loadmakeData()

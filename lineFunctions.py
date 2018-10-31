@@ -4,12 +4,11 @@ import globalFunctions as gF
 def veto(qAnteLine, proxExpress):  #  Resets values in a line to
     print(gF.lineno(), 'veto() | qAnteLine:', qAnteLine)
     runLine = ([],[])
-    for each in qAnteLine[0]:  #  Re-create any qAnteLinegF.superPopList, qLine, qLineIndexList, proxDicIndexList as a mutable variable
+    for each in qAnteLine[0]:  #  Re-create any qAnteLinegF.superPopList, qLine, gF.qLineIndexList, proxDicIndexList as a mutable variable
         runLine[0].append(each)
-    for each in qAnteLine[1]:  #  Re-create any qAnteLinegF.superPopList, qLine, qLineIndexList, proxDicIndexList as a mutable variable
+    for each in qAnteLine[1]:  #  Re-create any qAnteLinegF.superPopList, qLine, gF.qLineIndexList, proxDicIndexList as a mutable variable
         runLine[1].append(each)
-    global mList
-    for mList in gF.metaList:
+    for mList in gF.superList:
         while len(mList) > 0:
             mList.pop()
     gF.printGlobalData(([],[]))
@@ -32,29 +31,28 @@ def removeWordR(empLine, qLine, runLine):  #  Remove the rightmost word from lin
         print(gF.lineno(), "rMR - if1")
         minusWord0 = qLine[0].pop()  #  Remove word from first part of line
         minusWord1 = qLine[1].pop()  #  Until better method introduced, cut rLine here
-        pWEmps = gF.empsLine(empLine, [minusWord0], emps, doubles, quantumList)
-        pLEmps = gF.empsLine(empLine, qLine[0], emps, doubles, quantumList)
+        pWEmps = gF.pEmpsLine(empLine, [minusWord0])
+        pLEmps = gF.pEmpsLine(empLine, qLine[0])
         pLEmps = pLEmps[:-len(pWEmps)]  #  Cut emps from main line)
-        superBlackList.pop()  #  If we leave blacklisted words further down the road, they may negate an otherwise compatible sentence
+        gF.superBlackList.pop()  #  If we leave blacklisted words further down the road, they may negate an otherwise compatible sentence
         print(gF.lineno(), 'minusWord0:', minusWord0)
-        superBlackList[-1].append(minusWord0)  #  Add to blackList at correct point
+        gF.superBlackList[-1].append(minusWord0)  #  Add to blackList at correct point
     else:
         pLEmps = []
     #if len(gF.superPopList) > (len(qLine[1]) + 1):  #  If we've gone further than checking the list of next words
-    print(gF.lineno(), 'rMR - snipPopList')
-    global mList
-    for mList in gF.metaList:
+    print('liF:', gF.lineno(), '| rMR - snipPopList')
+    for mList in gF.superList:
         if len(mList) > 0:
             mList.pop()
         elif len(qLine[1]) > 0:
-            print(gF.lineno(), qLine)
+            print('liF:', gF.lineno(), '|', qLine)
             gF.printGlobalData(qLine)
     print(gF.lineno(), 'removeWordR-out', qLine)
     gF.printGlobalData(qLine)
     return pLEmps, qLine, runLine
 
 
-def acceptWordL(qLine, nextWord, qLineIndexList, proxDicIndexList):  #  Add the rightmost word to line
+def acceptWordL(qLine, nextWord):  #  Add the rightmost word to line
 
 ##  INVERT THESE VALUES
 
@@ -67,23 +65,23 @@ def acceptWordL(qLine, nextWord, qLineIndexList, proxDicIndexList):  #  Add the 
     proxNumList.append(proxNum)
     proxLineNum = proxLineNumList[0] + 1
     proxLineNumList.insert(0, proxLineNum)
-    return qLineIndexList, proxDicIndexList, qLine
+    return qLine
 
 
 def acceptWordR(empLine, qLine, runLine, nextWord):  #  Add word to right side of line
-    print('acceptWordR-in:', runLine, qLine, '|', nextWord)
+    print('liF:', gF.lineno(), '| acceptWordR-in:', runLine, qLine, '|', nextWord)
     for each in nextWord[0]:
         qLine[0].append(each)
     for each in nextWord[1]:
         qLine[1].append(each)
-    #proxDataBuilder(qLineIndexList, proxDicIndexList, qLine, len(qLine[1]))
-    #if len(superBlackList) == len(qLine[1]):  #  We don't have any blackListed words that far ahead
-    superBlackList.append([])
-    qLineIndexList.append([])
-    proxDicIndexList.append([])
-    proxDataBuilder((runLine[0]+qLine[0], runLine[1]+qLine[1]), len(runLine[1]+qLine[1]))
-    qLine, runLine = gF.superPopListMaker(empLine, [], qLine, runLine)
-    print('acceptWordR-out:', qLine, '|', nextWord, qLineIndexList, proxDicIndexList)
+    #gF.proxFunk.proxDataBuilder(gF.qLineIndexList, proxDicIndexList, qLine, len(qLine[1]))
+    #if len(gF.superBlackList) == len(qLine[1]):  #  We don't have any blackListed words that far ahead
+    gF.superBlackList.append([])
+    gF.qLineIndexList.append([])
+    gF.proxDicIndexList.append([])
+    gF.proxFunk.proxDataBuilder((runLine[0]+qLine[0], runLine[1]+qLine[1]), len(runLine[1]+qLine[1]))
+    qLine, runLine = gF.popFunk.superPopListMaker(empLine, [], qLine, runLine)
+    print('liF:', gF.lineno(), '| acceptWordR-out:', qLine, '|', nextWord, gF.qLineIndexList, gF.proxDicIndexList)
     return qLine
 
 
@@ -97,7 +95,7 @@ def gov(empLine, rhymeThisLine, rhymeList, qAnteLine):
             proxExpress = []
             for rhymers in rhymeList:  #  Find words that come before rhymeWords, so you direct it towards that one
                 try:
-                    for words in proxMinusLista[:len(empLine)]:  #  Only go as far as the empLine, as if all words are one-syllable long
+                    for words in gF.proxMinusLista[:len(empLine)]:  #  Only go as far as the empLine, as if all words are one-syllable long
                         thisProxList = words[rhymers]
                         for proxWord in thisProxList:
                             if proxWord not in proxExpress and proxWord not in quantumList:
@@ -108,7 +106,7 @@ def gov(empLine, rhymeThisLine, rhymeList, qAnteLine):
             qLine, killSwitch = rhymeLiner(empLine, proxExpress, rhymeList, qAnteLine)
         else:
             print(gF.lineno(), 'no rhymes')
-            return superBlackList, [], ([],[]), True  #  usedList, qLine, killSwitch
+            return [], ([],[]), True  #  usedList, qLine, killSwitch
     elif gF.metSwitch == True:  #  If metSwitch is off, then we wouldn't have either rhyme or meter
         print(gF.lineno(), 'lineGov - gF.meterLineFunk.gov activate')
         qLine, killSwitch = gF.meterLineFunk.gov(empLine, [[], []], [], qAnteLine, proxExpress)

@@ -10,9 +10,9 @@ def removeLine(stanza):
     print('stF:', gF.lineno(), '| removeLine in | len(stanza):', len(stanza))
     if len(stanza) > 0:
         stanzaSnip = stanza.pop()  #  Remove the last line of the stanza
-        superBlackList[0].append(stanzaSnip[0][0])  #  Add the first word of the line to blacklist to ensure the repeat doesn't happen
+        gF.superBlackList[0].append(stanzaSnip[0][0])  #  Add the first word of the line to blacklist to ensure the repeat doesn't happen
         print('stF:', gF.lineno(), '| stanzaSnip:', stanzaSnip)
-    print('stF:', gF.lineno(), '| removeLine', len(superBlackList))
+    print('stF:', gF.lineno(), '| removeLine', len(gF.superBlackList))
     qAnteLine = ([],[])  #  Rebuild qAnteLine, meant to direct the proceeding line(s). Returns empty if stanza empty
     if len(stanza) > 1:
         for word in stanza[-1][0]:
@@ -26,7 +26,7 @@ def removeLine(stanza):
 def acceptLine(stanza, newLine):
     print('stF:', gF.lineno(), '| acceptLine in | len(stanza):', len(stanza))
     stanza.append(newLine)
-    superBlackList = [[]]  #  Reset superBlackList to apply to next line
+    gF.superBlackList = [[]]  #  Reset superBlackList to apply to next line
     print('stF:', gF.lineno(), '| acceptLine in | len(stanza):', len(stanza))
     return stanza, newLine
           #stanza, qAnteLine
@@ -48,7 +48,7 @@ def gov():
                 lastWordIndex = int(-1)
                 rhymeWord = rhymeLine[lastWordIndex]
                 rhymeList = []
-                while rhymeLine[lastWordIndex] in allPunx:  #  Start from the end and bypass all punctuation
+                while rhymeLine[lastWordIndex] in gF.allPunx:  #  Start from the end and bypass all punctuation
                     try:
                         lastWordIndex-=1  #  Subtraction pulls the index back until we're not looking at a puncuation mark
                         rhymeWord = rhymeLine[lastWordIndex]  #  Picking the last word

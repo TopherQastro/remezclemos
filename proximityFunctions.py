@@ -8,36 +8,37 @@ fonoCursor = fonoConn.cursor()
 def loadmakeData():
     try:
         filepath = (gF.lang+'/data/textLibrary/textData/'+gF.textFile+'-firstFile.txt')
-        print(gF.lineno(), 'begin fwFile load', filepath) 
+        print('pxF:', gF.lineno(), ' | begin fwFile load', filepath) 
         firstFile = open(filepath, 'r')
         for line in firstFile:
             gF.firstWords.append(line[:-1])
-            firstPopList.append(line[:-1])
-        print(gF.lineno(), 'begin prox load')
+            gF.firstPopList.append(line[:-1])
+        print('pxF:', gF.lineno(), ' | begin prox load')
         #  Take a look at gpDataOpener. Consider moving more code there, or bring some here
-        proxPlusLista = gF.proxDataOpener(gF.lang, proxPlusLista, 'proxP', gF.textFile)
-        proxMinusLista = gF.proxDataOpener(gF.lang, proxMinusLista, 'proxM', gF.textFile)
-        print(gF.lineno(), 'prox load complete')
+        gF.proxPlusLista = gF.proxDataOpener(gF.lang, gF.proxPlusLista, 'proxP', gF.textFile)
+        gF.proxMinusLista = gF.proxDataOpener(gF.lang, gF.proxMinusLista, 'proxM', gF.textFile)
+        print('pxF:', gF.lineno(), '| proxP1:', len(gF.proxP1), '- proxM1:', len(gF.proxM1))
+        print('pxF:', gF.lineno(), ' | prox load complete')
             
     except FileNotFoundError:
         firstFile = open(gF.lang+'/data/textLibrary/textData/'+gF.textFile+'-firstFile.txt', 'w+')
         splitTIndex = int(0)
         splitTLen = len(splitText)
-        proxMaxDial = 19
-        print(gF.lineno(), 'begin loadmakeProxLibs()')
+        gF.proxMaxDial = 19
+        print('pxF:', gF.lineno(), ' | begin loadmakeProxLibs()')
         #  Prox and gramprox store Markov chains and build in -Liner() functions
         #  Libs declared here, made into lists of dics of lists, and called using indices on     #  The maximum length of theseslists are truncated based on the user's initial input
-        proxPlusLista = proxPlusLista[:proxMaxDial]
-        proxMinusLista = proxMinusLista[:proxMaxDial]
-        for all in range(0, (len(proxPlusLista))):  #  Now that we've got an exhaustive list of real words, we'll create empty lists for all of them (could this get pre-empted for common words?)
+        gF.proxPlusLista = gF.proxPlusLista[:gF.proxMaxDial]
+        gF.proxMinusLista = gF.proxMinusLista[:gF.proxMaxDial]
+        for all in range(0, (len(gF.proxMinusLista))):  #  Now that we've got an exhaustive list of real words, we'll create empty lists for all of them (could this get pre-empted for common words?)
             for each in splitText:
-                proxPlusLista[all][each] = []
-                proxMinusLista[all][each] = []
+                gF.proxPlusLista[all][each] = []
+                gF.proxMinusLista[all][each] = []
         while splitTIndex < len(splitText):
-            #print('working here:', splitTIndex, splitText[splitTIndex:splitTIndex+15])
+            #print('pxF:', 'working here:', splitTIndex, splitText[splitTIndex:splitTIndex+15])
             pWord = splitText[splitTIndex]
-            proxNumerator, proxDicCounter, proxMax = int(1), int(0), len(proxPlusLista)
-            if pWord in endPunx:
+            proxNumerator, proxDicCounter, proxMax = int(1), int(0), len(gF.proxMinusLista)
+            if pWord in gF.endPunx:
                 firstWord = splitText[splitTIndex+1]
                 if firstWord not in gF.firstWords:
                     gF.firstWords.append(firstWord)
@@ -45,20 +46,20 @@ def loadmakeData():
             while proxDicCounter < proxMax and splitTIndex+proxNumerator < splitTLen:
                 proxWord = splitText[splitTIndex+proxNumerator]
 ##                if pWord == 'the' and proxNumerator == 1 and proxWord == 'and':
-##                    print(proxWord, ':', splitText[splitTIndex+proxNumerator:splitTIndex+proxNumerator+15], '\n', splitTIndex, proxNumerator)
+##                    print('pxF:', proxWord, ':', splitText[splitTIndex+proxNumerator:splitTIndex+proxNumerator+15], '\n', splitTIndex, proxNumerator)
 ##                    input('fuckery')
-                if proxWord not in proxPlusLista[proxDicCounter][pWord]:
-                    #print(gF.lineno(), 'plusadd = proxP:', proxWord, 'pWord:', pWord, proxDicCounter, proxNumerator)
-                    proxPlusLista[proxDicCounter][pWord].append(proxWord)
-                if pWord not in proxMinusLista[proxDicCounter][proxWord]:
-                    #print(gF.lineno(), 'minusadd = proxM:', proxWord, 'pWord:', pWord, proxDicCounter, proxNumerator)
-                    proxMinusLista[proxDicCounter][proxWord].append(pWord)
+                if proxWord not in gF.proxMinusLista[proxDicCounter][pWord]:
+                    #print('pxF:', gF.lineno(), ' | plusadd = proxP:', proxWord, 'pWord:', pWord, proxDicCounter, proxNumerator)
+                    gF.proxMinusLista[proxDicCounter][pWord].append(proxWord)
+                if pWord not in gF.proxMinusLista[proxDicCounter][proxWord]:
+                    #print('pxF:', gF.lineno(), ' | minusadd = proxM:', proxWord, 'pWord:', pWord, proxDicCounter, proxNumerator)
+                    gF.proxMinusLista[proxDicCounter][proxWord].append(pWord)
                 proxDicCounter+=1
                 proxNumerator+=1
             splitTIndex+=1
-        print(gF.lineno(), 'writing proxLibs...')
-        gpDataWriter(gF.lang, proxPlusLista, 'proxP', gF.textFile)
-        gpDataWriter(gF.lang, proxMinusLista, 'proxM', gF.textFile)  
+        print('pxF:', gF.lineno(), ' | writing proxLibs...')
+        gpDataWriter(gF.lang, gF.proxMinusLista, 'proxP', gF.textFile)
+        gpDataWriter(gF.lang, gF.proxMinusLista, 'proxM', gF.textFile)  
 
 
 def proxNewBuild():
@@ -78,23 +79,23 @@ def proxNewBuild():
         proxM13 TEXT, proxM14 TEXT, proxM15 TEXT, proxM16 TEXT, proxM17 TEXT, proxM18 TEXT,
         proxM19 TEXT, proxM20 TEXT, proxM21 TEXT, proxM22 TEXT, proxM23 TEXT, proxM24 TEXT)''')
 
-    print(gF.lineno(), '\nNEW FILE\nbuilding firstfile...')
+    print('pxF:', gF.lineno(), ' | \nNEW FILE\nbuilding firstfile...')
     firstFile = open(lang+'/data/textLibrary/textData/'+textFile+'-firstFile.txt', 'w+')
     fullList = []
     splitTIndex = int(0)
     splitTLen = len(splitText)
-    print(gF.lineno(), 'begin loadmakeProxLibs()')
+    print('pxF:', gF.lineno(), ' | begin loadmakeProxLibs()')
     #  Prox and gramprox store Markov chains and build in -Liner() functions
     #  Libs declared here, made into lists of dics of lists, and called using indices on     #  The maximum length of theseslists are truncated based on the user's initial input
-    print(gF.lineno(), 'builing proxLibs...')
-    for all in range(0, (len(proxPlusLista))):  #  Now that we've got an exhaustive list of real words, we'll create empty lists for all of them (could this get pre-empted for common words?)
+    print('pxF:', gF.lineno(), ' | builing proxLibs...')
+    for all in range(0, (len(gF.proxMinusLista))):  #  Now that we've got an exhaustive list of real words, we'll create empty lists for all of them (could this get pre-empted for common words?)
         for each in splitText:
-            proxPlusLista[all][each] = []
-            proxMinusLista[all][each] = []
+            gF.proxMinusLista[all][each] = []
+            gF.proxMinusLista[all][each] = []
     while splitTIndex < len(splitText):  #
-        print(gF.lineno(), 'working here:', splitTIndex, splitText[splitTIndex:splitTIndex+15])
+        print('pxF:', gF.lineno(), ' | working here:', splitTIndex, splitText[splitTIndex:splitTIndex+15])
         pWord = splitText[splitTIndex]
-        print(gF.lineno(), 'p:', pWord)
+        print('pxF:', gF.lineno(), ' | p:', pWord)
         if pWord not in fullList:
             fullList.append(pWord)
         if len(pWord) > 0:
@@ -102,47 +103,47 @@ def proxNewBuild():
                 tablekey = pWord[0].upper()
                 if tablekey not in alphabet:
                     tablekey = 'Q'
-                #print(gF.lineno(), tablekey)
-                proxNumerator, proxDicCounter, proxMax = int(1), int(0), len(proxPlusLista)
-                if pWord not in allPunx:
+                #print('pxF:', gF.lineno(), tablekey)
+                proxNumerator, proxDicCounter, proxMax = int(1), int(0), len(gF.proxMinusLista)
+                if pWord not in gF.allPunx:
                     fonoCursor.execute('''SELECT empsEven FROM mastFono'''+tablekey+'''
                                           WHERE entry=?''', (pWord,))
                     dataCheck = fonoCursor.fetchone()[0]  #  Checks to see if valid dictionary word
                 else:
                     dataCheck = 'rawr'
-                if pWord in endPunx:
+                if pWord in gF.endPunx:
                     firstWord = splitText[splitTIndex+1]
                     if firstWord not in gF.firstWords:
                         gF.firstWords.append(firstWord)
                         firstFile.write(firstWord+'\n')
-                #print(gF.lineno(), dataCheck)
+                #print('pxF:', gF.lineno(), dataCheck)
                 if len(dataCheck) > 0:
                     while proxDicCounter < proxMax and splitTIndex+proxNumerator < splitTLen:
                         try:
                             proxWord = splitText[splitTIndex+proxNumerator]
                             if len(proxWord) > 0:
-                                ##print(gF.lineno(), 'prox:', proxWord)
+                                ##print('pxF:', gF.lineno(), ' | prox:', proxWord)
                                 tablekey = proxWord[0].upper()
                                 if tablekey not in alphabet:
                                     tablekey = 'Q'
-                                #print(gF.lineno(), tablekey)
+                                #print('pxF:', gF.lineno(), tablekey)
                                 if len(proxWord) > 0:
-                                    if proxWord not in allPunx:
+                                    if proxWord not in gF.allPunx:
                                         fonoCursor.execute('''SELECT empsEven FROM mastFono'''+tablekey+'''
                                                               WHERE entry=?''', (proxWord,))
                                         dataCheck = fonoCursor.fetchone()[0]  #  Checks to see if valid dictionary word
                                     else:
                                         dataCheck = 'rawr'
-                                    #print(gF.lineno(), dataCheck)
+                                    #print('pxF:', gF.lineno(), dataCheck)
                                     if len(dataCheck) > 0:
-                                        if proxWord not in proxPlusLista[proxDicCounter][pWord]:
-                                            #print(gF.lineno(), 'plusadd = proxP:', proxWord, 'pWord:', pWord, proxDicCounter, proxNumerator)
-                                            proxPlusLista[proxDicCounter][pWord].append(proxWord)
-                                        if pWord not in proxMinusLista[proxDicCounter][proxWord]:
-                                            #print(gF.lineno(), 'minusadd = proxM:', proxWord, 'pWord:', pWord, proxDicCounter, proxNumerator)
-                                            proxMinusLista[proxDicCounter][proxWord].append(pWord)
+                                        if proxWord not in gF.proxMinusLista[proxDicCounter][pWord]:
+                                            #print('pxF:', gF.lineno(), ' | plusadd = proxP:', proxWord, 'pWord:', pWord, proxDicCounter, proxNumerator)
+                                            gF.proxMinusLista[proxDicCounter][pWord].append(proxWord)
+                                        if pWord not in gF.proxMinusLista[proxDicCounter][proxWord]:
+                                            #print('pxF:', gF.lineno(), ' | minusadd = proxM:', proxWord, 'pWord:', pWord, proxDicCounter, proxNumerator)
+                                            gF.proxMinusLista[proxDicCounter][proxWord].append(pWord)
                         except TypeError:
-                            #print(gF.lineno(), 'prox tE:', proxWord)
+                            #print('pxF:', gF.lineno(), ' | prox tE:', proxWord)
                             proxDicCounter+=1
                             proxNumerator+=1
                             continue
@@ -150,31 +151,31 @@ def proxNewBuild():
                         proxNumerator+=1
             except TypeError:
                 splitTIndex+=1
-                #print(gF.lineno(), splitTIndex)
-                print(gF.lineno(), 'p tE:', pWord)
+                #print('pxF:', gF.lineno(), splitTIndex)
+                print('pxF:', gF.lineno(), ' | p tE:', pWord)
                 continue
             splitTIndex+=1
             if splitTIndex%1000==0:
-                print(gF.lineno(), 'prox', splitTIndex, 'of', len(splitText))       
+                print('pxF:', gF.lineno(), ' | prox', splitTIndex, 'of', len(splitText))       
         else:
             splitTIndex+=1
 
     for superProx in superProxLista:
-        #print(gF.lineno(), 'sup:', len(superProx))
+        #print('pxF:', gF.lineno(), ' | sup:', len(superProx))
         for proxLib in superProx:
-            #print(gF.lineno(), 'lib:', len(proxLib))
+            #print('pxF:', gF.lineno(), ' | lib:', len(proxLib))
             for key, val in proxLib.items():
-                #print(gF.lineno(), key, val)
+                #print('pxF:', gF.lineno(), key, val)
                 proxString = str()
                 for proxy in val:
-                    #print(gF.lineno(), len(val))
+                    #print('pxF:', gF.lineno(), len(val))
                     proxString = proxString+proxy+'^'  #  Entries for each proxLib are separated by the '^'
-                #print(gF.lineno(), key, proxString)
+                #print('pxF:', gF.lineno(), key, proxString)
                 proxLib[key] = proxString[:-1]
 
     for word in fullList:
         if len(word) > 0:
-            print(gF.lineno(), word)
+            print('pxF:', gF.lineno(), word)
             entry = word
             if entry[0].upper() in alphabet:
                 tableKey = entry[0].upper()
@@ -190,7 +191,7 @@ def proxNewBuild():
             proxM13Entry, proxM14Entry, proxM15Entry, proxM16Entry, proxM17Entry, proxM18Entry = proxM13[entry], proxM14[entry], proxM15[entry], proxM16[entry], proxM17[entry], proxM18[entry]
             proxM19Entry, proxM20Entry, proxM21Entry, proxM22Entry, proxM23Entry, proxM24Entry = proxM19[entry], proxM20[entry], proxM21[entry], proxM22[entry], proxM23[entry], proxM24[entry]
 
-            print(gF.lineno(), proxP1Entry, proxM1Entry)
+            print('pxF:', gF.lineno(), proxP1Entry, proxM1Entry)
             
             try:        
                 proxCursor.execute('''INSERT INTO mastProx'''+tableKey+''' (word,
@@ -214,12 +215,21 @@ def proxNewBuild():
                 proxM19Entry, proxM20Entry, proxM21Entry, proxM22Entry, proxM23Entry, proxM24Entry))
 
             except KeyError:
-                print(gF.lineno(), 'fuckery:', entry)
+                print('pxF:', gF.lineno(), ' | fuckery:', entry)
                 continue
 
     proxConn.commit()
     proxConn.close()
 
+def proxDataBuilder(qLine, limitNum):  #  Takes the qLine and builds proxData up to a certain length
+    print('pxF:', gF.lineno(), ' | proxDataBuilder |', qLine) # , qLineIndexList, proxDicIndexList)
+    qLineLen = len(qLine[1])
+    proxInt = int(0)  #  Starts the proxData
+    while proxInt < qLineLen:  #  Creates a list of indexes and the reverse list to index proxDics
+        gF.proxDicIndexList[-1].append(proxInt)
+        gF.qLineIndexList[-1].insert(0, proxInt)
+        proxInt+=1
+    print('pxF:', gF.lineno(), ' | proxData:', gF.qLineIndexList, gF.proxDicIndexList)
 
 # def proxGrabber(gF.lang, gF.textFile, thisWord):
 #     prox_file = gF.lang+'/data/textLibrary/textData/'+gF.textFile+'_prox.sqlite'    # name of the sqlite database file

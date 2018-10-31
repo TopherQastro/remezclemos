@@ -27,6 +27,7 @@ import lineFunctions as lineFunk
 import meterLineFunctions as meterLineFunk
 import plainLineFunctions as plainLineFunk
 import poemFunctions as poemFunk
+import popListFunctions as popFunk
 import proximityFunctions as proxFunk
 import rawtextFunctions as rawtextFunk
 import stanzaFunctions as stanzaFunk
@@ -40,15 +41,15 @@ def begin():
     global defaultSwitch, usedSwitch, rhySwitch, metSwitch, thesSwitch, contSwitch
     global language, lang, accent, textFile, empMode
     global poemQuota, stanzaQuota, proxMaxDial, proxMinDial, punxDial
-    global rhyMap, empMap, usedList, firstWords
+    global rhyMap, empMap, usedList, firstWords, firstPopList
     defaultSwitch, usedSwitch, rhySwitch, metSwitch, thesSwitch, contSwitch = True, True, True, True, True, True
     language, lang, accent, textFile, empMode = str(), str(), str(), str(), str()
     poemQuota, stanzaQuota, proxMaxDial, proxMinDial, punxDial = int(0), int(0), int(0), int(0), int(0)
-    rhyMap, empMap, usedList, firstWords = [], [], [], []
+    rhyMap, empMap, usedList, firstWords, firstPopList = [], [], [], [], []
 
-    global metaList, superPopList, expressList, thesList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList
-    metaList, superPopList, expressList, thesList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList = [], [], [], [], [], [], [], [[], []], [[], []] 
-    metaList = superPopList, expressList, thesList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList
+    global superList, superPopList, expressList, thesList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList
+    superList, superPopList, expressList, thesList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList = [], [], [], [], [], [], [], [[], []], [[], []] 
+    superList = superPopList, expressList, thesList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList
 
     global quantumList, nonEnders, alphabet, allPunx, midPunx, endPunx #  List of words used for quantum emp patterns
     quantumList = ['was', 'be', 'and', 'to', 'for', 'a', 'the', 'in', 'at', 'but', 'an',
@@ -115,19 +116,107 @@ def begin():
 
  
 def printGlobalData(qLine):
-    print(lineno(), 'printGlobalData() |', len(qLine[1]), qLine[1])
-    print(lineno(), 'printGlobalData() | superPop, express, thes, cont, punx, proxData')
+    print('gF:', lineno(), 'printGlobalData() |', len(qLine[1]), qLine[1])
+    print('gF:', lineno(), 'printGlobalData() | superPop, express, thes, cont, punx, proxData')
     indInt = int(0)
-    for each in metaList:
-        if len(each) > 0:
-            eachListLenLine = []
-            for all in each:
-                eachListLenLine.append(len(all))
-            print(lineno(), indInt, 'len:', len(eachListLenLine), '|', eachListLenLine)
-            qInt = len(qLine[1]) + 2
-            if len(eachListLenLine) > qInt:
-                input(lineno(), 'printGlobalData() | fuckery'+str(len(eachListLenLine))+str(qInt))
+    print(qLineIndexList, proxDicIndexList)
+    for lists in superList:
+        if len(lists) > 0:
+            listsLenLine = []
+            for subList in lists:
+                listsLenLine.append(len(subList))
+            print('gF:', lineno(), indInt, 'len:', len(listsLenLine), '|', listsLenLine)
+            qLine1Int = len(qLine[1]) + 2
+            if len(listsLenLine) > qLine1Int:
+                print('gF:', lineno(), '| printGlobalData() | fuckery -->', 
+                      len(listsLenLine), str(qLine1Int))
+                input('paused')
         indInt+=1
+
+
+def pEmpsLine(empKey, pLines):
+    #$print('gF:', lineno(), empsLine:', pLine)
+    empLine = []
+##    for all in allPunx:
+##        if all in pLine:
+##            pLine.remove(all)
+    #empHost = pLine.split(' ')
+    for eachWord in pLine:
+        if '_' in eachWord:
+            splitWords = eachWord.split('_')
+##            for sWord in splitWords:
+            theseEmps = empsLine(empKey, splitWords, emps, doubles, quantumWords)
+            for eachEmp in theseEmps:
+                empLine.append(eachEmp)
+        else:
+            eWord = eachWord.lower()
+            if eWord in doubles:
+                try:
+                    if eWord in quantumWords:
+                        #$print('gF:', lineno(), qW:', eWord, empLine, empKey)
+                        empLine.append(empKey[len(empLine)])  #  Could be either 1 or 0, so just match empKey
+                    else:
+                        for each in emps[eWord]:
+                            empLine.append(each)
+                except KeyError:
+                    try:
+                        doubInt = int(0)  #  This only tries one pronounciation of a word, for the sake of ease
+                        eWord = eWord+'('+str(doubInt)+')'
+                        if eWord in quantumWords:
+                            #$print('gF:', lineno(), qW:', eWord, empLine, empKey)
+                            empLine.append(empKey[len(empLine)])  #  Could be either 1 or 0, so just match empKey
+                        else:
+                            for each in emps[eWord]:
+                                empLine.append(each)
+                    except:
+                        #$print('gF:', lineno(), gotfukt')
+                        this = 'that'
+                except IndexError:
+                    #$print('gF:', lineno(), iE0', eWord)
+                    try:
+                        for each in emps[eWord]:
+                            empLine.append(each)
+                    except KeyError:
+                        for each in emps[eWord+'(0)']:
+                            empLine.append(each)
+            elif (eachWord not in silentPunx) and (len(eachWord) > 0):
+                try:
+                    if eWord in quantumWords:
+                        #$print('gF:', lineno(), qW:', eWord, empLine, empKey)
+                        empLine.append(empKey[len(empLine)])  #  Could be either 1 or 0, so just match empKey
+                    else:
+                        for each in emps[eWord]:
+                            empLine.append(each)
+                except KeyError:
+                    try:
+                        eWord = eWord[0].upper()+eWord[1:]
+                        if eWord in quantumWords:  #  quantum words could be either emp
+                            #$print('gF:', lineno(), qW:', eWord, empLine, empKey)
+                            empLine.append(empKey[len(empLine)])  #  Just match empKey
+                        else:
+                            for each in emps[eWord]:
+                                empLine.append(each)
+                        #$print('empLine0')
+                    except KeyError:
+                        empLine.append('2')
+                        #$print('kE empLine:', eachWord)
+                        continue
+                    except IndexError:
+                        #$print('wut?', eWord)
+                        continue
+                except IndexError:
+                    #$print('gF:', lineno(), iE1', eWord)
+                    try:
+                        for each in emps[eWord]:
+                            empLine.append(each)
+                    except KeyError:
+                        for each in emps[eWord+'(0)']:  #  Defaults to first emps of word
+                            empLine.append(each)        #  with multiple pronuciations
+                            
+    #$print('gF:', lineno(), gotHere', empLine)
+    return empLine
+
+##########################################################################
 
 
 
@@ -412,89 +501,6 @@ def empAdder(empKey):
     return data
 
 
-def empsLine(empKey, pLine, emps, doubles, quantumWords):
-    #$print('gF empsLine:', pLine)
-    empLine = []
-##    for all in allPunx:
-##        if all in pLine:
-##            pLine.remove(all)
-    #empHost = pLine.split(' ')
-    for eachWord in pLine:
-        if '_' in eachWord:
-            splitWords = eachWord.split('_')
-##            for sWord in splitWords:
-            theseEmps = empsLine(empKey, splitWords, emps, doubles, quantumWords)
-            for eachEmp in theseEmps:
-                empLine.append(eachEmp)
-        else:
-            eWord = eachWord.lower()
-            if eWord in doubles:
-                try:
-                    if eWord in quantumWords:
-                        #$print('gF qW:', eWord, empLine, empKey)
-                        empLine.append(empKey[len(empLine)])  #  Could be either 1 or 0, so just match empKey
-                    else:
-                        for each in emps[eWord]:
-                            empLine.append(each)
-                except KeyError:
-                    try:
-                        doubInt = int(0)  #  This only tries one pronounciation of a word, for the sake of ease
-                        eWord = eWord+'('+str(doubInt)+')'
-                        if eWord in quantumWords:
-                            #$print('gF qW:', eWord, empLine, empKey)
-                            empLine.append(empKey[len(empLine)])  #  Could be either 1 or 0, so just match empKey
-                        else:
-                            for each in emps[eWord]:
-                                empLine.append(each)
-                    except:
-                        #$print('gF gotfukt')
-                        this = 'that'
-                except IndexError:
-                    #$print('gF iE0', eWord)
-                    try:
-                        for each in emps[eWord]:
-                            empLine.append(each)
-                    except KeyError:
-                        for each in emps[eWord+'(0)']:
-                            empLine.append(each)
-            elif (eachWord not in silentPunx) and (len(eachWord) > 0):
-                try:
-                    if eWord in quantumWords:
-                        #$print('gF qW:', eWord, empLine, empKey)
-                        empLine.append(empKey[len(empLine)])  #  Could be either 1 or 0, so just match empKey
-                    else:
-                        for each in emps[eWord]:
-                            empLine.append(each)
-                except KeyError:
-                    try:
-                        eWord = eWord[0].upper()+eWord[1:]
-                        if eWord in quantumWords:
-                            #$print('gF qW:', eWord, empLine, empKey)
-                            empLine.append(empKey[len(empLine)])  #  Could be either 1 or 0, so just match empKey
-                        else:
-                            for each in emps[eWord]:
-                                empLine.append(each)
-                        #$print('empLine0')
-                    except KeyError:
-                        empLine.append('2')
-                        #$print('kE empLine:', eachWord)
-                        continue
-                    except IndexError:
-                        #$print('wut?', eWord)
-                        continue
-                except IndexError:
-                    #$print('gF iE1', eWord)
-                    try:
-                        for each in emps[eWord]:
-                            empLine.append(each)
-                    except KeyError:
-                        for each in emps[eWord+'(0)']:
-                            empLine.append(each)
-                            
-    #$print('gF gotHere', empLine)
-    return empLine
-
-
 def getLineData(pLine, vocs, emps, cons, phos): # pulls all the phonetic info at once
 
     pLVocs, pLEmps, pLFono, pLCons = [], [], [], []
@@ -642,7 +648,7 @@ def rhyDictator(lang, superTokens, pWord, maxTotalVs, maxRSyls): # Find rhymes o
     while totalVs < maxTotalVs:
         while (rSyls <= totalVs):
             tName, rName = str(totalVs), str(rSyls)
-           #$ print('gF.rhy:', pWord, str(totalVs), str(rSyls))
+           #$ print('gF:', lineno(),.rhy:', pWord, str(totalVs), str(rSyls))
             if totalVs < 10:
                 tName = '0'+tName
             if rSyls < 10:
@@ -679,7 +685,7 @@ def rhyDictator(lang, superTokens, pWord, maxTotalVs, maxRSyls): # Find rhymes o
         totalVs+=1
         rSyls = int(1)
     finalRhys.sort()
-   #$ print('gF.rhys:', len(finalRhys))
+   #$ print('gF:', lineno(),.rhys:', len(finalRhys))
     return finalRhys
 
 
@@ -697,3 +703,4 @@ def testAlts(pWord, altNum):
 
 
 begin()
+print('gloFunk loaded')

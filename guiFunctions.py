@@ -38,7 +38,7 @@ class GUIstart:
         self.emp7 = self.builder.get_object('emp7')
 
         self.metSwitch = self.builder.get_variable('metSwitch')
-        self.metSwitch.set(True)
+        self.metSwitch.set(True)  #  Are these statements overriding choice in GUI?
         self.rhySwitch = self.builder.get_variable('rhySwitch')
         self.rhySwitch.set(True)
         self.thesSwitch = self.builder.get_variable('thesSwitch')
