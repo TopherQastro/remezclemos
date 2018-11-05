@@ -19,10 +19,10 @@ def gov():
         gF.thesSwitch = True
         gF.rhyMap = 'abab'
         gF.empMap = [[bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
-                          [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
-                          [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
-                         #[bool(0), bool(1), bool(0), bool(0), bool(1)],
-                          [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)]]
+                     [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
+                     [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
+                    #[bool(0), bool(1), bool(0), bool(0), bool(1)],
+                     [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)]]
 
     try:
         filepath = (gF.lang+'/data/textLibrary/textData/'+gF.textFile+'-firstFile.txt')

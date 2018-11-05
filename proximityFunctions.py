@@ -1,9 +1,27 @@
 
 import globalFunctions as gF
 
+
 fono_file = 'eng/data/USen/USen_fonoDB.sqlite'    # name of the sqlite database file
 fonoConn = gF.sqlite3.connect(fono_file)
 fonoCursor = fonoConn.cursor()
+
+
+def proxDataOpener(lang, allDics, strBit, textFile):
+    dataFile = gF.csv.reader(open(lang+'/data/textLibrary/textData/'+textFile+'-'+strBit+'.csv', 'r'))
+    gpDic = {}
+    for line in dataFile:
+        dicInt = int(0)
+        dicEntries = line[1].split('~')
+        for all in allDics:
+            try:
+                all[line[0]] = dicEntries[dicInt].split('^')
+                dicInt+=1
+            except IndexError:
+                continue
+    #dataFile.close()
+    return allDics
+
 
 def loadmakeData():
     try:
@@ -15,8 +33,8 @@ def loadmakeData():
             gF.firstPopList.append(line[:-1])
         print('pxF:', gF.lineno(), ' | begin prox load')
         #  Take a look at gpDataOpener. Consider moving more code there, or bring some here
-        gF.proxPlusLista = gF.proxDataOpener(gF.lang, gF.proxPlusLista, 'proxP', gF.textFile)
-        gF.proxMinusLista = gF.proxDataOpener(gF.lang, gF.proxMinusLista, 'proxM', gF.textFile)
+        gF.proxPlusLista = proxDataOpener(gF.lang, gF.proxPlusLista, 'proxP', gF.textFile)
+        gF.proxMinusLista = proxDataOpener(gF.lang, gF.proxMinusLista, 'proxM', gF.textFile)
         print('pxF:', gF.lineno(), '| proxP1:', len(gF.proxP1), '- proxM1:', len(gF.proxM1))
         print('pxF:', gF.lineno(), ' | prox load complete')
             
@@ -222,14 +240,38 @@ def proxNewBuild():
     proxConn.close()
 
 def proxDataBuilder(qLine, limitNum):  #  Takes the qLine and builds proxData up to a certain length
-    print('pxF:', gF.lineno(), ' | proxDataBuilder |', qLine) # , qLineIndexList, proxDicIndexList)
+    print('pxF:', gF.lineno(), '| proxDataBuilder() - qLine:', qLine) # , qLineIndexList, proxDicIndexList)
     qLineLen = len(qLine[1])
     proxInt = int(0)  #  Starts the proxData
-    while proxInt < qLineLen:  #  Creates a list of indexes and the reverse list to index proxDics
-        gF.proxDicIndexList[-1].append(proxInt)
-        gF.qLineIndexList[-1].insert(0, proxInt)
-        proxInt+=1
-    print('pxF:', gF.lineno(), ' | proxData:', gF.qLineIndexList, gF.proxDicIndexList)
+    print('pxF:', gF.lineno(), '| proxDataBuilder() - proxData:', gF.qLineIndexList, gF.proxDicIndexList)
+    if len(qLine[1]) > 0:
+        # gF.qLineIndexList.append([0])
+        # gF.proxDicIndexList.append([0])
+        while proxInt < qLineLen:  #  Creates a list of indexes and the reverse list to index proxDics
+            gF.proxDicIndexList[-1].append(proxInt)
+            gF.qLineIndexList[-1].insert(0, proxInt)
+            proxInt+=1
+    print('pxF:', gF.lineno(), '| proxDataBuilder() - qLine:', qLine, 
+                               '- proxData:', gF.qLineIndexList, gF.proxDicIndexList)
+
+
+def snipProxData(empLine, qLine, runLine):
+    if len(qLine[1]) > 0:
+        if (len(gF.qLineIndexList[-1]) > gF.proxMinDial) and (len(runLine[1]+qLine[1]) > gF.proxMinDial):
+            print('mLF:', gF.lineno(), ' | snip qLineIndex in:', gF.qLineIndexList, 
+                    gF.proxDicIndexList, runLine[1], qLine[1])
+            gF.qLineIndexList[-1].pop()
+            gF.proxDicIndexList[-1].pop()
+            print('mLF:', gF.lineno(), ' | snip qLineIndex out:', 
+                    gF.qLineIndexList, gF.proxDicIndexList)
+            for eachList in gF.superList[:-2]:
+                eachList.pop()
+            qLine, runLine = gF.popFunk.superPopListMaker(empLine, proxExpress, qLine, runLine)
+        else: #and len(qLine[1]) > gF.proxMinDial:  #  If we have enough words, then we can remove rightmost element and metadata, then try again
+            print('mLF:', gF.lineno(), ' | snipLine', qLine, '|', runLine, len(gF.superPopList))
+            pLEmps, qLine, runLine = gF.lineFunk.removeWordR(empLine, qLine, runLine)
+    return pLEmps, qLine, runLine
+
 
 # def proxGrabber(gF.lang, gF.textFile, thisWord):
 #     prox_file = gF.lang+'/data/textLibrary/textData/'+gF.textFile+'_prox.sqlite'    # name of the sqlite database file

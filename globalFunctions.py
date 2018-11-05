@@ -22,12 +22,13 @@ import tkinter as tk
 from tkinter import messagebox
 
 #  Internal, self-created files
+import dynasaurusFunctions as dynaFunk
 import guiFunctions as guiFunk
 import lineFunctions as lineFunk
-import meterLineFunctions as meterLineFunk
-import plainLineFunctions as plainLineFunk
+import meterLineFunctions as meterFunk
+import plainLineFunctions as plainFunk
 import poemFunctions as poemFunk
-import popListFunctions as popFunk
+import popFunctions as popFunk
 import proximityFunctions as proxFunk
 import rawtextFunctions as rawtextFunk
 import stanzaFunctions as stanzaFunk
@@ -47,9 +48,9 @@ def begin():
     poemQuota, stanzaQuota, proxMaxDial, proxMinDial, punxDial = int(0), int(0), int(0), int(0), int(0)
     rhyMap, empMap, usedList, firstWords, firstPopList = [], [], [], [], []
 
-    global superList, superPopList, expressList, thesList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList
-    superList, superPopList, expressList, thesList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList = [], [], [], [], [], [], [], [[], []], [[], []] 
-    superList = superPopList, expressList, thesList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList
+    global superList, superPopList, expressList, thesList, dynaList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList
+    superList, superPopList, expressList, thesList, dynaList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList = [], [], [], [], [], [], [], [], [], []
+    superList = superPopList, expressList, thesList, dynaList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList
 
     global quantumList, nonEnders, alphabet, allPunx, midPunx, endPunx #  List of words used for quantum emp patterns
     quantumList = ['was', 'be', 'and', 'to', 'for', 'a', 'the', 'in', 'at', 'but', 'an',
@@ -64,6 +65,17 @@ def begin():
     midPunx = [',', ';', ':', '--']
     endPunx = ['.', '!', '?']  #  To gather which words immediately thereafter should start 
                             #  a sentence
+
+
+    vocsList = ['a', 'e', 'i', 'o', 'u', 'y', 'A', 'E', 'I', 'O', 'U', 'V', 'Y', '3', '0', '@', '&', 'L', 'M',  'N', '%', '!', '#', '$', '^', '*', '(', ')', '?', '<', '>', '.', '|', ']', '[', '=']
+    vow = 'y', 'a', 'e', 'i', 'o', 'u', 'ü', 'â', 'ê', 'è', 'ô', 'ö', 'õ', 'à', 'è', 'î', 'ã', 'ë', 'ä', 'ê', 'ĩ', 'ï', 'ũ', 'ü', 'û', 'ī', 'ū', '4', '5', '6', '7', '8', '9', '0', '@', '#', '$', '%', '&', '!', '?', '<', '.', ':', ';', '(', ')', '[', ']', '{', '}', '1', '2'
+    accVow = 'á', 'é', 'ó', 'í', 'ú', 'ĕ', 'ė', 'ŏ', 'ő', 'ă', 'ą', 'Ə', 'ů', 'œ', 'þ', 'ø', 'æ'
+    allVow = 'y', 'a', 'e', 'i', 'o', 'u', 'ü', 'á', 'é', 'ó', 'í', 'ú', 'â', 'ê', 'è', 'ô', 'ö', 'õ', 'à', 'è', 'î', 'ã', 'ë', 'ä', 'ê', 'ĩ', 'ï', 'ũ', 'ü', 'û', 'ī', 'ū', 'ĕ', 'ė', 'ŏ', 'ő', 'ă', 'ą', 'Ə', 'ů', 'œ', 'þ', 'ø', 'æ', '4', '5', '6', '7', '8', '9', '0', '@', '#', '$', '%', '&', '!', '?', ',', '.', ':', ';', '(', ')', '[', ']', '{', '}', '1', '2'
+    espEmpPat1 = 's', 'n', 'a', 'e', 'i', 'o', 'u', 'y', 'ë', 'ä', 'ã', 'õ', 'ö', 'ê', 'ĩ', 'î', 'ï', 'ũ', 'ü', 'û', 'ī', 'ū'
+    strippers = '”', '’', "'", '…', '…', '—', '·', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '@', '#', '$', '%', '^', '&', '*', '(', ')', '[', ']', '{', '}', '<', '>', '"', ',', '!', '.', ',', '‘', '’', '`', '~', '/', '+', '=', '|', '\c', '\n', '?', ';', ':', '_', '-', '¿', '»', '«', '¡', '©', '“', '”', 'º', '/', '\c'
+    spacers = '\n\n\n', '\n\n', '\n', '    ', '      ', '     ', '    ', '   ', '  '
+    caps =  'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Á', 'É', 'Í', 'Ó', 'Ú', 'Ü'
+
 
     global rawText
     global splitText
@@ -116,8 +128,10 @@ def begin():
 
  
 def printGlobalData(qLine):
-    print('gF:', lineno(), 'printGlobalData() |', len(qLine[1]), qLine[1])
-    print('gF:', lineno(), 'printGlobalData() | superPop, express, thes, cont, punx, proxData')
+    print('gF:', lineno(), '| printGlobalData() -', len(qLine[1]), qLine[1])
+    # if len(superPopList) > 0:
+    #     print('gF:', lineno(), 'printGlobalData() |', superPopList[-1], expressList[-1])
+    print('gF:', lineno(), '| printGlobalData() - sPpL, expL, cont, thes, dyna, sBkL, qLIL, pLDL')
     indInt = int(0)
     print(qLineIndexList, proxDicIndexList)
     for lists in superList:
@@ -125,17 +139,17 @@ def printGlobalData(qLine):
             listsLenLine = []
             for subList in lists:
                 listsLenLine.append(len(subList))
-            print('gF:', lineno(), indInt, 'len:', len(listsLenLine), '|', listsLenLine)
+            print('gF:', lineno(), '|', indInt, 'len:', len(listsLenLine), '|', listsLenLine)
             qLine1Int = len(qLine[1]) + 2
             if len(listsLenLine) > qLine1Int:
-                print('gF:', lineno(), '| printGlobalData() | fuckery -->', 
+                print('gF:', lineno(), '| printGlobalData() - fuckery -->', 
                       len(listsLenLine), str(qLine1Int))
                 input('paused')
         indInt+=1
 
 
-def pEmpsLine(empKey, pLines):
-    #$print('gF:', lineno(), empsLine:', pLine)
+def pEmpsLine(empKey, pLine):
+    print('gF:', lineno(), '| empsLine:', pLine)
     empLine = []
 ##    for all in allPunx:
 ##        if all in pLine:
@@ -145,14 +159,14 @@ def pEmpsLine(empKey, pLines):
         if '_' in eachWord:
             splitWords = eachWord.split('_')
 ##            for sWord in splitWords:
-            theseEmps = empsLine(empKey, splitWords, emps, doubles, quantumWords)
+            theseEmps = empsLine(empKey, splitWords, emps, doubles, quantumList)
             for eachEmp in theseEmps:
                 empLine.append(eachEmp)
         else:
             eWord = eachWord.lower()
             if eWord in doubles:
                 try:
-                    if eWord in quantumWords:
+                    if eWord in quantumList:
                         #$print('gF:', lineno(), qW:', eWord, empLine, empKey)
                         empLine.append(empKey[len(empLine)])  #  Could be either 1 or 0, so just match empKey
                     else:
@@ -162,7 +176,7 @@ def pEmpsLine(empKey, pLines):
                     try:
                         doubInt = int(0)  #  This only tries one pronounciation of a word, for the sake of ease
                         eWord = eWord+'('+str(doubInt)+')'
-                        if eWord in quantumWords:
+                        if eWord in quantumList:
                             #$print('gF:', lineno(), qW:', eWord, empLine, empKey)
                             empLine.append(empKey[len(empLine)])  #  Could be either 1 or 0, so just match empKey
                         else:
@@ -179,9 +193,9 @@ def pEmpsLine(empKey, pLines):
                     except KeyError:
                         for each in emps[eWord+'(0)']:
                             empLine.append(each)
-            elif (eachWord not in silentPunx) and (len(eachWord) > 0):
+            elif (eachWord not in allPunx) and (len(eachWord) > 0):
                 try:
-                    if eWord in quantumWords:
+                    if eWord in quantumList:
                         #$print('gF:', lineno(), qW:', eWord, empLine, empKey)
                         empLine.append(empKey[len(empLine)])  #  Could be either 1 or 0, so just match empKey
                     else:
@@ -190,7 +204,7 @@ def pEmpsLine(empKey, pLines):
                 except KeyError:
                     try:
                         eWord = eWord[0].upper()+eWord[1:]
-                        if eWord in quantumWords:  #  quantum words could be either emp
+                        if eWord in quantumList:  #  quantum words could be either emp
                             #$print('gF:', lineno(), qW:', eWord, empLine, empKey)
                             empLine.append(empKey[len(empLine)])  #  Just match empKey
                         else:
@@ -249,19 +263,6 @@ iA, iB, iC = int(0), int(0), int(0)
 escCt, count, couplCount, count, nextLCt, xCt, yCt, zCt, lineCt, click = int(0), int(0), int(0), int(0), int(0), int(0), int(0), int(0), int(0), int(0)
 
 
-vocsList = vocs = ['a', 'e', 'i', 'o', 'u', 'y', 'A', 'E', 'I', 'O', 'U', 'V', 'Y', '3', '0', '@', '&', 'L', 'M',  'N', '%', '!', '#', '$', '^', '*', '(', ')', '?', '<', '>', '.', '|', ']', '[', '=']
-vow = 'y', 'a', 'e', 'i', 'o', 'u', 'ü', 'â', 'ê', 'è', 'ô', 'ö', 'õ', 'à', 'è', 'î', 'ã', 'ë', 'ä', 'ê', 'ĩ', 'ï', 'ũ', 'ü', 'û', 'ī', 'ū', '4', '5', '6', '7', '8', '9', '0', '@', '#', '$', '%', '&', '!', '?', '<', '.', ':', ';', '(', ')', '[', ']', '{', '}', '1', '2'
-accVow = 'á', 'é', 'ó', 'í', 'ú', 'ĕ', 'ė', 'ŏ', 'ő', 'ă', 'ą', 'Ə', 'ů', 'œ', 'þ', 'ø', 'æ'
-allVow = 'y', 'a', 'e', 'i', 'o', 'u', 'ü', 'á', 'é', 'ó', 'í', 'ú', 'â', 'ê', 'è', 'ô', 'ö', 'õ', 'à', 'è', 'î', 'ã', 'ë', 'ä', 'ê', 'ĩ', 'ï', 'ũ', 'ü', 'û', 'ī', 'ū', 'ĕ', 'ė', 'ŏ', 'ő', 'ă', 'ą', 'Ə', 'ů', 'œ', 'þ', 'ø', 'æ', '4', '5', '6', '7', '8', '9', '0', '@', '#', '$', '%', '&', '!', '?', ',', '.', ':', ';', '(', ')', '[', ']', '{', '}', '1', '2'
-empPat1 = 's', 'n', 'a', 'e', 'i', 'o', 'u', 'y', 'ë', 'ä', 'ã', 'õ', 'ö', 'ê', 'ĩ', 'î', 'ï', 'ũ', 'ü', 'û', 'ī', 'ū'
-cons = 'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'z', 'ñ'
-strippers = '”', '’', "'", '…', '…', '—', '·', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '@', '#', '$', '%', '^', '&', '*', '(', ')', '[', ']', '{', '}', '<', '>', '"', ',', '!', '.', ',', '‘', '’', '`', '~', '/', '+', '=', '|', '\c', '\n', '?', ';', ':', '_', '-', '¿', '»', '«', '¡', '©', '“', '”', 'º', '/', '\c'
-spacers = '\n\n\n', '\n\n', '\n', '    ', '      ', '     ', '    ', '   ', '  '
-caps =  'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Á', 'É', 'Í', 'Ó', 'Ú', 'Ü',
-allPunx = ['.', ',', ';', ',', ':', '!', '?', '--', '``', '`', '"', "'", "''"]
-silentPunx = ['.', ',', ';', ',', ':', '!', '?', '--', '``', '`']
-endPunx = ['.', '!', '?']
-
 palabras = []
 
 
@@ -311,42 +312,6 @@ def dataFileOpener(lang, proxLista, libInt, strBit, textFile):
     for line in dataFile:
         proxLista[all][line[0]] = line[1].split('^')
     return proxLista
-
-
-def dynaDataWriter(lang, dynaList, textFile, dynaType):
-    dynaFile = csv.writer(open(lang+'/data/textLibrary/textData/dynasaurus/'+textFile+'-'+dynaType+'.csv', 'w+'))
-    dynaSaurus = {}
-    for key, val in dynaList.items():
-        svVal = str()
-        for each in val:
-            svVal = svVal+'^'
-        dynaFile.writerow([pWord, svVal]) 
-    #dynaFile.close()
-    return dynaSaurus
-
-
-def dynaDataOpener(lang, textFile, dynaType):
-    dynaFile = csv.reader(open(lang+'/data/textLibrary/textData/dynasaurus/'+textFile+'-'+dynaType+'.csv', 'r'))
-    dynaSaurus = {}
-    for line in dynaFile:
-        dynaSaurus[line[0]] = line[1].split('^')
-    return dynaSaurus
-
-
-def proxDataOpener(lang, allDics, strBit, textFile):
-    dataFile = csv.reader(open(lang+'/data/textLibrary/textData/'+textFile+'-'+strBit+'.csv', 'r'))
-    gpDic = {}
-    for line in dataFile:
-        dicInt = int(0)
-        dicEntries = line[1].split('~')
-        for all in allDics:
-            try:
-                all[line[0]] = dicEntries[dicInt].split('^')
-                dicInt+=1
-            except IndexError:
-                continue
-    #dataFile.close()
-    return allDics
 
 
 def gpDataWriter(lang, allDics, strBit, textFile):
@@ -633,60 +598,6 @@ def pLineToStringData(pLine, empKeyLet, doubles):
         pString = pString[0].upper() + pString[1:]
 
     return pString
-
-
-
-#####
-#  rhymes&rimas
-
-## Can this be used to find a range of totalVs and rSyls?
-
-
-def rhyDictator(lang, superTokens, pWord, maxTotalVs, maxRSyls): # Find rhymes of a particular word
-    matchBox, finalRhys = [], []
-    totalVs, rSyls = int(1), int(1)
-    while totalVs < maxTotalVs:
-        while (rSyls <= totalVs):
-            tName, rName = str(totalVs), str(rSyls)
-           #$ print('gF:', lineno(),.rhy:', pWord, str(totalVs), str(rSyls))
-            if totalVs < 10:
-                tName = '0'+tName
-            if rSyls < 10:
-                rName = '0'+rName
-            try:
-                dicFile = csv.reader(open(lang+'/data/USen/rhymes/rhymeLib-t'+tName+"r"+rName+".csv", "r"))
-                for line in dicFile:
-                    strikeList = []
-                    keyChain = line[0].split('^')
-                    if pWord in keyChain:
-                        matchBox = line[1].split('^')
-                        if pWord in matchBox:
-                            matchBox.remove(pWord)
-                        for all in matchBox:
-                            if '(' in all:
-                                newWord = all[:-3]
-                                matchBox.append(newWord)
-                                strikeList.append(all)
-                            if all not in superTokens:
-                                strikeList.append(all)
-                        for all in strikeList:
-                            if all in matchBox:
-                                matchBox.remove(all)
-                        strikeList = []                        
-                        for all in matchBox:
-                            if all not in finalRhys:
-                                finalRhys.append(all)
-                for all in matchBox:
-                    if all not in finalRhys:
-                        finalRhys.append(all)
-            except IOError:
-                return []
-            rSyls+=1
-        totalVs+=1
-        rSyls = int(1)
-    finalRhys.sort()
-   #$ print('gF:', lineno(),.rhys:', len(finalRhys))
-    return finalRhys
 
 
 def testAlts(pWord, altNum):
