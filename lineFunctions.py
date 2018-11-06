@@ -38,12 +38,12 @@ def removeWordR(empLine, qLine, runLine):  #  Remove the rightmost word from lin
         pLEmps = []
     #if len(gF.superPopList) > (len(qLine[1]) + 1):  #  If we've gone further than checking the list of next words
     print('liF:', gF.lineno(), '| removeWordR() - snipPopList')
-    for lists in (gF.superList[:-3] and gF.superList[-2:]):
+    for lists in gF.superList[:-3]:
         if len(lists) > 0:
             lists.pop()
         elif len(qLine[1]) > 0:
             print('liF:', gF.lineno(), '|', qLine)
-            gF.printGlobalData(qLine)
+        gF.printGlobalData(qLine)
     print('liF:', gF.lineno(), '| removeWordR() out - qLine:', qLine)
     gF.printGlobalData(qLine)
     return pLEmps, qLine, runLine

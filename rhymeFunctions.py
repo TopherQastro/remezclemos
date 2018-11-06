@@ -50,7 +50,7 @@ def rhyDictator(lang, superTokens, pWord, maxTotalVs, maxRSyls): # Find rhymes o
 
 
 def rhymeLiner(qLine, proxExpress, rhymeList):
-    print('mLF:', gF.lineno(), '| rhymeLiner() | start\nPrevious:', qAnteLine, '\nempLine:', empLine)
+    print('ryF:', gF.lineno(), '| rhymeLiner() - start\nPrevious:', qAnteLine, '\nempLine:', empLine)
     while (len(qLine[0] == 0) or (qLine[0][-1] not in rhymeList):
         if metSwitch == True:
             qLine, killSwitch = gF.meterLineFunk.gov(empLine, proxExpress, pLEmps, qLine, runLine)
@@ -67,7 +67,7 @@ def rhymeLiner(qLine, proxExpress, rhymeList):
                     retun qLine, killSwitch
             elif (qLine[0][-1] not in rhymeList):  #  Words that don't sound good as the last word of a line, such as conjunctions without something else to connect
                 pLEmps, qLine, runLine = gF.lineFunk.removeWordR(empLine, qLine, runLine)
-    print('mLF:', gF.lineno(), '| rhymeLiner() | out:', qLine, 'len(gF.superPopList):', len(gF.superPopList), 'killSwitch:', killSwitch)
+    print('ryF:', gF.lineno(), '| rhymeLiner() - out:', qLine, 'len(gF.superPopList):', len(gF.superPopList), 'killSwitch:', killSwitch)
     return qLine, killSwitch
 
     

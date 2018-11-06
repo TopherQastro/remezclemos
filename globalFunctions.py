@@ -140,16 +140,16 @@ def printGlobalData(qLine):
             for subList in lists:
                 listsLenLine.append(len(subList))
             print('gF:', lineno(), '|', indInt, 'len:', len(listsLenLine), '|', listsLenLine)
-            qLine1Int = len(qLine[1]) + 2
-            if len(listsLenLine) > qLine1Int:
-                print('gF:', lineno(), '| printGlobalData() - fuckery -->', 
-                      len(listsLenLine), str(qLine1Int))
-                input('paused')
+            # qLine1Int = len(qLine[1]) + 2
+            # if len(listsLenLine) > qLine1Int:
+            #     print('gF:', lineno(), '| printGlobalData() - fuckery -->', 
+            #           len(listsLenLine), str(qLine1Int))
+            #     input('paused')
         indInt+=1
 
 
 def pEmpsLine(empKey, pLine):
-    print('gF:', lineno(), '| empsLine:', pLine)
+    print('gF:', lineno(), '| pLine:', pLine)
     empLine = []
 ##    for all in allPunx:
 ##        if all in pLine:

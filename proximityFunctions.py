@@ -255,20 +255,20 @@ def proxDataBuilder(qLine, limitNum):  #  Takes the qLine and builds proxData up
                                '- proxData:', gF.qLineIndexList, gF.proxDicIndexList)
 
 
-def snipProxData(empLine, qLine, runLine):
+def snipProxData(empLine, pLEmps, qLine, runLine):
     if len(qLine[1]) > 0:
         if (len(gF.qLineIndexList[-1]) > gF.proxMinDial) and (len(runLine[1]+qLine[1]) > gF.proxMinDial):
-            print('mLF:', gF.lineno(), ' | snip qLineIndex in:', gF.qLineIndexList, 
+            print('pxF:', gF.lineno(), ' | snip qLineIndex in:', gF.qLineIndexList, 
                     gF.proxDicIndexList, runLine[1], qLine[1])
             gF.qLineIndexList[-1].pop()
             gF.proxDicIndexList[-1].pop()
-            print('mLF:', gF.lineno(), ' | snip qLineIndex out:', 
+            print('pxF:', gF.lineno(), ' | snip qLineIndex out:', 
                     gF.qLineIndexList, gF.proxDicIndexList)
             for eachList in gF.superList[:-2]:
                 eachList.pop()
             qLine, runLine = gF.popFunk.superPopListMaker(empLine, proxExpress, qLine, runLine)
         else: #and len(qLine[1]) > gF.proxMinDial:  #  If we have enough words, then we can remove rightmost element and metadata, then try again
-            print('mLF:', gF.lineno(), ' | snipLine', qLine, '|', runLine, len(gF.superPopList))
+            print('pxF:', gF.lineno(), ' | snipLine', qLine, '|', runLine, len(gF.superPopList))
             pLEmps, qLine, runLine = gF.lineFunk.removeWordR(empLine, qLine, runLine)
     return pLEmps, qLine, runLine
 

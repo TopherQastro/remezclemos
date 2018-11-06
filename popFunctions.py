@@ -131,7 +131,7 @@ def superPopListMaker(empLine, proxExpress, qLine, runLine): #  Creates a list-o
                         print('ppF:', gF.lineno(), 'superPopListMaker() | keepList out')
                         break
             if len(keepList) == 0:
-                pLEmps, qLine, runLine = gF.proxFunk.snipProxData(empLine, qLine, runLine)
+                pLEmps, qLine, runLine = gF.proxFunk.snipProxData(empLine, pLEmps, qLine, runLine)
             else:
                 print('ppF:', gF.lineno(), 'superPopListMaker() | grown', len(gF.superPopList), '|', testLine, 'proxData:', gF.qLineIndexList, gF.proxDicIndexList)
                 for keepWords in keepList:
