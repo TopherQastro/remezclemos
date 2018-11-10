@@ -2,6 +2,15 @@
 import globalFunctions as gF
 
 def veto():
+    if len(gF.superBlackList) > 0: #  Roundabout way of taking off everything except 1st blackList
+        firstBlacks = []  
+        for blackWords in gF.superBlackList[0]:
+            firstBlacks.append(blackWords)
+    for lists in gF.superList:
+        lists = []
+    if len(gF.superBlackList) > 0:    
+        gF.superBlackList.append(firstBlacks)
+    gF.printGlobalData(([],[]))
     return [], ([],[]), int(0), False, False
           #stanza, qAnteLine, lineCt, rhymeThisLine, killSwitch
 
@@ -24,10 +33,11 @@ def removeLine(stanza):
 
 
 def acceptLine(stanza, newLine):
-    print('stF:', gF.lineno(), '| acceptLine in | len(stanza):', len(stanza))
+    print('stF:', gF.lineno(), '| acceptLine in | len(stanza):', len(stanza),
+          '\nnewLine:', newLine)
     stanza.append(newLine)
-    gF.superBlackList = [[]]  #  Reset superBlackList to apply to next line
-    print('stF:', gF.lineno(), '| acceptLine in | len(stanza):', len(stanza))
+    #gF.superBlackList = [[]]  #  Reset superBlackList to apply to next line
+    print('stF:', gF.lineno(), '| acceptLine out | len(stanza):', len(stanza))
     return stanza, newLine
           #stanza, qAnteLine
 
@@ -56,12 +66,12 @@ def gov():
                         print('stF:', gF.lineno(), "| iE:", rhymeLine, lastWordIndex)
                         return  [], [], True  #  killSwitch event
                 print('stF:', gF.lineno(), '| rhymeWord:', rhymeWord)
-                rhymeSearch = rhymeGrab(gF.empMap[lineCt], rhymeWord)
+                rhymeSearch = gF.rhyFunk.rhyDictator('eng', gF.splitText, rhymeWord, 10, 10)  #  Syllable length can be varied, 10 returns all
                 for all in rhymeSearch:
                     rhymeList.append(all)
                 rhyInt = 0
-                while rhyInt <= 3:
-                    rhymeSearch = rhymeGrab(gF.empMap[lineCt], rhymeWord+'('+str(rhyInt)+')')
+                while rhyInt <= 3:  #  Checks for multiple pronunciations of words 
+                    rhymeSearch = gF.rhyFunk.rhyDictator('eng', gF.splitText, rhymeWord+'('+str(rhyInt)+')', 10, 10)  #  Syllable length can be varied, 10 returns all
                     for each in rhymeSearch:
                         rhymeList.append(each)
                     rhyInt+=1
@@ -70,6 +80,7 @@ def gov():
                     print('stF:', gF.lineno(), '| rhymer', rhymeWord, '|', rhymeList)
                     newLine, killSwitch = gF.lineFunk.gov(gF.empMap[lineCt], rhymeThisLine, rhymeList, qAnteLine)  #  If so, we try to create rhyming lines
                 else:  #  Our lines created nothing, so we hit a killSwitch event
+                    print('stF:', gF.lineno(), 'rhymeList:', rhymeList)
                     return [], [], True
             else:  #  Then you don't need rhymes
                 rhymeList = []
@@ -82,14 +93,7 @@ def gov():
             newLine, killSwitch = gF.lineFunk.gov(gF.empMap[lineCt], rhymeThisLine, [], qAnteLine)
         if killSwitch == True:  #  Not an elif because any of the above could trigger this; must be separate if statement
             print('stF:', gF.lineno(), '| - killSwitch')
-            if (anteRhyme < lineCt) and (gF.rhySwitch == True):  #  This line cuts back to the rhyming line to try another
-                while len(stanza) > anteRhyme:
-                    print('stF:', gF.lineno(), 'removing rhyLine from: ', stanza)
-                    stanza, qAnteLine = removeLine(stanza)
-                print('stF:', gF.lineno(), stanza)
-            else:
-                print('stF:', gF.lineno(), 'regular line remove: ', stanza)
-                stanza, qAnteLine = removeLine(stanza)
+            stanza, qAnteLine, lineCt, rhymeThisLine, killSwitch = veto()
         elif len(newLine[1]) > 0:  #  Line-building functions will either return a valid, nonzero-length line, or trigger a subtraction in the stanza with empty list
             print('stF:', gF.lineno(), '| - newLine:', newLine)
             stanza, qAnteLine = acceptLine(stanza, newLine)
@@ -98,7 +102,7 @@ def gov():
         else:  #  Redundant, as the stanza should logically be vetoed already, but just to clean house
             print('stF:', gF.lineno(), '| - vetoStanza')
             #stanza, qAnteLine, gF.usedList, lineCt, rhymeThisLine, killSwitch = vetoStanza([])
-            stanza, qAnteLine = removeLine(stanza)
+            stanza, qAnteLine, lineCt, rhymeThisLine, killSwitch = veto()
         lineCt = len(stanza)  #  Count the length of the stanza, provided no killSwitch events occurred...
         print('stF:', gF.lineno(), 'end whileloop', lineCt)
 

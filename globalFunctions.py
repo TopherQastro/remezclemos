@@ -31,11 +31,12 @@ import poemFunctions as poemFunk
 import popFunctions as popFunk
 import proximityFunctions as proxFunk
 import rawtextFunctions as rawtextFunk
+import rhymeFunctions as rhyFunk
 import stanzaFunctions as stanzaFunk
 
 
 def lineno():     ##  Returns the current line number in our program.
-     return inspect.currentframe().f_back.f_lineno
+    return inspect.currentframe().f_back.f_lineno
 
 
 def begin():
@@ -131,7 +132,7 @@ def printGlobalData(qLine):
     print('gF:', lineno(), '| printGlobalData() -', len(qLine[1]), qLine[1])
     # if len(superPopList) > 0:
     #     print('gF:', lineno(), 'printGlobalData() |', superPopList[-1], expressList[-1])
-    print('gF:', lineno(), '| printGlobalData() - sPpL, expL, cont, thes, dyna, sBkL, qLIL, pLDL')
+    print('gF:', lineno(), '| printGlobalData() - sPpL, expL, thes, dyna, cont, pnxL, sBkL, qLIL, pLDL')
     indInt = int(0)
     print(qLineIndexList, proxDicIndexList)
     for lists in superList:

@@ -3,23 +3,28 @@ import globalFunctions as gF
 
 
 def rhyDictator(lang, superTokens, pWord, maxTotalVs, maxRSyls): # Find rhymes of a particular word
+    print('ryF:', gF.lineno(), '| entering rhyDictator()')
     matchBox, finalRhys = [], []
     totalVs, rSyls = int(1), int(1)
     while totalVs < maxTotalVs:
         while (rSyls <= totalVs):
             tName, rName = str(totalVs), str(rSyls)
-           #$ print('gF:', lineno(),.rhy:', pWord, str(totalVs), str(rSyls))
+           #$ print('gF:', gF.lineno(),.rhy:', pWord, str(totalVs), str(rSyls))
             if totalVs < 10:
                 tName = '0'+tName
             if rSyls < 10:
                 rName = '0'+rName
             try:
-                dicFile = csv.reader(open(lang+'/data/USen/rhymes/rhymeLib-t'+tName+"r"+rName+".csv", "r"))
+                print('ryF:', gF.lineno(), '| tName, rName:', tName, rName)
+                dicFile = gF.csv.reader(open(lang+'/data/USen/rhymes/rhymeLib-t'+tName+"r"+rName+".csv", "r"))
                 for line in dicFile:
                     strikeList = []
                     keyChain = line[0].split('^')
+                    if len(keyChain) > 0:
+                        print('ryF:', gF.lineno(), 'keyChain:', keyChain)
                     if pWord in keyChain:
                         matchBox = line[1].split('^')
+                        print('ryF:', gF.lineno(), 'matchBox:', matchBox)
                         if pWord in matchBox:
                             matchBox.remove(pWord)
                         for all in matchBox:
@@ -36,22 +41,25 @@ def rhyDictator(lang, superTokens, pWord, maxTotalVs, maxRSyls): # Find rhymes o
                         for all in matchBox:
                             if all not in finalRhys:
                                 finalRhys.append(all)
+                        print('ryF:', gF.lineno(), 'len(finalRhys):', len(finalRhys))
                 for all in matchBox:
                     if all not in finalRhys:
                         finalRhys.append(all)
+                print('ryF:', gF.lineno(), 'len(finalRhys):', len(finalRhys))
             except IOError:
                 return []
             rSyls+=1
         totalVs+=1
         rSyls = int(1)
     finalRhys.sort()
-   #$ print('gF:', lineno(),.rhys:', len(finalRhys))
+    print('ryF:', gF.lineno(), '| finalRhys:', len(finalRhys))
+    input('paused...')
     return finalRhys
 
 
 def rhymeLiner(qLine, proxExpress, rhymeList):
     print('ryF:', gF.lineno(), '| rhymeLiner() - start\nPrevious:', qAnteLine, '\nempLine:', empLine)
-    while (len(qLine[0] == 0) or (qLine[0][-1] not in rhymeList):
+    while (len(qLine[0]) == 0) or (qLine[0][-1] not in rhymeList):
         if metSwitch == True:
             qLine, killSwitch = gF.meterLineFunk.gov(empLine, proxExpress, pLEmps, qLine, runLine)
         else:
@@ -60,14 +68,12 @@ def rhymeLiner(qLine, proxExpress, rhymeList):
             return qLine, killSwitch
         else:
             if qLine[0][-1] in gF.allPunx:
-                if qLine[0][-2] not in rhymeList):
+                if qLine[0][-2] not in rhymeList:
                     pLEmps, qLine, runLine = gF.lineFunk.removeWordR(empLine, qLine, runLine)
                     pLEmps, qLine, runLine = gF.lineFunk.removeWordR(empLine, qLine, runLine)
                 else:
-                    retun qLine, killSwitch
-            elif (qLine[0][-1] not in rhymeList):  #  Words that don't sound good as the last word of a line, such as conjunctions without something else to connect
+                    return qLine, killSwitch
+            elif qLine[0][-1] not in rhymeList:  #  Words that don't sound good as the last word of a line, such as conjunctions without something else to connect
                 pLEmps, qLine, runLine = gF.lineFunk.removeWordR(empLine, qLine, runLine)
     print('ryF:', gF.lineno(), '| rhymeLiner() - out:', qLine, 'len(gF.superPopList):', len(gF.superPopList), 'killSwitch:', killSwitch)
     return qLine, killSwitch
-
-    

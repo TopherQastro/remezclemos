@@ -11,7 +11,7 @@ def testMeterWord(empLine, qLine, qWord):  #  A subfunction of metPopDigester, w
     print('mLF:', gF.lineno(), '|\ntestLine:', testLine, '\nempLine:', empLine)
     testEmps = gF.pEmpsLine(empLine, testLine)
     #gF.superBlackList[len(qLine[1])].append(pWord)  #  Add to blackList at correct point
-    print('mLF:', gF.lineno(), '| gF.superBlackListLen:', len(gF.superBlackList[len(qLine[1])]))
+    print('mLF:', gF.lineno(), '| gF.superBlackListLen:', len(gF.superBlackList[-1]))
     print('mLF:', gF.lineno(), '|\ntestEmps:', testEmps, '\nempLine:', empLine)
     if len(testEmps) <= len(empLine):  #  This is to screen against an error
         print('mLF:', gF.lineno(), '| mPD testEmp0 |', qWord)
@@ -22,13 +22,15 @@ def testMeterWord(empLine, qLine, qWord):  #  A subfunction of metPopDigester, w
        
 
 def gov(empLine, pLEmps, qLine, qAnteLine, proxExpress):
-    print('mLF:', gF.lineno(), '| gov() | qAnteLine:', qAnteLine, '| qLine:', qLine)
+    print('mLF:', gF.lineno(), '| gov() - qAnteLine:', qAnteLine, '- qLine:', qLine)
     gF.stopTime = gF.time.time()
+    killSwitch = False
     if gF.stopTime > (gF.startTime + 300):
-        qLine, runLine, pLEmps, killSwitch = gF.lineFunk.veto(qAnteLine, [])
+        qLine, pLEmps = gF.lineFunk.veto()
+        stanza, qAnteLine, lineCt, rhymeThisLine, killSwitch = gF.stanzaFunk.veto()
         gF.startTime = gF.time.time()
         print('mLF:', gF.lineno(), '| gov() - timeout restart:', str(gF.time.ctime())[11:20])
-        return qLine, True
+        return qLine, True  #  qLine, killSwitch
     runLine = ([],[])
     while pLEmps != empLine:
         print('mLF:', gF.lineno(), '| gov() while0 start', qLine, pLEmps)
@@ -40,6 +42,9 @@ def gov(empLine, pLEmps, qLine, qAnteLine, proxExpress):
             runLine, qLine = gF.lineFunk.lineStarter(qAnteLine, proxExpress)
         print('mLF:', gF.lineno(), '| runLine:', runLine)
         popWord = gF.popFunk.popWordPicker(qLine)
+        if (len(popWord[0]) == 0) and (len(gF.superPopList[-1]+gF.expressList[-1]+gF.thesList[-1]+gF.contList[-1]+gF.punxList[-1]) == 0):
+            print('mLF:', gF.lineno(), '| qLine and popLists out')
+            return ([],[]), True
         print('mLF:', gF.lineno(), '| popWord:', popWord)
         if len(popWord[1]) > 0:
             result = testMeterWord(empLine, qLine, popWord)
@@ -48,11 +53,11 @@ def gov(empLine, pLEmps, qLine, qAnteLine, proxExpress):
         if result == True:
             print('mLF:', gF.lineno(), '| runLine:', runLine)
             print('mLF:', gF.lineno(), '| qLine:', qLine)
-            qLine = gF.lineFunk.acceptWordR(empLine, runLine, qLine, popWord)
+            qLine, killSwitch = gF.lineFunk.acceptWordR(empLine, runLine, qLine, popWord)
             print('mLF:', gF.lineno(), qLine)
         elif len(gF.superPopList[-1]+gF.expressList[-1]+gF.thesList[-1]+gF.contList[-1]+gF.punxList[-1]+gF.dynaList[-1]) == 0:
             if len(gF.qLineIndexList[-1]) > gF.proxMinDial:
-                gF.proxFunk.snipProxData(empLine, pLEmps, qLine, runLine)
+                gF.proxFunk.snipProxData(empLine, pLEmps, proxExpress, qLine, runLine)
             else:
                 pLEmps, qLine, runLine = gF.lineFunk.removeWordR(empLine, qLine, runLine)
         if len(gF.superPopList) == 0:
@@ -67,7 +72,7 @@ def gov(empLine, pLEmps, qLine, qAnteLine, proxExpress):
             print('mLF:', gF.lineno(), '| gov() - meterGov over emps')
             pLEmps, qLine, runLine = gF.lineFunk.removeWordR(empLine, qLine, runLine)
         print('mLF:', gF.lineno(), '| pLEmps:', pLEmps, '- empLine:', empLine)
-    return qLine, False    
+    return qLine, killSwitch    
 
 
             # elif len(runLine[0]) == 1 and runLine[-1] in gF.endPunx:                

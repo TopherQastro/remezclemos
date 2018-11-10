@@ -17,7 +17,7 @@ def gov():
         gF.rhySwitch = True
         gF.metSwitch = True
         gF.thesSwitch = True
-        gF.rhyMap = 'abab'
+        gF.rhyMap = 'aa'
         gF.empMap = [[bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
                      [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
                      [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],

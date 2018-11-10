@@ -83,12 +83,13 @@ def popWordPicker(qLine):  #  Digests words that fit a particular meter
     return ([],[])
 
 
-def superPopListMaker(empLine, proxExpress, qLine, runLine): #  Creates a list-of-lists to pull from
+def superPopListMaker(empLine, pLEmps, proxExpress, qLine, runLine): #  Creates a list-of-lists to pull from
     print('ppF:', gF.lineno(), 'sPLM init | len(gF.superPopList)', len(gF.superPopList))
     print('ppF:', gF.lineno(), 'qLine:', qLine)
     gF.printGlobalData(qLine)
     keepList = []  #  Will return empty set upon failure
     testLine = ([],[])
+    killSwitch = False
     if len(runLine[0]) > 0:  #  If there's a previous line, add it into testLine
         for each in runLine[0]:
             testLine[0].append(each)
@@ -100,21 +101,22 @@ def superPopListMaker(empLine, proxExpress, qLine, runLine): #  Creates a list-o
         testLine[1].append(each)
     # for mList in gF.superList[:-3]:  #  Everything except proxData, superBlackLIst
     #     mList.append([])
-    print('ppF:', gF.lineno(), 'superPopListMaker() | start', len(gF.superPopList), testLine, 
+    print('ppF:', gF.lineno(), '| superPopListMaker() - start', len(gF.superPopList), testLine, 
           'proxData:', gF.qLineIndexList, gF.proxDicIndexList)
-    print('ppF:', gF.lineno(), 'superPopListMaker() | len(testLine) >= 1', gF.qLineIndexList, gF.proxDicIndexList)
+    print('ppF:', gF.lineno(), '| superPopListMaker() - len(testLine) >= 1', gF.qLineIndexList, gF.proxDicIndexList)
     if len(testLine) == 0:
         for firstWords in gF.firstWords:
             superPopList[-1].append(firstWords)
-            return qLine, runLine
-    print('ppF:', gF.lineno(), 'qLine:', qLine)
+            return qLine, runLine, False
+    print('ppF:', gF.lineno(), '| qLine:', qLine)
     try:
-        print('ppF:', gF.lineno(), 'superPopListMaker() |', qLine, len(gF.superBlackList), testLine)
+        print('ppF:', gF.lineno(), '| superPopListMaker() -', qLine, len(gF.superBlackList), testLine)
         while len(gF.qLineIndexList[-1]) > 0:
+            print('ppF:', gF.lineno(), '| superPopListMaker() - main while')
             for all in gF.proxP1[testLine[1][-1]]:
                 if (all not in gF.superBlackList[-1]) and (all != testLine[1][-1]):  #  Screen against the initial gF.superBlackList
                     keepList.append(all)  #  Practically an 'else' clause, because the 'if' above returns an answer
-            #print('ppF:', gF.lineno(), 'sPM - this keepList:', keepList)
+            print('ppF:', gF.lineno(), '| proxP1 keepList:', len(keepList))
             if len(gF.qLineIndexList[-1]) > 1:  #  Only keep going if we need more than 2 words analyzed
                 for each in gF.proxDicIndexList[-1][1:]:  #  Skip first indexNum, we already found it
                     testList = gF.proxMinusLista[each][testLine[1][gF.qLineIndexList[-1][each]]]  #  Scans approximate words with indexes
@@ -122,18 +124,32 @@ def superPopListMaker(empLine, proxExpress, qLine, runLine): #  Creates a list-o
                     for all in keepList:
                         if (all not in testList) or (all in gF.superBlackList[-1]): #or (testString not in rawText):  #  Add blackList screening later
                             burnList.append(all)  #  Screen it with a burnList so we don't delete as we iterate thru list
-                    print('ppF:', gF.lineno(), 'superPopListMaker() | len(keepList):', len(keepList), 
+                    print('ppF:', gF.lineno(), '| superPopListMaker() - len(keepList):', len(keepList), 
                           'len(burnList):', len(burnList))
                     if len(keepList) > 0:
+                        print('ppF:', gF.lineno(), '| trimming keeplist')
                         for all in burnList:
                             keepList.remove(all)
                     else:  #  If we run out prematurely, stop iterating over the list
-                        print('ppF:', gF.lineno(), 'superPopListMaker() | keepList out')
+                        print('ppF:', gF.lineno(), '| superPopListMaker() - keepList out')
                         break
+            print('ppF:', gF.lineno(), '| final keepList:', len(keepList))
             if len(keepList) == 0:
-                pLEmps, qLine, runLine = gF.proxFunk.snipProxData(empLine, pLEmps, qLine, runLine)
+                print('ppF:', gF.lineno(), '|', len(gF.qLineIndexList), '>=', gF.proxMinDial, "?")
+                if len(qLine[0]) > 1: 
+                    if len(gF.qLineIndexList) >= gF.proxMinDial:
+                        print('ppF:', gF.lineno(), '| keepList empty', qLine, testLine)
+                        pLEmps, qLine, runLine = gF.proxFunk.snipProxData(empLine, pLEmps, proxExpress, qLine, runLine)
+                        print('ppF:', gF.lineno(), '|', len(gF.qLineIndexList))
+                    else :
+                        print('ppF:', gF.lineno(), '| proxdata too short')
+                        pLEmps, qLine, runLine = gF.lineFunk.removeWordR(empLine, qLine, runLine)
+                else:
+                    print('ppF:', gF.lineno(), '| superPopList lost line')
+                    killSwitch = True
+                    break
             else:
-                print('ppF:', gF.lineno(), 'superPopListMaker() | grown', len(gF.superPopList), '|', testLine, 'proxData:', gF.qLineIndexList, gF.proxDicIndexList)
+                print('ppF:', gF.lineno(), '| superPopListMaker() - grown', len(gF.superPopList), '|', testLine, 'proxData:', gF.qLineIndexList, gF.proxDicIndexList)
                 for keepWords in keepList:
                     if keepWords in proxExpress and keepWords not in gF.expressList[-1] and keepWords not in quantumList:
                         gF.expressList[-1].append(keepWords)
@@ -142,7 +158,7 @@ def superPopListMaker(empLine, proxExpress, qLine, runLine): #  Creates a list-o
                 break
         print('ppF:', gF.lineno(), 'qLine:', qLine)
         gF.printGlobalData(qLine)
-        return qLine, runLine
+        return qLine, runLine, killSwitch
     except KeyError:
         print('ppF:', gF.lineno(), 'kE:', testLine, 'len(gF.superPopList):', len(gF.superPopList))
         unknownWords.write(qLine[1][-1])
@@ -151,4 +167,4 @@ def superPopListMaker(empLine, proxExpress, qLine, runLine): #  Creates a list-o
         return qLine, runLine
     print('ppF:', gF.lineno(), 'sPM lastfinish', qLine)
     gF.printGlobalData(qLine)
-    return qLine, runLine
+    return qLine, runLine, killSwitch
