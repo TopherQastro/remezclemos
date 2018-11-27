@@ -19,8 +19,8 @@ def popWordScanner(popWord):  #  Organizes expressList and superPopList words to
 
 def popWordPicker(qLine):  #  Digests words that fit a particular meter
     print('ppF:', gF.lineno(), '| popWordPicker start')
-    gF.printGlobalData(qLine)
-    while len(gF.superPopList[-1]+gF.expressList[-1]+gF.thesList[-1]+gF.contList[-1]+gF.punxList[-1]) > 0:
+    #$gF.printGlobalData(qLine)
+    while len(gF.superPopList[-1]+gF.expressList[-1]+gF.thesList[-1]+gF.contList[-1]) > 0:
         print('ppF:', gF.lineno(), '| whileLoop entered')
         if len(gF.expressList) > 0:
             if len(gF.expressList[-1]) == 0:  #  If the first expressList is out, move non-quantum to front
@@ -49,7 +49,7 @@ def popWordPicker(qLine):  #  Digests words that fit a particular meter
             print('ppF:', gF.lineno(), ' | contraction attempt:', qWord)
             return qWord
         print('ppF:', gF.lineno(), ' | gF.thesSwitch:', gF.thesSwitch)
-        if gF.thesSwitch == True:
+        if (gF.thesSwitch == True) and (len(gF.contList[-1]) > 0):
             if len(gF.dynaList[-1]) > 0:
                 return gF.dynaList[-1].pop(gF.random.choice(range(0, len(gF.dynaList[-1]))))
             else:
@@ -111,6 +111,8 @@ def superPopListMaker(empLine, pLEmps, proxExpress, qLine, runLine): #  Creates 
     print('ppF:', gF.lineno(), '| qLine:', qLine)
     try:
         print('ppF:', gF.lineno(), '| superPopListMaker() -', qLine, len(gF.superBlackList), testLine)
+        if len(gF.qLineIndexList[-1]) > len(gF.proxPlusLista):
+            pLEmps, qLine, runLine = gF.proxFunk.snipProxData(empLine, pLEmps, proxExpress, qLine, runLine)
         while len(gF.qLineIndexList[-1]) > 0:
             print('ppF:', gF.lineno(), '| superPopListMaker() - main while')
             for all in gF.proxP1[testLine[1][-1]]:
@@ -119,7 +121,7 @@ def superPopListMaker(empLine, pLEmps, proxExpress, qLine, runLine): #  Creates 
             print('ppF:', gF.lineno(), '| proxP1 keepList:', len(keepList))
             if len(gF.qLineIndexList[-1]) > 1:  #  Only keep going if we need more than 2 words analyzed
                 for each in gF.proxDicIndexList[-1][1:]:  #  Skip first indexNum, we already found it
-                    testList = gF.proxMinusLista[each][testLine[1][gF.qLineIndexList[-1][each]]]  #  Scans approximate words with indexes
+                    testList = gF.proxPlusLista[each][testLine[1][gF.qLineIndexList[-1][each]]]  #  Scans approximate words with indexes
                     burnList = []  #  burnList holds words that don't match with mutual proxLists
                     for all in keepList:
                         if (all not in testList) or (all in gF.superBlackList[-1]): #or (testString not in rawText):  #  Add blackList screening later
@@ -151,10 +153,12 @@ def superPopListMaker(empLine, pLEmps, proxExpress, qLine, runLine): #  Creates 
             else:
                 print('ppF:', gF.lineno(), '| superPopListMaker() - grown', len(gF.superPopList), '|', testLine, 'proxData:', gF.qLineIndexList, gF.proxDicIndexList)
                 if len(gF.superPopList) == 0:
-                    for lists in gF.superPopList[:-3]:
+                    for lists in gF.superList[:-3]:
                         lists.append([])
                 for keepWords in keepList:
-                    if keepWords in proxExpress and keepWords not in gF.expressList[-1] and keepWords not in gF.quantumList:
+                    if keepWords in gF.allPunx:
+                        gF.punxList[-1].append(keepWords)
+                    elif (keepWords in proxExpress) and (keepWords not in gF.expressList[-1]) and (keepWords not in gF.quantumList):
                         gF.expressList[-1].append(keepWords)
                     elif all not in gF.superPopList[-1]:
                         gF.superPopList[-1].append(keepWords)

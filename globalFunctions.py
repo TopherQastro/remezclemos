@@ -139,13 +139,28 @@ def begin():
     contractionList = []  #  Use a list to check if the contraction exists (circumvents excepting KeyErrors)
 
     global thesDic 
-    thesDic = {}
+    thesDic = dd(list)
 
     print('opening fonoFiles')  #  These are global values, so they need to be opened regardless
     global emps, vocs, cons, fono
     emps, vocs, cons, fono = dd(list), dd(list), dd(list), dd(list)
 
- 
+    global empsA, empsB, empsC, empsD, empsE, empsF, empsG
+    global empsH, empsI, empsJ, empsK, empsL, empsM, empsN
+    global empsO, empsP, empsQ, empsR, empsS, empsT, empsU
+    global empsV, empsW, empsX, empsY, empsZ, empsDics
+
+    empsA, empsB, empsC, empsD = dd(list), dd(list), dd(list), dd(list)
+    empsE, empsF, empsG, empsH = dd(list), dd(list), dd(list), dd(list)
+    empsI, empsJ, empsK, empsL = dd(list), dd(list), dd(list), dd(list)
+    empsM, empsN, empsO, empsP = dd(list), dd(list), dd(list), dd(list)
+    empsQ, empsR, empsS, empsT = dd(list), dd(list), dd(list), dd(list)
+    empsU, empsV, empsW, empsX = dd(list), dd(list), dd(list), dd(list)
+    empsY, empsZ = dd(list), dd(list)
+
+    empsDics = [empsA, empsB, empsC, empsD, empsE, empsF, empsG, empsH, empsI, empsJ, empsK, empsL, empsM, empsN, empsO, empsP, empsQ, empsR, empsS, empsT, empsU, empsV, empsW, empsX, empsY, empsZ]
+
+
 def printGlobalData(qLine):
     print('gF:', lineno(), '| printGlobalData() -', len(qLine[1]), qLine[1])
     # if len(superPopList) > 0:

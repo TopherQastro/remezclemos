@@ -7,7 +7,7 @@ def gov():
         gF.lang = 'eng'
         gF.accent = 'USen'
         gF.empMode = 'USen-unik'
-        gF.textFile = 'bibleX'
+        gF.textFile = 'bibleY'
         gF.poemQuota = 100
         gF.stanzaQuota = 1
         gF.proxMinDial = int(3)
@@ -17,7 +17,7 @@ def gov():
         gF.rhySwitch = True
         gF.metSwitch = True
         gF.thesSwitch = True
-        gF.rhyMap = 'aa'
+        gF.rhyMap = 'abab'
         gF.empMap = [[bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
                      [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
                      [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
@@ -89,8 +89,8 @@ def gov():
             
         except FileNotFoundError:
             print(gF.lineno(), 'building thesDic...')
-            thesaurusFile = gF.csv.writer(open(lang+'/data/textLibrary/textData/'+gF.textFile+'-thesaurusFile.csv', 'w+'))
-            for all in splitText:
+            thesaurusFile = gF.csv.writer(open(gF.lang+'/data/textLibrary/textData/'+gF.textFile+'-thesaurusFile.csv', 'w+'))
+            for all in gF.splitText:
                 finalList = []
                 try:
                     #print('\n.\n')

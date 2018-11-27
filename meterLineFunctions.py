@@ -42,17 +42,17 @@ def gov(empLine, pLEmps, qLine, qAnteLine, proxExpress):
             runLine, qLine = gF.lineFunk.lineStarter(qAnteLine, proxExpress)
         print('mLF:', gF.lineno(), '| runLine:', runLine)
         popWord = gF.popFunk.popWordPicker(qLine)
-        if (len(popWord[0]) == 0) and (len(gF.superPopList[-1]+gF.expressList[-1]+gF.thesList[-1]+gF.contList[-1]+gF.punxList[-1]) == 0):
-            print('mLF:', gF.lineno(), '| qLine and popLists out')
+        if (len(popWord[0]) == 0) and (len(gF.superPopList[-1]+gF.expressList[-1]+gF.thesList[-1]+gF.contList[-1]) == 0):
+            print('mLF:', gF.lineno(), '| gov() - qLine and popLists out')
             return ([],[]), True
-        print('mLF:', gF.lineno(), '| popWord:', popWord)
+        print('mLF:', gF.lineno(), '| gov() - popWord:', popWord)
         if len(popWord[1]) > 0:
             result = testMeterWord(empLine, qLine, popWord)
-        print('mLF:', gF.lineno(), '| runLine:', runLine)
-        print('mLF:', gF.lineno(), '| qLine:', qLine)
+        print('mLF:', gF.lineno(), '| gov() - runLine:', runLine)
+        print('mLF:', gF.lineno(), '| gov() - qLine:', qLine)
         if result == True:
-            print('mLF:', gF.lineno(), '| runLine:', runLine)
-            print('mLF:', gF.lineno(), '| qLine:', qLine)
+            print('mLF:', gF.lineno(), '| gov() - runLine:', runLine)
+            print('mLF:', gF.lineno(), '| gov() - qLine:', qLine)
             qLine, killSwitch = gF.lineFunk.acceptWordR(empLine, runLine, qLine, popWord)
             print('mLF:', gF.lineno(), qLine)
         elif len(gF.superPopList[-1]+gF.expressList[-1]+gF.thesList[-1]+gF.contList[-1]+gF.punxList[-1]+gF.dynaList[-1]) == 0:
@@ -63,7 +63,7 @@ def gov(empLine, pLEmps, qLine, qAnteLine, proxExpress):
         if len(gF.superPopList) == 0:
             return ([],[]), True
         pLEmps = gF.pEmpsLine(empLine, qLine[0])
-        print('mLF:', gF.lineno(), '| qLine:', qLine, pLEmps)
+        print('mLF:', gF.lineno(), '| gov() - qLine:', qLine, pLEmps)
         if pLEmps == empLine and qLine[1][-1] in gF.nonEnders:
             print('mLF:', gF.lineno(), '| gov() - nonending word')
             pLEmps, qLine, runLine = gF.lineFunk.removeWordR(empLine, qLine, runLine)
@@ -71,7 +71,7 @@ def gov(empLine, pLEmps, qLine, qAnteLine, proxExpress):
         while len(pLEmps) > len(empLine):  #  If somehow the line went over the numbered lists
             print('mLF:', gF.lineno(), '| gov() - meterGov over emps')
             pLEmps, qLine, runLine = gF.lineFunk.removeWordR(empLine, qLine, runLine)
-        print('mLF:', gF.lineno(), '| pLEmps:', pLEmps, '- empLine:', empLine)
+        print('mLF:', gF.lineno(), '| gov() - pLEmps:', pLEmps, '- empLine:', empLine)
     return qLine, killSwitch    
 
 

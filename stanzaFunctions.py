@@ -64,7 +64,7 @@ def gov():
                         rhymeWord = rhymeLine[lastWordIndex]  #  Picking the last word
                     except IndexError:
                         print('stF:', gF.lineno(), "| iE:", rhymeLine, lastWordIndex)
-                        return  [], [], True  #  killSwitch event
+                        return  [], True  #  killSwitch event
                 print('stF:', gF.lineno(), '| rhymeWord:', rhymeWord)
                 print('stF:', gF.lineno(), '| len(gF.splitText):', len(gF.splitText))
                 rhymeSearch = gF.rhyFunk.rhyDictator('eng', rhymeWord, 10, 10)  #  Syllable length can be varied, 10 returns all
@@ -82,7 +82,7 @@ def gov():
                     newLine, killSwitch = gF.lineFunk.gov(gF.empMap[lineCt], rhymeThisLine, rhymeList, qAnteLine)  #  If so, we try to create rhyming lines
                 else:  #  Our lines created nothing, so we hit a killSwitch event
                     print('stF:', gF.lineno(), 'rhymeList:', rhymeList)
-                    return [], [], True
+                    return [], True
             else:  #  Then you don't need rhymes
                 rhymeList = []
                 print('stF:', gF.lineno(), '| -', qAnteLine, gF.usedList, False, rhymeList, gF.empMap[lineCt])

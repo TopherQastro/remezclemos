@@ -76,8 +76,8 @@ def loadmakeData():
                 proxNumerator+=1
             splitTIndex+=1
         print('pxF:', gF.lineno(), ' | writing proxLibs...')
-        gpDataWriter(gF.lang, gF.proxMinusLista, 'proxP', gF.textFile)
-        gpDataWriter(gF.lang, gF.proxMinusLista, 'proxM', gF.textFile)  
+        gF.gpDataWriter(gF.lang, gF.proxMinusLista, 'proxP', gF.textFile)
+        gF.gpDataWriter(gF.lang, gF.proxMinusLista, 'proxM', gF.textFile)  
 
 
 def proxNewBuild():
@@ -266,14 +266,14 @@ def snipProxData(empLine, pLEmps, proxExpress, qLine, runLine):
             gF.proxDicIndexList[-1].pop()
             print('pxF:', gF.lineno(), '| snip qLineIndex out:', 
                     gF.qLineIndexList, gF.proxDicIndexList)
-            for eachList in gF.superList[:-2]:
-                if len(eachList) > 0:
-                    eachList.pop()
-            gF.printGlobalData(qLine)
-            if len(gF.superBlackList) > (len(gF.superPopList) + 1):
-                print('pxF:', gF.lineno(), '| superBlackPop')
-                gF.superBlackList.pop()
-            qLine, runLine, killSwitch = gF.popFunk.superPopListMaker(empLine, pLEmps, proxExpress, qLine, runLine)
+            # for eachList in gF.superList[:-2]:
+            #     if len(eachList) > 0:
+            #         eachList.pop()
+            # gF.printGlobalData(qLine)
+            # if len(gF.superBlackList) > (len(gF.superPopList) + 1):
+            #     print('pxF:', gF.lineno(), '| superBlackPop')
+            #     gF.superBlackList.pop()
+            # qLine, runLine, killSwitch = gF.popFunk.superPopListMaker(empLine, pLEmps, proxExpress, qLine, runLine)
         else: #and len(qLine[1]) > gF.proxMinDial:  #  If we have enough words, then we can remove rightmost element and metadata, then try again
             print('pxF:', gF.lineno(), '| snipLine', qLine, '|', runLine, len(gF.superPopList))
             pLEmps, qLine, runLine = gF.lineFunk.removeWordR(empLine, qLine, runLine)
