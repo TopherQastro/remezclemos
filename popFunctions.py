@@ -150,8 +150,11 @@ def superPopListMaker(empLine, pLEmps, proxExpress, qLine, runLine): #  Creates 
                     break
             else:
                 print('ppF:', gF.lineno(), '| superPopListMaker() - grown', len(gF.superPopList), '|', testLine, 'proxData:', gF.qLineIndexList, gF.proxDicIndexList)
+                if len(gF.superPopList) == 0:
+                    for lists in gF.superPopList[:-3]:
+                        lists.append([])
                 for keepWords in keepList:
-                    if keepWords in proxExpress and keepWords not in gF.expressList[-1] and keepWords not in quantumList:
+                    if keepWords in proxExpress and keepWords not in gF.expressList[-1] and keepWords not in gF.quantumList:
                         gF.expressList[-1].append(keepWords)
                     elif all not in gF.superPopList[-1]:
                         gF.superPopList[-1].append(keepWords)

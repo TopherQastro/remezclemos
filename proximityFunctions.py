@@ -195,7 +195,7 @@ def proxNewBuild():
         if len(word) > 0:
             print('pxF:', gF.lineno(), word)
             entry = word
-            if entry[0].upper() in alphabet:
+            if entry[0].upper() in gF.upperAlphabet:
                 tableKey = entry[0].upper()
             else:
                 tableKey = 'Q'
@@ -267,7 +267,12 @@ def snipProxData(empLine, pLEmps, proxExpress, qLine, runLine):
             print('pxF:', gF.lineno(), '| snip qLineIndex out:', 
                     gF.qLineIndexList, gF.proxDicIndexList)
             for eachList in gF.superList[:-2]:
-                eachList.pop()
+                if len(eachList) > 0:
+                    eachList.pop()
+            gF.printGlobalData(qLine)
+            if len(gF.superBlackList) > (len(gF.superPopList) + 1):
+                print('pxF:', gF.lineno(), '| superBlackPop')
+                gF.superBlackList.pop()
             qLine, runLine, killSwitch = gF.popFunk.superPopListMaker(empLine, pLEmps, proxExpress, qLine, runLine)
         else: #and len(qLine[1]) > gF.proxMinDial:  #  If we have enough words, then we can remove rightmost element and metadata, then try again
             print('pxF:', gF.lineno(), '| snipLine', qLine, '|', runLine, len(gF.superPopList))

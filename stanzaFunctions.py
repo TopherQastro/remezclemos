@@ -66,12 +66,13 @@ def gov():
                         print('stF:', gF.lineno(), "| iE:", rhymeLine, lastWordIndex)
                         return  [], [], True  #  killSwitch event
                 print('stF:', gF.lineno(), '| rhymeWord:', rhymeWord)
-                rhymeSearch = gF.rhyFunk.rhyDictator('eng', gF.splitText, rhymeWord, 10, 10)  #  Syllable length can be varied, 10 returns all
+                print('stF:', gF.lineno(), '| len(gF.splitText):', len(gF.splitText))
+                rhymeSearch = gF.rhyFunk.rhyDictator('eng', rhymeWord, 10, 10)  #  Syllable length can be varied, 10 returns all
                 for all in rhymeSearch:
                     rhymeList.append(all)
                 rhyInt = 0
                 while rhyInt <= 3:  #  Checks for multiple pronunciations of words 
-                    rhymeSearch = gF.rhyFunk.rhyDictator('eng', gF.splitText, rhymeWord+'('+str(rhyInt)+')', 10, 10)  #  Syllable length can be varied, 10 returns all
+                    rhymeSearch = gF.rhyFunk.rhyDictator('eng', rhymeWord+'('+str(rhyInt)+')', 10, 10)  #  Syllable length can be varied, 10 returns all
                     for each in rhymeSearch:
                         rhymeList.append(each)
                     rhyInt+=1

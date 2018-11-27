@@ -5,10 +5,10 @@ def veto():  #  Resets values in a line to
     print('lnF:', gF.lineno(), '| veto()')
     listInt = int(0)
     for lists in gF.superList:
-    #    print('lnF:', gF.lineno(), listInt, lists)
-        lists = []
-    #     while len(lists) > 0:
-    #         mList.pop()
+        print('lnF:', gF.lineno(), listInt, lists)
+        while len(lists) > 0:
+            lists.pop()
+        print('lnF:', gF.lineno(), listInt, lists)
         listInt+=1
     gF.printGlobalData([[],[]])
     return ([],[]), []
@@ -21,13 +21,13 @@ def removeWordL(superPopList, qLine):  #  Remove the leftmost word from line
 
 
 def removeWordR(empLine, qLine, runLine):  #  Remove the rightmost word from line
-    print('lnF:', gF.lineno(), 'removeWordR-in', 'qLine:', qLine, 'runLine:', runLine)
+    print('lnF:', gF.lineno(), '| removeWordR-in', 'qLine:', qLine, 'runLine:', runLine)
     if len(qLine[0]) == 0 and len(runLine[0]) > 0:  #  Cut runLine
-        print('lnF:', gF.lineno(), "rMR - if0")
+        print('lnF:', gF.lineno(), "| rMR - if0")
         minusWordX = runLine[0].pop(0)  #  Since the previous line didn't yield any following line
         minusWordY = runLine[1].pop(0)  #  minusWordX just holds whatever is getting popped
     if len(qLine[0]) > 0:
-        print('lnF:', gF.lineno(), "rMR - if1")
+        print('lnF:', gF.lineno(), "| rMR - if1")
         minusWord0 = qLine[0].pop()  #  Remove word from first part of line
         minusWord1 = qLine[1].pop()  #  Until better method introduced, cut rLine here
         pWEmps = gF.pEmpsLine(empLine, [minusWord0])
@@ -35,26 +35,27 @@ def removeWordR(empLine, qLine, runLine):  #  Remove the rightmost word from lin
         print('lnF:', gF.lineno(), qLine, pLEmps, pWEmps)
         pLEmps = pLEmps[:-len(pWEmps)]  #  Cut emps from main line)
         print('lnF:', gF.lineno(), '| len(superBlackList):', len(gF.superBlackList))
-        gF.superBlackList.pop()  #  If we leave blacklisted words further down the road, they may negate an otherwise compatible sentence
-        print('lnF:', gF.lineno(), '| len(superBlackList):', len(gF.superBlackList))
-        print('lnF:', gF.lineno(), 'minusWord0:', minusWord0)
+        print('lnF:', gF.lineno(), '| minusWord0:', minusWord0)
+        gF.superBlackList.append([])  #  Add one to remove, because this was easiest in code
+        for lists in gF.superList:
+            if len(lists) > 0:
+                lists.pop()
+            elif len(qLine[1]) > 0:
+                print('lnF:', gF.lineno(), '| qLine:', qLine)
         try:  #  This 'try' setup shouldn't be part of the program, just the next line
-            gF.superBlackList[-1].append(minusWord0)  #  Add to blackList at correct point
+            if len(gF.superBlackList) > (len(gF.expressList) + 1):
+                gF.superBlackList.pop()
+            else:
+                gF.superBlackList[-1].append(minusWord0)  #  Add to blackList at correct point
         except IndexError:  #  Investigate why an IndexError occurred. It's not supposed to.
             print('lnF:', gF.lineno(), '| superBlackList IndexError:\n', 
                   'len(superBlackList):', len(gF.superBlackList),
                   gF.superBlackList)
             input('paused...')
+        gF.printGlobalData(qLine)
     else:
         pLEmps = []
     #if len(gF.superPopList) > (len(qLine[1]) + 1):  #  If we've gone further than checking the list of next words
-    print('lnF:', gF.lineno(), '| removeWordR() - snipPopList')
-    for lists in gF.superList[:-3]:
-        if len(lists) > 0:
-            lists.pop()
-        elif len(qLine[1]) > 0:
-            print('lnF:', gF.lineno(), '|', qLine)
-        gF.printGlobalData(qLine)
     print('lnF:', gF.lineno(), '| removeWordR() out - qLine:', qLine)
     gF.printGlobalData(qLine)
     return pLEmps, qLine, runLine
@@ -150,12 +151,12 @@ def gov(empLine, rhymeThisLine, rhymeList, qAnteLine):
                     for words in gF.proxMinusLista[:len(empLine)]:  #  Only go as far as the empLine, as if all words are one-syllable long
                         thisProxList = words[rhymers]
                         for proxWord in thisProxList:
-                            if (proxWord not in proxExpress) and (proxWord not in quantumList):
+                            if (proxWord not in proxExpress) and (proxWord not in gF.quantumList):
                                 proxExpress.append(proxWord)
                 except KeyError:
                     continue
             print('lnF:', gF.lineno(), '| gov() - len(proxExpress):', len(proxExpress))
-            qLine, killSwitch = gF.rhymeFunk.gov(empLine, proxExpress, rhymeList, qAnteLine)
+            qLine, killSwitch = gF.rhyFunk.rhymeLiner(empLine, proxExpress, qAnteLine, rhymeList)
         else:
             print('lnF:', gF.lineno(), '| gov() - no rhymes')
             return ([],[]), True  #  qLine, killSwitch

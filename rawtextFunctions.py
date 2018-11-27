@@ -24,32 +24,38 @@ def gov():
                     #[bool(0), bool(1), bool(0), bool(0), bool(1)],
                      [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)]]
 
-    try:
-        filepath = (gF.lang+'/data/textLibrary/textData/'+gF.textFile+'-firstFile.txt')
-        print(gF.lineno(), 'rawText previously processed @', filepath)
-    except FileNotFoundError:
-        gF.rawText = str(open(gF.lang+'/data/textLibrary/'+gF.textFile+'.txt', 'r', 
-                        encoding='utf-8').read())
+    gF.rawText = str(open(gF.lang+'/data/textLibrary/'+gF.textFile+'.txt', 'r', 
+                    encoding='utf-8').read())
 
-        nullSpace = ''  #  Certain characters will be replaced by null character
-        nullReplace = ['- \n', '-\n', '\n']  #  Hyphen at the end of lines indicates words that are broken
-        whiteSpace = ' '  #  Whitespace erases characters, then whitespace shrinks itself
-        whiteReplace = ['_', '^', '~', '     ', '    ', '   ', '  ']
+    nullSpace = ''  #  Certain characters will be replaced by null character
+    nullReplace = ['- \n', '-\n', '\n']  #  Hyphen at the end of lines indicates words that are broken
+    whiteSpace = ' '  #  Whitespace erases characters, then whitespace shrinks itself
+    whiteReplace = ['_', '^', '~', '     ', '    ', '   ', '  ']
 
-        gF.rawText = gF.rawText.replace('``', '"')
-        gF.rawText = gF.rawText.replace("''", '"')
-        gF.rawText = gF.rawText.replace('`', "'")
-        gF.rawText = gF.rawText.replace('&', ' and ')
-        for all in gF.allPunx:  #  Put a space around punctuation to tokenize later
-            gF.rawText = gF.rawText.replace(all, ' '+all+' ')
-        for nullSpaceVictims in nullReplace:
-            gF.rawText = gF.rawText.replace(nullSpaceVictims, '')
-        for whiteSpaceVictims in whiteReplace:
-            gF.rawText = gF.rawText.replace(whiteSpaceVictims, ' ')  
-        gF.rawText = gF.rawText.lower()
+    gF.rawText = gF.rawText.replace('``', '"')
+    gF.rawText = gF.rawText.replace("''", '"')
+    gF.rawText = gF.rawText.replace('`', "'")
+    gF.rawText = gF.rawText.replace('&', ' and ')
+    for all in gF.allPunx:  #  Put a space around punctuation to tokenize later
+        gF.rawText = gF.rawText.replace(all, ' '+all+' ')
+    for nullSpaceVictims in nullReplace:
+        gF.rawText = gF.rawText.replace(nullSpaceVictims, '')
+    for whiteSpaceVictims in whiteReplace:
+        gF.rawText = gF.rawText.replace(whiteSpaceVictims, ' ')  
+    gF.rawText = gF.rawText.lower()
 
-        #  Tokenizes raw text, grooms into lists of words
-        gF.splitText = gF.rawText.split(' ')  # The reason for placing a space between all tokens to be grabbed
+    #  Tokenizes raw text, grooms into lists of words
+    gF.splitText = gF.rawText.split(' ')  # The reason for placing a space between all tokens to be grabbed
+    print('rtF:', gF.lineno(), '| len(gF.splitText):', len(gF.splitText))
+    for splitWords in gF.splitText:
+        if len(splitWords) > 0:
+            if splitWords[0] in gF.lowerAlphabet:
+                gF.splitDics[gF.lowerAlphabet.index(splitWords[0])].append(splitWords)
+            else:
+                gF.splitDics[gF.lowerAlphabet.index('q')].append(splitWords)
+
+
+    #$input('paused...')
 
     #  Prepares switches to contractions
     if gF.contSwitch == True:

@@ -53,13 +53,15 @@ def begin():
     superList, superPopList, expressList, thesList, dynaList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList = [], [], [], [], [], [], [], [], [], []
     superList = superPopList, expressList, thesList, dynaList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList
 
-    global quantumList, nonEnders, alphabet, allPunx, midPunx, endPunx #  List of words used for quantum emp patterns
+    global quantumList, nonEnders, upperAlphabet, lowerAlphabet, allPunx, midPunx, endPunx #  List of words used for quantum emp patterns
     quantumList = ['was', 'be', 'and', 'to', 'for', 'a', 'the', 'in', 'at', 'but', 'an',
                 'not', 'is', 'do', 'did', 'can', 'could', 'will', 'does', 'of', 'as',
                 'when', 'than', 'then', 'my', 'your', 'too', 'would', 'should'] 
     nonEnders = ['and', 'or', 'a', 'but', 'the', 'an', ',', ';', ':', '--'] #  Words that don't sound well ending a sentence
-    alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-                'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    upperAlphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+                     'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    lowerAlphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+                     'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
     allPunx = ['.', ',', ';', ',', ':', '!', '?', '--', '"', "''", '-', '\\', '+',
             '=', '/', '<', '>', '(', ')']  #  Doesn't include apostrophe, because
                                             #  that could be part of a contraction
@@ -82,6 +84,22 @@ def begin():
     global splitText
     rawText = str()
     splitText = []
+
+    #  These dictionaries organize the splitText words alphabetically based on 1st letter
+    global splitTextA, splitTextB, splitTextC, splitTextD, splitTextE, splitTextF, splitTextG
+    global splitTextH, splitTextI, splitTextJ, splitTextK, splitTextL, splitTextM, splitTextN
+    global splitTextO, splitTextP, splitTextQ, splitTextR, splitTextS, splitTextT, splitTextU
+    global splitTextV, splitTextW, splitTextX, splitTextY, splitTextZ, splitDics
+
+    splitTextA, splitTextB, splitTextC, splitTextD = [], [], [], []
+    splitTextE, splitTextF, splitTextG, splitTextH = [], [], [], []
+    splitTextI, splitTextJ, splitTextK, splitTextL = [], [], [], []
+    splitTextM, splitTextN, splitTextO, splitTextP = [], [], [], []
+    splitTextQ, splitTextR, splitTextS, splitTextT = [], [], [], []
+    splitTextU, splitTextV, splitTextW, splitTextX = [], [], [], []
+    splitTextY, splitTextZ = [], []
+
+    splitDics = [splitTextA, splitTextB, splitTextC, splitTextD, splitTextE, splitTextF, splitTextG, splitTextH, splitTextI, splitTextJ, splitTextK, splitTextL, splitTextM, splitTextN, splitTextO, splitTextP, splitTextQ, splitTextR, splitTextS, splitTextT, splitTextU, splitTextV, splitTextW, splitTextX, splitTextY, splitTextZ]
 
     global proxP1, proxP2, proxP3, proxP4, proxP5, proxP6, proxP7, proxP8, proxP9
     global proxP10, proxP11, proxP12, proxP13, proxP14, proxP15, proxP16, proxP17
