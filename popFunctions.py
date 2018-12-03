@@ -115,13 +115,15 @@ def superPopListMaker(empLine, pLEmps, proxExpress, qLine, runLine): #  Creates 
             pLEmps, qLine, runLine = gF.proxFunk.snipProxData(empLine, pLEmps, proxExpress, qLine, runLine)
         while len(gF.qLineIndexList[-1]) > 0:
             print('ppF:', gF.lineno(), '| superPopListMaker() - main while')
-            for all in gF.proxP1[testLine[1][-1]]:
+            proxP1grab = gF.proxFunk.proxGrabber(testLine[1][-1], 0)
+            for all in proxP1grab:
                 if (all not in gF.superBlackList[-1]) and (all != testLine[1][-1]):  #  Screen against the initial gF.superBlackList
                     keepList.append(all)  #  Practically an 'else' clause, because the 'if' above returns an answer
             print('ppF:', gF.lineno(), '| proxP1 keepList:', len(keepList))
             if len(gF.qLineIndexList[-1]) > 1:  #  Only keep going if we need more than 2 words analyzed
-                for each in gF.proxDicIndexList[-1][1:]:  #  Skip first indexNum, we already found it
-                    testList = gF.proxPlusLista[each][testLine[1][gF.qLineIndexList[-1][each]]]  #  Scans approximate words with indexes
+                for proxDicIndexes in gF.proxDicIndexList[-1][1:]:  #  Skip first indexNum, we already found it
+                    testList = gF.proxFunk.proxGrabber(testLine[1][gF.qLineIndexList[-1][proxDicIndexes]], proxDicIndexes)
+                    #testList = gF.proxPlusLista[each][testLine[1][gF.qLineIndexList[-1][each]]]  #  Scans approximate words with indexes
                     burnList = []  #  burnList holds words that don't match with mutual proxLists
                     for all in keepList:
                         if (all not in testList) or (all in gF.superBlackList[-1]): #or (testString not in rawText):  #  Add blackList screening later

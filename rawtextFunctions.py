@@ -17,7 +17,7 @@ def gov():
         gF.rhySwitch = True
         gF.metSwitch = True
         gF.thesSwitch = True
-        gF.rhyMap = 'abab'
+        gF.rhyMap = 'aa'
         gF.empMap = [[bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
                      [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
                      [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
@@ -28,9 +28,9 @@ def gov():
                     encoding='utf-8').read())
 
     nullSpace = ''  #  Certain characters will be replaced by null character
-    nullReplace = ['- \n', '-\n', '\n']  #  Hyphen at the end of lines indicates words that are broken
+    nullReplace = ['- \n', '-\n']  #  Hyphen at the end of lines indicates words that are broken
     whiteSpace = ' '  #  Whitespace erases characters, then whitespace shrinks itself
-    whiteReplace = ['_', '^', '~', '     ', '    ', '   ', '  ']
+    whiteReplace = ['_', '^', '~', '\n', '     ', '    ', '   ', '  ']
 
     gF.rawText = gF.rawText.replace('``', '"')
     gF.rawText = gF.rawText.replace("''", '"')
@@ -140,5 +140,13 @@ def gov():
             gF.doubles.append(key)
 
     print(gF.lineno(), "rhySwitch =", gF.rhySwitch)
+
+    gF.fono_file = 'eng/data/USen/USen_fonoDB.sqlite'    # name of the sqlite database file
+    gF.fonoConn = gF.sqlite3.connect(gF.fono_file)
+    gF.fonoCursor = gF.fonoConn.cursor()
+
+    gF.prox_file = gF.lang+'/data/textLibrary/textData/'+gF.textFile+'_prox.sqlite'    # name of the sqlite database file
+    gF.proxConn = gF.sqlite3.connect(gF.prox_file)
+    gF.proxCursor = gF.proxConn.cursor()
     
     gF.proxFunk.loadmakeData()

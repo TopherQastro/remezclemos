@@ -5,10 +5,10 @@ def veto():  #  Resets values in a line to
     print('lnF:', gF.lineno(), '| veto()')
     listInt = int(0)
     for lists in gF.superList:
-        print('lnF:', gF.lineno(), listInt, lists)
+        #print('lnF:', gF.lineno(), listInt, lists)
         while len(lists) > 0:
             lists.pop()
-        print('lnF:', gF.lineno(), listInt, lists)
+        #print('lnF:', gF.lineno(), listInt, lists)
         listInt+=1
     gF.printGlobalData([[],[]])
     return ([],[]), []

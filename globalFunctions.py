@@ -103,25 +103,38 @@ def begin():
 
     global proxP1, proxP2, proxP3, proxP4, proxP5, proxP6, proxP7, proxP8, proxP9
     global proxP10, proxP11, proxP12, proxP13, proxP14, proxP15, proxP16, proxP17
-    global proxP18, proxP19, proxP20
+    global proxP18, proxP19, proxP20, proxP21, proxP22, proxP23, proxP24
     global proxM1, proxM2, proxM3, proxM4, proxM5, proxM6, proxM7, proxM8, proxM9
     global proxM10, proxM11, proxM12, proxM13, proxM14, proxM15, proxM16, proxM17
-    global proxM18, proxM19, proxM20
-    global proxPlusLista, proxMinusLista, proxLib # gramProxLib, gramProxPlusLista, gramProxMinusLista
+    global proxM18, proxM19, proxM20, proxM21, proxM22, proxM23, proxM24
+    global proxPlusLista, proxMinusLista, proxLib, proxPlusStrings, proxMinusStrings # gramProxLib, gramProxPlusLista, gramProxMinusLista
     proxP1, proxP2, proxP3, proxP4, proxP5 = dd(list), dd(list), dd(list), dd(list), dd(list) 
     proxP6, proxP7, proxP8, proxP9, proxP10 = dd(list), dd(list), dd(list), dd(list), dd(list)
     proxP11, proxP12, proxP13, proxP14, proxP15 = dd(list), dd(list), dd(list), dd(list), dd(list)
     proxP16, proxP17, proxP18, proxP19, proxP20 = dd(list), dd(list), dd(list), dd(list), dd(list)
+    proxP21, proxP22, proxP23, proxP24 = dd(list), dd(list), dd(list), dd(list)
     proxM1, proxM2, proxM3, proxM4, proxM5 = dd(list), dd(list), dd(list), dd(list), dd(list) 
     proxM6, proxM7, proxM8, proxM9, proxM10 = dd(list), dd(list), dd(list), dd(list), dd(list)
     proxM11, proxM12, proxM13, proxM14, proxM15 = dd(list), dd(list), dd(list), dd(list), dd(list)
     proxM16, proxM17, proxM18, proxM19, proxM20 = dd(list), dd(list), dd(list), dd(list), dd(list)
+    proxM21, proxM22, proxM23, proxM24 = dd(list), dd(list), dd(list), dd(list)
     proxPlusLista = [proxP1, proxP2, proxP3, proxP4, proxP5, proxP6, proxP7, proxP8, 
                         proxP9, proxP10, proxP11, proxP12, proxP13, proxP14, proxP15, 
-                        proxP16, proxP17, proxP18, proxP19, proxP20]
+                        proxP16, proxP17, proxP18, proxP19, proxP20, proxP21, proxP22, 
+                        proxP23, proxP24]
     proxMinusLista = [proxM1, proxM2, proxM3, proxM4, proxM5, proxM6, proxM7, proxM8, 
-                        proxM9, proxM10, proxM11, proxM12, proxM13, proxM14, proxM15, 
-                        proxM16, proxM17, proxM18, proxM19, proxM20]
+                      proxM9, proxM10, proxM11, proxM12, proxM13, proxM14, proxM15, 
+                      proxM16, proxM17, proxM18, proxM19, proxM20, proxM21, proxM22, 
+                      proxM23, proxM24]
+    proxPlusStrings = ['proxP1', 'proxP2', 'proxP3', 'proxP4', 'proxP5', 'proxP6', 'proxP7', 'proxP8',
+                        'proxP9', 'proxP10', 'proxP11', 'proxP12', 'proxP13', 'proxP14', 'proxP15',
+                        'proxP16', 'proxP17', 'proxP18', 'proxP19', 'proxP20', 'proxP21', 'proxP22', 
+                        'proxP23', 'proxP24']
+    proxMinusStrings = ['proxM1', 'proxM2', 'proxM3', 'proxM4', 'proxM5', 'proxM6', 'proxM7', 'proxM8',
+                        'proxM9', 'proxM10', 'proxM11', 'proxM12', 'proxM13', 'proxM14', 'proxM15', 
+                        'proxM16', 'proxM17', 'proxM18', 'proxM19', 'proxM20', 'proxM21', 'proxM22',
+                        'proxM23', 'proxM24']
+
 
 
     global startTime, stopTime
@@ -159,6 +172,8 @@ def begin():
     empsY, empsZ = dd(list), dd(list)
 
     empsDics = [empsA, empsB, empsC, empsD, empsE, empsF, empsG, empsH, empsI, empsJ, empsK, empsL, empsM, empsN, empsO, empsP, empsQ, empsR, empsS, empsT, empsU, empsV, empsW, empsX, empsY, empsZ]
+
+    global fono_file, fonoConn, fonoCursor, prox_file, proxConn, proxCursor
 
 
 def printGlobalData(qLine):
@@ -353,7 +368,7 @@ def gpDataWriter(lang, allDics, strBit, textFile):
     print('building: data/textLibrary/textData/'+textFile+'-'+strBit+'.csv')
     gpDic = {}
     gpEntr = str()
-    print(len(allDics))
+    #$print('gF:', lineno(), '| len(allDics):', len(allDics))
     #print(allDics[0])
     for dicIndex in range(0, 19):
         if dicIndex == 0:
@@ -361,7 +376,7 @@ def gpDataWriter(lang, allDics, strBit, textFile):
                 for each in val:
                     gpEntr=gpEntr+each+'^'
                 gpDic[key] = gpEntr[:-1]+'~'
-                print(gpEntr)
+                #$print('gF:', lineno(), '|', gpEntr)
         else:
             try:
                 for each in allDics[dicIndex]:
@@ -369,7 +384,7 @@ def gpDataWriter(lang, allDics, strBit, textFile):
                         gpEntr = str()
                         for each in val:
                             gpEntr=gpEntr+each+'^'
-                            print("gpEntr:", len(gpEntr))
+                            #$print('gF:', lineno(), '| gpEntr:', len(gpEntr))
                         gpDic[key] = gpDic[key]+gpEntr[:-1]+'~'
             except KeyError:
                 print('kE datawriter:', pWord)
