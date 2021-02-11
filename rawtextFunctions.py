@@ -6,8 +6,8 @@ def gov():
     if gF.defaultSwitch == True:
         gF.lang = 'eng'
         gF.accent = 'USen'
-        gF.empMode = 'USen-unik'
-        gF.textFile = 'bibleY'
+        gF.empMode = 'USen-even'
+        gF.textFile = 'bibleZ'
         gF.poemQuota = 100
         gF.stanzaQuota = 1
         gF.proxMinDial = int(3)
@@ -18,11 +18,11 @@ def gov():
         gF.metSwitch = True
         gF.thesSwitch = True
         gF.rhyMap = 'aa'
-        gF.empMap = [[bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
+        gF.empMap = [[bool(0), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
                      [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
-                     [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
+                     [bool(0), bool(1), bool(1), bool(0), bool(1), bool(0), bool(1)],
                     #[bool(0), bool(1), bool(0), bool(0), bool(1)],
-                     [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)]]
+                     [bool(1), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)]]
 
     gF.rawText = str(open(gF.lang+'/data/textLibrary/'+gF.textFile+'.txt', 'r', 
                     encoding='utf-8').read())
@@ -59,60 +59,10 @@ def gov():
 
     #  Prepares switches to contractions
     if gF.contSwitch == True:
-        contractionFile = open(gF.lang+'/data/'+gF.accent+'/contractionList.txt', 'r')
-        contractionSwitch = gF.csv.reader(open(gF.lang+'/data/'+gF.accent+'/contractionSwitches.csv', 'r+'))
-        for line in contractionFile:  #  Makes a dictionary of contractions
-            gF.contractionList.append(line[:-1])  #  Remove '\n' before appending
-        print(gF.lineno(), 'len(contractionList):', len(gF.contractionList), 
-              gF.contractionList[:10])
-        try:
-            for line in contractionSwitch:
-                #if "'s" not in line[0]:  #  There's a problem with whether the line is a possessive or contraction of "___ is"
-                gF.contDic[line[0]] = line[1]
-        except IndexError:
-            gF.contDic = dd(list)
-        #print(gF.contDic)
-        print(gF.lineno(), 'len(contractionDic):', len(gF.contDic), 
-              gF.contDic["can't"], gF.contDic["don't"])
+        gF.altFunk.contractionLoad()
 
     if gF.thesSwitch == True:
-        try:
-            thesaurusFile = gF.csv.reader(open(gF.lang+'/data/textLibrary/textData/'
-                                            +gF.textFile+'-thesaurusFile.csv', 'r'))
-            print(gF.lineno(), 'loading thesDic...')
-            for line in thesaurusFile:
-                thesWords = line[1].split('^')
-                gF.thesDic[line[0]] = []
-                for all in thesWords:
-                    if (len(all) > 0) and (all not in gF.allPunx) and (all != line[0]):
-                        gF.thesDic[line[0]].append(all)
-            
-        except FileNotFoundError:
-            print(gF.lineno(), 'building thesDic...')
-            thesaurusFile = gF.csv.writer(open(gF.lang+'/data/textLibrary/textData/'+gF.textFile+'-thesaurusFile.csv', 'w+'))
-            for all in gF.splitText:
-                finalList = []
-                try:
-                    #print('\n.\n')
-                    gF.thesDic[all]  #  Test to see if the thesaurus has an entry already
-                except KeyError:
-                    try:
-                        syns = wn.synsets(all)
-                        for each in syns:
-                            wordData = str(each).split("'")
-                            synList = [str(lemma.name()) for lemma in wn.synset(wordData[1]).lemmas()]
-                            for syn in synList:
-                                if (syn not in finalList) and (syn != all) and (len(syn) > 0) and (syn not in allPunx):
-                                    finalList.append(syn)
-                        #print('thesaurus['+all+']:', finalList)
-                        gF.thesDic[all] = finalList
-                        thesLine = str()
-                        for each in finalList:
-                            thesLine+=(each+'^')
-                        thesaurusFile.writerow([all, thesLine[:-1]])
-                    except ValueError:
-                        print('ValueError:', all)
-                        continue
+       gF.dynaFunk.thisThesLoad()
                     
     gF.emps = gF.globalOpen(gF.lang+'/data/'+gF.accent+'/empDic-'
                                      +gF.empMode+'.csv', 'lista')
@@ -150,3 +100,25 @@ def gov():
     gF.proxCursor = gF.proxConn.cursor()
     
     gF.proxFunk.loadmakeData()
+
+
+def lineToString(pLine):
+    pString = str()
+    for each in pLine:
+        pString+=str(each)+' '
+    for each in silentPunx:
+        if each in pString:
+            pString.replace(' '+each, each)
+   #$ print('line2Str:', pString)
+    return pString
+    
+def stringToLine(pString):
+    for all in silentPunx:
+        if all in pString:
+            pString = pString.replace(all, ' '+all)
+    pLine = pString.split(' ')
+    while '' in pLine:
+        pLine.remove('')
+   #$ print('str2Line:', pLine)
+    return pLine
+

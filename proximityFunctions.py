@@ -57,7 +57,8 @@ def proxNewBuild():
     splitTLen = len(gF.splitText)
     print('pxF:', gF.lineno(), ' | begin loadmakeProxLibs()')
     #  Prox and gramprox store Markov chains and build in -Liner() functions
-    #  Libs declared here, made into lists of dics of lists, and called using indices on     #  The maximum length of theseslists are truncated based on the user's initial input
+    #  Libs declared here, made into lists of dics of lists, and called using indices on     
+    # #  The maximum length of theseslists are truncated based on the user's initial input
     print('pxF:', gF.lineno(), ' | builing proxLibs...')
     for all in range(0, (len(gF.proxMinusLista))):  #  Now that we've got an exhaustive list of real words, we'll create empty lists for all of them (could this get pre-empted for common words?)
         for each in gF.splitText:
@@ -177,8 +178,7 @@ def proxNewBuild():
                 print('pxF:', gF.lineno(), ' | fuckery:', entry)
                 continue
 
-    proxConn.commit()
-    proxConn.close()
+    gF.proxConn.commit()
     input('paused...')
 
 def proxDataBuilder(qLine, limitNum):  #  Takes the qLine and builds proxData up to a certain length

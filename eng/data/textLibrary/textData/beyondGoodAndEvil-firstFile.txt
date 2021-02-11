@@ -52,12 +52,13 @@ a
 kant
 granting
 —
-people
+peo
 all
 tod
 above
 one
 enough
+people
 an
 only
 y2
@@ -66,7 +67,7 @@ between
 14
 obversely
 sensualism
-consequently
+con
 i6
 more
 18
@@ -102,12 +103,13 @@ cynicism
 28
 like
 34
-everything
+every
 lessing
 29
 30
 books
 where
+everything
 later
 32
 instead
@@ -127,7 +129,6 @@ presupposing
 un
 should
 many
-every
 ii
 43
 philosopher
@@ -322,6 +323,7 @@ firstly
 s
 whatever
 neither
+conse
 208
 practises
 be
@@ -410,7 +412,7 @@ ribie
 ah
 beethoven
 weber
-schumann
+schu
 assuredly
 246
 247
@@ -421,7 +423,6 @@ compared
 2si
 about
 190
-thesis
 255
 suppose
 256
@@ -439,7 +440,7 @@ everjrwhere
 261
 262
 2o8
-variations
+varia
 nothing
 danger
 263
