@@ -9,14 +9,19 @@ def fonoBuild_USen():
     fonoDicsInt = int(0)
     fullList = []
     for fonoBits in fonoList:
-        thisDict = fonoDics[fonoDicsInt]
+        print('building dic:', fonoBits)
         dataFile = gF.csv.reader(open('eng/data/USen/USen-'+fonoBits+'.csv', 'r'))
         for line in dataFile:
-            print('fnF | word:', line[0], line[1])
-            thisDict[line[0]] = line[1]
+            #print('fnF',  gF.lineno(), '| word:', line[0], line[1])
+            fonoDics[fonoDicsInt][line[0]] = line[1]
             if line[0] not in fullList:
                 fullList.append(line[0])
-        fonoDicsInt += 1
+        fonoDicsInt+=1
+    print('len(vocs):', len(vocs), 'len(fono):', len(fono), 'len(fullList):', len(fullList))
+    for words in fullList:
+        if len(fono[words]) == 0:
+            print('no fono for', words, '\n', cons[words], vocs[words])
+
     return fonoDics, fullList
 
 def fonoBuild_UKen():
@@ -30,35 +35,34 @@ def fonoBuild_ESes():
 
 def fonoBuild_SQLmain(fonoDics, fullList):
 
-    print('fnF:', gF.lineno(), ' | begin fonoSQLBuild()')
+    print('fnF: | begin fonoSQLBuild()')
 
     fono, vocs, cons, empsFull, empsEven, empsUnik = fonoDics
     for letter in gF.upperAlphabet:  #  Creating SQL database grouped by initial letter
         gF.fonoCursor.execute('''CREATE TABLE mastFono'''+letter+'''(word TEXT,
         fono TEXT, vocs TEXT, cons TEXT, empsFull TEXT, empsEven TEXT, empsUnik TEXT)''')
 
-
+    wordCt = int(0)
     for word in fullList:
         if len(word) > 0:
-            print('pxF:', gF.lineno(), word)
             entry = word
+            wordCt+=1
+            print('fnF:', wordCt, word, fono[entry], vocs[entry], cons[entry], empsFull[entry], empsEven[entry], empsUnik[entry])
             if entry[0].upper() in gF.upperAlphabet:
                 tableKey = entry[0].upper()
             else:
                 tableKey = 'Q'
             
             try:        
-                gF.fonoCursor.execute('''INSERT INTO mastProx'''+tableKey+''' (word,
-                fono TEXT, vocs TEXT, cons TEXT, empsFull TEXT, empsEven TEXT, empsUnik TEXT)
-                VALUES(?,?,?,?,?,?,?,?,?)''', (word, fono[entry], vocs[entry], cons[entry], 
-                empsFull[entry], empsEven[entry], empsUnik[entry]))
+                gF.fonoCursor.execute('''INSERT INTO mastFono'''+tableKey+''' VALUES(?,?,?,?,?,?,?)''', 
+                (word, fono[entry], vocs[entry], cons[entry], empsFull[entry], empsEven[entry], empsUnik[entry]))
 
             except KeyError:
-                print('pxF:', gF.lineno(), ' | fuckery:', entry)
+                print('fnF: | fuckery:', entry)
                 continue
 
     gF.fonoConn.commit()
-    input('paused...')
+    #input('paused...')
 
 
 
@@ -278,4 +282,3 @@ def pEmpsLine(empKey, pLine):
     return empLine
 
 
-fonoBuild_SQLmain(fonoBuild_USen())

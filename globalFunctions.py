@@ -176,8 +176,17 @@ def begin():
     empsDics = [empsA, empsB, empsC, empsD, empsE, empsF, empsG, empsH, empsI, empsJ, empsK, empsL, empsM, empsN, empsO, empsP, empsQ, empsR, empsS, empsT, empsU, empsV, empsW, empsX, empsY, empsZ]
 
     global fono_file, fonoConn, fonoCursor
-    global prox_file, proxConn, proxCursor
-    global rhyme_file, rhyme_conn, rhymeCursor
+    fono_file = 'eng/data/USen/USen_fonoDB.db'
+    fonoConn = sqlite3.connect(fono_file)
+    fonoCursor = fonoConn.cursor()
+#    global prox_file, proxConn, proxCursor
+#    prox_file = sqlite3.connect(#sql database)
+#    proxConn = sqlite3.connect(prox_file)
+#    proxCursor = proxConn.cursor()
+#    global rhyme_file, rhyme_conn, rhymeCursor
+#    rhyme_file = sqlite3.connect(#sql database)
+#    rhymeConn = sqlite3.connect(rhyme_file)
+#    rhymeCursor = rhymeConn.cursor()
 
 
 def printGlobalData(qLine):

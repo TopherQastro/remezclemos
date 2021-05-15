@@ -35,9 +35,9 @@ def rhymeMainSQLBuild():
                 tableKey = 'Q'
             
             try:        
-                gF.fonoCursor.execute('''INSERT INTO mastProx'''+tableKey+''' (word,
+                gF.fonoCursor.execute('''INSERT INTO mastProx'''+tableKey+''' (word TEXT,
                 fono TEXT, emps TEXT, vocs TEXT, cons TEXT)
-                VALUES(?,?,?,?,?)''', (word, fono TEXT, emps TEXT, vocs TEXT, cons TEXT)
+                VALUES(?,?,?,?,?)''', (word, fono, emps, vocs, cons))
 
             except KeyError:
                 print('pxF:', gF.lineno(), ' | fuckery:', entry)
@@ -91,10 +91,10 @@ def rhyMaker(totalVs, rSyls):
     if rSyls < 10:
         rName = '0'+rName
     try:
-        libFile = csv.reader(open('data/USen/rhymes/alt/rhymeLib-t'+tName+"r"+rName+".csv", "r"))
+        libFile = gF.csv.reader(open('eng/data/USen/rhymes/rhymeLib-t'+tName+"r"+rName+".csv", "r"))
         print('rhymeLib-t'+tName+"r"+rName+" already exists")
     except IOError:
-        dicFile = csv.writer(open('data/USen/rhymes/alt/rhymeLib-t'+tName+"r"+rName+".csv", 'w+', encoding='latin-1'))
+        dicFile = gF.csv.writer(open('eng/data/USen/rhymes/rhymeLib-t'+tName+"r"+rName+".csv", 'w+', encoding='latin-1'))
         print('rhymeLib-t'+tName+"r"+rName+" beginning....")
         yaFound = []
         thisRhyDic = {}
