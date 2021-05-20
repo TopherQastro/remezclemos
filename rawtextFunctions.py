@@ -3,11 +3,16 @@ import globalFunctions as gF
 
 def gov():
 
+    gF.fonoSwitch = False
+    gF.vocsSwitch = False
+    gF.consSwitch = False
+    gF.empsSwitch = True
+
     if gF.defaultSwitch == True:
         gF.lang = 'eng'
         gF.accent = 'USen'
         gF.empMode = 'USen-even'
-        gF.textFile = 'bibleZ'
+        gF.textFile = 'ulysses'
         gF.poemQuota = 100
         gF.stanzaQuota = 1
         gF.proxMinDial = int(3)
@@ -63,31 +68,6 @@ def gov():
 
     if gF.thesSwitch == True:
        gF.dynaFunk.thisThesLoad()
-                    
-    gF.emps = gF.globalOpen(gF.lang+'/data/'+gF.accent+'/empDic-'
-                                     +gF.empMode+'.csv', 'lista')
-    for key, val in gF.emps.items():  #  Stored as ints because could be numbers up to 2. Change to bools
-        boolSwitch = []
-        for each in val:
-            if each == '1':
-                boolSwitch.append(bool(True))
-            else:
-                boolSwitch.append(bool(False))
-        gF.emps[key] = boolSwitch
-    gF.vocs = gF.globalOpen(gF.lang+'/data/'+gF.accent+
-                              '/vocDic-USen-MAS.csv', 'lista')
-    gF.cons = gF.globalOpen(gF.lang+'/data/'+gF.accent+
-                              '/conDic-USen-MAS.csv', 'lista')
-    gF.fono = gF.globalOpen(gF.lang+'/data/'+gF.accent+
-                              '/fonDic-USen-MAS.csv', 'lista')
-    print(gF.lineno(), 'len(emps):', len(gF.emps))
-
-    print(gF.lineno(), 'opening doubles')
-    for key, val in gF.emps.items():
-        if '(' in key:
-            gF.doubles.append(key[:-3])
-        else:
-            gF.doubles.append(key)
 
     print(gF.lineno(), "rhySwitch =", gF.rhySwitch)
 
@@ -95,7 +75,7 @@ def gov():
     gF.fonoConn = gF.sqlite3.connect(gF.fono_file)
     gF.fonoCursor = gF.fonoConn.cursor()
 
-    gF.prox_file = gF.lang+'/data/textLibrary/textData/'+gF.textFile+'_prox.sqlite'    # name of the sqlite database file
+    gF.prox_file = gF.lang+'/data/textLibrary/textData/'+gF.textFile+'_prox.db'    # name of the sqlite database file
     gF.proxConn = gF.sqlite3.connect(gF.prox_file)
     gF.proxCursor = gF.proxConn.cursor()
     
@@ -106,14 +86,14 @@ def lineToString(pLine):
     pString = str()
     for each in pLine:
         pString+=str(each)+' '
-    for each in silentPunx:
+    for each in gF.silentPunx:
         if each in pString:
             pString.replace(' '+each, each)
    #$ print('line2Str:', pString)
     return pString
     
 def stringToLine(pString):
-    for all in silentPunx:
+    for all in gF.silentPunx:
         if all in pString:
             pString = pString.replace(all, ' '+all)
     pLine = pString.split(' ')

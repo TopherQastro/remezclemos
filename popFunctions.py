@@ -83,7 +83,7 @@ def popWordPicker(qLine):  #  Digests words that fit a particular meter
     return ([],[])
 
 
-def superPopListMaker(empLine, pLEmps, proxExpress, qLine, runLine): #  Creates a list-of-lists to pull from
+def superPopListMaker(proxExpress, qLine, runLine): #  Creates a list-of-lists to pull from
     print('ppF:', gF.lineno(), 'sPLM init | len(gF.superPopList)', len(gF.superPopList))
     print('ppF:', gF.lineno(), 'qLine:', qLine)
     gF.printGlobalData(qLine)

@@ -84,6 +84,6 @@ def fonoBuild(doubles):
     doublesFile.close()
     contractionFile.close()
             
-doubLisnt = doubBuild(doublesFile)
+doubList = doubBuild(doublesFile)
 print('building fonoFiles')
 fonoBuild(doubList)

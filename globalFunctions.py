@@ -23,7 +23,7 @@ from tkinter import messagebox
 
 #  Internal, self-created files
 import alternateFunctions as altFunk
-#import dynasaurusFunctions as dynaFunk
+import dynasaurusFunctions as dynaFunk
 import fonoFunctions as fonoFunk
 import guiFunctions as guiFunk
 import lineFunctions as lineFunk
@@ -156,9 +156,69 @@ def begin():
     global thesDic 
     thesDic = dd(list)
 
-    print('opening fonoFiles')  #  These are global values, so they need to be opened regardless
-    global emps, vocs, cons, fono
-    emps, vocs, cons, fono = dd(list), dd(list), dd(list), dd(list)
+    global fonoSwitch, vocsSwitch, consSwitch, empsSwitch
+
+    global soundsLine
+    soundsLine = [[],[],[],[]]
+
+    # fono, vocs, cons, and emps are organized into alphabetical dictionaries
+    global soundDicsIndex
+    soundDicsIndex = {'A':0, 'B':1, 'C':2, 'D':3, 'E':4, 'F':5, 'G':6, 'H':7, 
+                     'I':8, 'J':9, 'K':10, 'L':11, 'M':12, 'N':13, 'O':14, 'P':15, 
+                     'Q':16, 'R':17, 'S':18, 'T':19, 'U':20, 'V':21, 'W':22, 'X':23, 
+                     'Y':24, 'Z':25}
+
+
+    global fonoA, fonoB, fonoC, fonoD, fonoE, fonoF, fonoG
+    global fonoH, fonoI, fonoJ, fonoK, fonoL, fonoM, fonoN
+    global fonoO, fonoP, fonoQ, fonoR, fonoS, fonoT, fonoU
+    global fonoV, fonoW, fonoX, fonoY, fonoZ, fonoDics
+
+    fonoA, fonoB, fonoC, fonoD = dd(list), dd(list), dd(list), dd(list)
+    fonoE, fonoF, fonoG, fonoH = dd(list), dd(list), dd(list), dd(list)
+    fonoI, fonoJ, fonoK, fonoL = dd(list), dd(list), dd(list), dd(list)
+    fonoM, fonoN, fonoO, fonoP = dd(list), dd(list), dd(list), dd(list)
+    fonoQ, fonoR, fonoS, fonoT = dd(list), dd(list), dd(list), dd(list)
+    fonoU, fonoV, fonoW, fonoX = dd(list), dd(list), dd(list), dd(list)
+    fonoY, fonoZ = dd(list), dd(list)
+
+    fonoDics = [fonoA, fonoB, fonoC, fonoD, fonoE, fonoF, fonoG, fonoH, fonoI, 
+                fonoJ, fonoK, fonoL, fonoM, fonoN, fonoO, fonoP, fonoQ, fonoR, 
+                fonoS, fonoT, fonoU, fonoV, fonoW, fonoX, fonoY, fonoZ]
+
+    global vocsA, vocsB, vocsC, vocsD, vocsE, vocsF, vocsG
+    global vocsH, vocsI, vocsJ, vocsK, vocsL, vocsM, vocsN
+    global vocsO, vocsP, vocsQ, vocsR, vocsS, vocsT, vocsU
+    global vocsV, vocsW, vocsX, vocsY, vocsZ, vocsDics
+
+    vocsA, vocsB, vocsC, vocsD = dd(list), dd(list), dd(list), dd(list)
+    vocsE, vocsF, vocsG, vocsH = dd(list), dd(list), dd(list), dd(list)
+    vocsI, vocsJ, vocsK, vocsL = dd(list), dd(list), dd(list), dd(list)
+    vocsM, vocsN, vocsO, vocsP = dd(list), dd(list), dd(list), dd(list)
+    vocsQ, vocsR, vocsS, vocsT = dd(list), dd(list), dd(list), dd(list)
+    vocsU, vocsV, vocsW, vocsX = dd(list), dd(list), dd(list), dd(list)
+    vocsY, vocsZ = dd(list), dd(list)
+
+    vocsDics = [vocsA, vocsB, vocsC, vocsD, vocsE, vocsF, vocsG, vocsH, vocsI, 
+                vocsJ, vocsK, vocsL, vocsM, vocsN, vocsO, vocsP, vocsQ, vocsR, 
+                vocsS, vocsT, vocsU, vocsV, vocsW, vocsX, vocsY, vocsZ]
+
+    global consA, consB, consC, consD, consE, consF, consG
+    global consH, consI, consJ, consK, consL, consM, consN
+    global consO, consP, consQ, consR, consS, consT, consU
+    global consV, consW, consX, consY, consZ, consDics
+
+    consA, consB, consC, consD = dd(list), dd(list), dd(list), dd(list)
+    consE, consF, consG, consH = dd(list), dd(list), dd(list), dd(list)
+    consI, consJ, consK, consL = dd(list), dd(list), dd(list), dd(list)
+    consM, consN, consO, consP = dd(list), dd(list), dd(list), dd(list)
+    consQ, consR, consS, consT = dd(list), dd(list), dd(list), dd(list)
+    consU, consV, consW, consX = dd(list), dd(list), dd(list), dd(list)
+    consY, consZ = dd(list), dd(list)
+
+    consDics = [consA, consB, consC, consD, consE, consF, consG, consH, consI, 
+                consJ, consK, consL, consM, consN, consO, consP, consQ, consR, 
+                consS, consT, consU, consV, consW, consX, consY, consZ]
 
     global empsA, empsB, empsC, empsD, empsE, empsF, empsG
     global empsH, empsI, empsJ, empsK, empsL, empsM, empsN
@@ -173,20 +233,20 @@ def begin():
     empsU, empsV, empsW, empsX = dd(list), dd(list), dd(list), dd(list)
     empsY, empsZ = dd(list), dd(list)
 
-    empsDics = [empsA, empsB, empsC, empsD, empsE, empsF, empsG, empsH, empsI, empsJ, empsK, empsL, empsM, empsN, empsO, empsP, empsQ, empsR, empsS, empsT, empsU, empsV, empsW, empsX, empsY, empsZ]
+    empsDics = [empsA, empsB, empsC, empsD, empsE, empsF, empsG, empsH, empsI, 
+                empsJ, empsK, empsL, empsM, empsN, empsO, empsP, empsQ, empsR, 
+                empsS, empsT, empsU, empsV, empsW, empsX, empsY, empsZ]
 
-    global fono_file, fonoConn, fonoCursor
-    fono_file = 'eng/data/USen/USen_fonoDB.db'
-    fonoConn = sqlite3.connect(fono_file)
-    fonoCursor = fonoConn.cursor()
-#    global prox_file, proxConn, proxCursor
-#    prox_file = sqlite3.connect(#sql database)
-#    proxConn = sqlite3.connect(prox_file)
-#    proxCursor = proxConn.cursor()
-#    global rhyme_file, rhyme_conn, rhymeCursor
-#    rhyme_file = sqlite3.connect(#sql database)
-#    rhymeConn = sqlite3.connect(rhyme_file)
-#    rhymeCursor = rhymeConn.cursor()
+
+    global sound_file, soundConn, soundCursor
+    sound_file = 'eng/data/USen/USen_fonoDB.db'
+    soundConn = sqlite3.connect(sound_file)
+    soundCursor = soundConn.cursor()
+    global prox_file, proxConn, proxCursor
+    global rhyme_file, rhyme_conn, rhymeCursor
+    # rhyme_file = sqlite3.connect(#sql database)
+    # rhymeConn = sqlite3.connect(rhyme_file)
+    # rhymeCursor = rhymeConn.cursor()
 
 
 def printGlobalData(qLine):
