@@ -30,7 +30,7 @@ def removeWordR(qLine, runLine):  #  Remove the rightmost word from line
         print('lnF:', gF.lineno(), "| rMR - if1")
         minusWord0 = qLine[0].pop()  #  Remove word from first part of line
         minusWord1 = qLine[1].pop()  #  Until better method introduced, cut rLine here
-        gF.fonoFunk.subtractFonoLine(minusWord0)
+        gF.fonoFunk.subtractFonoLine((minusWord0, minusWord1))
         print('lnF:', gF.lineno(), '| len(superBlackList):', len(gF.superBlackList))
         print('lnF:', gF.lineno(), '| minusWord0:', minusWord0)
         gF.superBlackList.append([])  #  Add one to remove, because this was easiest in code

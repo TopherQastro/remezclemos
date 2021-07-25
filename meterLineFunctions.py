@@ -37,30 +37,51 @@ def gov(empsKeyLine, qLine, qAnteLine, proxExpress):
             print('mLF:', gF.lineno(), '| gov() - qLine and popLists out')
             return ([],[]), True  #  qLine, killSwitch
         print('mLF:', gF.lineno(), '| gov() - popWord:', popWord)
-        if len(popWord[1]) > 0:
-            gF.fonoFunk.addFonoLine(empsKeyLine, popWord)
         print('mLF:', gF.lineno(), '| gov() - runLine:', runLine)
         print('mLF:', gF.lineno(), '| gov() - qLine:', qLine)
-        if gF.soundsLine[3] == empsKeyLine[:len(gF.soundsLine[3])]:
-            print('mLF:', gF.lineno(), '| gov() - runLine:', runLine)
-            print('mLF:', gF.lineno(), '| gov() - qLine:', qLine)
-            qLine, killSwitch = gF.lineFunk.acceptWordR(runLine, qLine, popWord)
-            print('mLF:', gF.lineno(), qLine)
-        elif len(gF.superPopList[-1]+gF.expressList[-1]+gF.thesList[-1]+gF.contList[-1]+gF.punxList[-1]+gF.dynaList[-1]) == 0:
+        if len(popWord[1]) > 0:
+            if popWord[1] in gF.doubles:
+                doubInt = int(0)
+                popWord = (popWord[0]+'(0)', popWord[1]+'(0)')
+                fonoResult = 'gotIt'
+                while fonoResult == 'gotIt':
+                    print('mLF:', gF.lineno(), '| ', popWord, doubInt, str(doubInt))
+                    gF.printGlobalData(qLine)
+                    popWord = (popWord[0][:-3]+'('+str(doubInt)+')', popWord[1][:-3]+'('+str(doubInt)+')')
+                    gF.expressList.insert(0, popWord[1])
+                    fonoResult = gF.fonoFunk.addFonoLine(empsKeyLine, popWord)
+                    if fonoResult != 'gotIt':
+                        popWord = (popWord[0][:-3]+'(0)', popWord[1][:-3]+'(0)')
+                        fonoResult = 'gotIt'
+                        break
+                    gF.fonoFunk.subtractFonoLine(popWord)
+                    doubInt+=1
+            print('mLF:', gF.lineno(), '| gov() - popWord:', popWord, '- empsKeyLine:', empsKeyLine, '- soundsLine[3]:', gF.soundsLine[3])
+            fonoResult = gF.fonoFunk.addFonoLine(empsKeyLine, popWord)
+            print('mLF:', gF.lineno(), '| gov() - popWord:', popWord, '- empsKeyLine:', empsKeyLine, '- soundsLine[3]:', gF.soundsLine[3])
+            gF.printGlobalData(qLine)
+            if gF.soundsLine[3] == empsKeyLine[:len(gF.soundsLine[3])] and fonoResult != 'noInfo':
+                print('mLF:', gF.lineno(), '| gov() - runLine:', runLine)
+                print('mLF:', gF.lineno(), '| gov() - qLine:', qLine)
+                qLine, killSwitch = gF.lineFunk.acceptWordR(runLine, qLine, popWord)
+                print('mLF:', gF.lineno(), qLine)
+            elif fonoResult == 'gotIt':
+                gF.fonoFunk.subtractFonoLine(popWord) 
+        if len(gF.superPopList[-1]+gF.expressList[-1]+gF.thesList[-1]+gF.contList[-1]+gF.punxList[-1]+gF.dynaList[-1]) == 0:
             if len(gF.qLineIndexList[-1]) > gF.proxMinDial:
                 gF.proxFunk.snipProxData(empsKeyLine, gF.soundsLine[3], proxExpress, qLine, runLine)
             else:
-                qLine, runLine = gF.lineFunk.removeWordR(empsKeyLine, qLine, runLine)
+                qLine, runLine = gF.lineFunk.removeWordR(qLine, runLine)
         if len(gF.superPopList) == 0:
             return ([],[]), True
         print('mLF:', gF.lineno(), '| gov() - qLine:', qLine, gF.soundsLine[3])
         if gF.soundsLine[3] == empsKeyLine and qLine[1][-1] in gF.nonEnders:
             print('mLF:', gF.lineno(), '| gov() - nonending word')
-            qLine, runLine = gF.lineFunk.removeWordR(empsKeyLine, qLine, runLine)
+            qLine, runLine = gF.lineFunk.removeWordR(qLine, runLine)
         print('mLF:', gF.lineno(), '| gov() - end of meterGov ifchecks', qLine, gF.soundsLine[3])
         while len(gF.soundsLine[3]) > len(empsKeyLine):  #  If somehow the line went over the numbered lists
             print('mLF:', gF.lineno(), '| gov() - meterGov over emps')
-            qLine, runLine = gF.lineFunk.removeWordR(empsKeyLine, qLine, runLine)
+            qLine, runLine = gF.lineFunk.removeWordR(qLine, runLine)
         print('mLF:', gF.lineno(), '| gov() - gF.soundsLine[3]:', gF.soundsLine[3], '- empsKeyLine:', empsKeyLine)
     return qLine, killSwitch    
 

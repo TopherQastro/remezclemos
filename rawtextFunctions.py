@@ -1,6 +1,7 @@
 
 import globalFunctions as gF
 
+
 def gov():
 
     gF.fonoSwitch = False
@@ -11,8 +12,8 @@ def gov():
     if gF.defaultSwitch == True:
         gF.lang = 'eng'
         gF.accent = 'USen'
-        gF.empMode = 'USen-even'
-        gF.textFile = 'ulysses'
+        gF.empMode = 'empsEven'
+        gF.textFile = 'genesisZ'
         gF.poemQuota = 100
         gF.stanzaQuota = 1
         gF.proxMinDial = int(3)
@@ -23,9 +24,9 @@ def gov():
         gF.metSwitch = True
         gF.thesSwitch = True
         gF.rhyMap = 'aa'
-        gF.empMap = [[bool(0), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
-                     [bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
-                     [bool(0), bool(1), bool(1), bool(0), bool(1), bool(0), bool(1)],
+        gF.empMap = [[bool(1), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
+                     [bool(1), bool(0), bool(0), bool(1), bool(0), bool(1), bool(0), bool(1)],
+                     [bool(1), bool(0), bool(1), bool(0), bool(1), bool(0), bool(1)],
                     #[bool(0), bool(1), bool(0), bool(0), bool(1)],
                      [bool(1), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)]]
 

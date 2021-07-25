@@ -55,10 +55,12 @@ def begin():
     superList, superPopList, expressList, thesList, dynaList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList = [], [], [], [], [], [], [], [], [], []
     superList = superPopList, expressList, thesList, dynaList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList
 
-    global quantumList, nonEnders, upperAlphabet, lowerAlphabet, allPunx, midPunx, endPunx #  List of words used for quantum emp patterns
+    global quantumList, nonEnders, upperAlphabet, lowerAlphabet, allPunx, midPunx, endPunx, deadPunx #  List of words used for quantum emp patterns
     quantumList = ['was', 'be', 'and', 'to', 'for', 'a', 'the', 'in', 'at', 'but', 'an',
                 'not', 'is', 'do', 'did', 'can', 'could', 'will', 'does', 'of', 'as',
-                'when', 'than', 'then', 'my', 'your', 'too', 'would', 'should'] 
+                'when', 'than', 'then', 'my', 'your', 'too', 'would', 'should', 'he', 'him',
+                'his', 'she', 'her', 'hers', 'they', 'them', 'their', "they're", 'there',
+                'have', 'had', 'has', 'must', 'with', 'i', 'from', 'through', 'now', 'on'] 
     nonEnders = ['and', 'or', 'a', 'but', 'the', 'an', ',', ';', ':', '--'] #  Words that don't sound well ending a sentence
     upperAlphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
                      'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -66,10 +68,11 @@ def begin():
                      'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
     allPunx = ['.', ',', ';', ',', ':', '!', '?', '--', '"', "''", '-', '\\', '+',
             '=', '/', '<', '>', '(', ')']  #  Doesn't include apostrophe, because
-                                            #  that could be part of a contraction
+                                           #  that could be part of a contraction
     midPunx = [',', ';', ':', '--']
     endPunx = ['.', '!', '?']  #  To gather which words immediately thereafter should start 
-                            #  a sentence
+                               #  a sentence
+    deadPunx = ['(', ')', '<', '>', '"', '[', ']']
 
 
     vocsList = ['a', 'e', 'i', 'o', 'u', 'y', 'A', 'E', 'I', 'O', 'U', 'V', 'Y', '3', '0', '@', '&', 'L', 'M',  'N', '%', '!', '#', '$', '^', '*', '(', ')', '?', '<', '>', '.', '|', ']', '[', '=']
@@ -148,6 +151,15 @@ def begin():
 
     global unknownWords, doubles
     unknownWords, doubles = [], []
+    doubles_file = open('eng/data/USen/doubleList.txt', 'r')
+    print('gloF:', lineno(), 'building doubles...')
+    for line in doubles_file:
+        line = line.replace('\n', '')  #  Take out \n from line
+        doubles.append(line)
+    print('gloF:', lineno(), 'len(doubles):', len(doubles))
+    # for doubs in doubles:
+    #     print('doubled word:', doubs)
+
 
     global contDic, contractionList  #  These are immutable and should be accessed wherever
     contDic = dd(list)  #  Use a dictionary to look up contraction switches
@@ -174,13 +186,13 @@ def begin():
     global fonoO, fonoP, fonoQ, fonoR, fonoS, fonoT, fonoU
     global fonoV, fonoW, fonoX, fonoY, fonoZ, fonoDics
 
-    fonoA, fonoB, fonoC, fonoD = dd(list), dd(list), dd(list), dd(list)
-    fonoE, fonoF, fonoG, fonoH = dd(list), dd(list), dd(list), dd(list)
-    fonoI, fonoJ, fonoK, fonoL = dd(list), dd(list), dd(list), dd(list)
-    fonoM, fonoN, fonoO, fonoP = dd(list), dd(list), dd(list), dd(list)
-    fonoQ, fonoR, fonoS, fonoT = dd(list), dd(list), dd(list), dd(list)
-    fonoU, fonoV, fonoW, fonoX = dd(list), dd(list), dd(list), dd(list)
-    fonoY, fonoZ = dd(list), dd(list)
+    fonoA, fonoB, fonoC, fonoD = {}, {}, {}, {}
+    fonoE, fonoF, fonoG, fonoH = {}, {}, {}, {}
+    fonoI, fonoJ, fonoK, fonoL = {}, {}, {}, {}
+    fonoM, fonoN, fonoO, fonoP = {}, {}, {}, {}
+    fonoQ, fonoR, fonoS, fonoT = {}, {}, {}, {}
+    fonoU, fonoV, fonoW, fonoX = {}, {}, {}, {}
+    fonoY, fonoZ = {}, {}
 
     fonoDics = [fonoA, fonoB, fonoC, fonoD, fonoE, fonoF, fonoG, fonoH, fonoI, 
                 fonoJ, fonoK, fonoL, fonoM, fonoN, fonoO, fonoP, fonoQ, fonoR, 
@@ -191,13 +203,13 @@ def begin():
     global vocsO, vocsP, vocsQ, vocsR, vocsS, vocsT, vocsU
     global vocsV, vocsW, vocsX, vocsY, vocsZ, vocsDics
 
-    vocsA, vocsB, vocsC, vocsD = dd(list), dd(list), dd(list), dd(list)
-    vocsE, vocsF, vocsG, vocsH = dd(list), dd(list), dd(list), dd(list)
-    vocsI, vocsJ, vocsK, vocsL = dd(list), dd(list), dd(list), dd(list)
-    vocsM, vocsN, vocsO, vocsP = dd(list), dd(list), dd(list), dd(list)
-    vocsQ, vocsR, vocsS, vocsT = dd(list), dd(list), dd(list), dd(list)
-    vocsU, vocsV, vocsW, vocsX = dd(list), dd(list), dd(list), dd(list)
-    vocsY, vocsZ = dd(list), dd(list)
+    vocsA, vocsB, vocsC, vocsD = {}, {}, {}, {}
+    vocsE, vocsF, vocsG, vocsH = {}, {}, {}, {}
+    vocsI, vocsJ, vocsK, vocsL = {}, {}, {}, {}
+    vocsM, vocsN, vocsO, vocsP = {}, {}, {}, {}
+    vocsQ, vocsR, vocsS, vocsT = {}, {}, {}, {}
+    vocsU, vocsV, vocsW, vocsX = {}, {}, {}, {}
+    vocsY, vocsZ = {}, {}
 
     vocsDics = [vocsA, vocsB, vocsC, vocsD, vocsE, vocsF, vocsG, vocsH, vocsI, 
                 vocsJ, vocsK, vocsL, vocsM, vocsN, vocsO, vocsP, vocsQ, vocsR, 
@@ -208,13 +220,13 @@ def begin():
     global consO, consP, consQ, consR, consS, consT, consU
     global consV, consW, consX, consY, consZ, consDics
 
-    consA, consB, consC, consD = dd(list), dd(list), dd(list), dd(list)
-    consE, consF, consG, consH = dd(list), dd(list), dd(list), dd(list)
-    consI, consJ, consK, consL = dd(list), dd(list), dd(list), dd(list)
-    consM, consN, consO, consP = dd(list), dd(list), dd(list), dd(list)
-    consQ, consR, consS, consT = dd(list), dd(list), dd(list), dd(list)
-    consU, consV, consW, consX = dd(list), dd(list), dd(list), dd(list)
-    consY, consZ = dd(list), dd(list)
+    consA, consB, consC, consD = {}, {}, {}, {}
+    consE, consF, consG, consH = {}, {}, {}, {}
+    consI, consJ, consK, consL = {}, {}, {}, {}
+    consM, consN, consO, consP = {}, {}, {}, {}
+    consQ, consR, consS, consT = {}, {}, {}, {}
+    consU, consV, consW, consX = {}, {}, {}, {}
+    consY, consZ = {}, {}
 
     consDics = [consA, consB, consC, consD, consE, consF, consG, consH, consI, 
                 consJ, consK, consL, consM, consN, consO, consP, consQ, consR, 
@@ -225,13 +237,13 @@ def begin():
     global empsO, empsP, empsQ, empsR, empsS, empsT, empsU
     global empsV, empsW, empsX, empsY, empsZ, empsDics
 
-    empsA, empsB, empsC, empsD = dd(list), dd(list), dd(list), dd(list)
-    empsE, empsF, empsG, empsH = dd(list), dd(list), dd(list), dd(list)
-    empsI, empsJ, empsK, empsL = dd(list), dd(list), dd(list), dd(list)
-    empsM, empsN, empsO, empsP = dd(list), dd(list), dd(list), dd(list)
-    empsQ, empsR, empsS, empsT = dd(list), dd(list), dd(list), dd(list)
-    empsU, empsV, empsW, empsX = dd(list), dd(list), dd(list), dd(list)
-    empsY, empsZ = dd(list), dd(list)
+    empsA, empsB, empsC, empsD = {}, {}, {}, {}
+    empsE, empsF, empsG, empsH = {}, {}, {}, {}
+    empsI, empsJ, empsK, empsL = {}, {}, {}, {}
+    empsM, empsN, empsO, empsP = {}, {}, {}, {}
+    empsQ, empsR, empsS, empsT = {}, {}, {}, {}
+    empsU, empsV, empsW, empsX = {}, {}, {}, {}
+    empsY, empsZ = {}, {}
 
     empsDics = [empsA, empsB, empsC, empsD, empsE, empsF, empsG, empsH, empsI, 
                 empsJ, empsK, empsL, empsM, empsN, empsO, empsP, empsQ, empsR, 
@@ -269,12 +281,6 @@ def printGlobalData(qLine):
             #     input('paused')
         indInt+=1
 
-
-def dataFileOpener(lang, proxLista, libInt, strBit, textFile):
-    dataFile = csv.reader(open(lang+'/data/textLibrary/textData/'+textFile+'-'+strBit+str(all+1)+'.csv', 'r'))
-    for line in dataFile:
-        proxLista[all][line[0]] = line[1].split('^')
-        
 
 begin()
 print('gloFunk loaded')
