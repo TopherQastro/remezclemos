@@ -5,4 +5,6 @@
 */*/*/*/*.sqlite filter=lfs diff=lfs merge=lfs -text
 */*/*/*/*/*.sqlite filter=lfs diff=lfs merge=lfs -text
 */*/*/*/*/*/*.sqlite filter=lfs diff=lfs merge=lfs -text
+eng/data/textLibrary/textData/*,db filter=lfs diff=lfs merge=lfs -text
+eng/data/textLibrary/textData/*.db filter=lfs diff=lfs merge=lfs -text
 eng/data/textLibrary/textData filter=lfs diff=lfs merge=lfs -text
