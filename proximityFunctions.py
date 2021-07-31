@@ -218,7 +218,11 @@ def proxGrabber(thisWord, proxIndex):
     gF.proxCursor.execute('''SELECT '''+gF.proxPlusStrings[proxIndex]+''' FROM mastProx'''+tablekey+''' WHERE word=?''', (thisWord,))
     proxInfo = gF.proxCursor.fetchone()
     print('pxF:', gF.lineno(), '| proxInfo:', proxInfo)
-    proxList = proxInfo[0].split('^')
+    if len(proxInfo) > 0:
+        proxList = proxInfo[0].split('^')
+    else:
+        proxList = []
+        print('pxF:', gF.lineno(), '| no words found')
     print('pxF:', gF.lineno(), '| proxList:', proxList)
     #input('paused')
     gF.proxPlusLista[proxIndex][thisWord] = proxList
