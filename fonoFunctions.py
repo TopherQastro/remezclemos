@@ -3,7 +3,7 @@ import globalFunctions as gF
 
 def loadFonoWordData(empsKeyLine, newWord, checkInitial):
     fonoLine, vocsLine, consLine, empsLine = gF.soundsLine
-    print('fnF:', gF.lineno(), empsLine)
+    #print('fnF:', gF.lineno(), empsLine)
     try:
         if gF.fonoSwitch == True:
             fonoLine+=gF.fonoDics[gF.soundDicsIndex[checkInitial]][newWord]
@@ -12,44 +12,44 @@ def loadFonoWordData(empsKeyLine, newWord, checkInitial):
         if gF.consSwitch == True:
             consLine+=gF.consDics[gF.soundDicsIndex[checkInitial]][newWord]
         if gF.empsSwitch == True:
-            print('fnF:', gF.lineno(), '| loadFono() - checking:', newWord, gF.empsDics[gF.soundDicsIndex[checkInitial]][newWord])
+            #print('fnF:', gF.lineno(), '| loadFono() - checking:', newWord, gF.empsDics[gF.soundDicsIndex[checkInitial]][newWord])
             if '(' in newWord:
                 quantumCheck = newWord[:-3]
             else:
                 quantumCheck = newWord
             if quantumCheck in gF.quantumList:
-                print('fnF:', gF.lineno(), 'quantumFono')
+                #print('fnF:', gF.lineno(), 'quantumFono')
                 presentEmpsLen = len(gF.soundsLine[3])
                 empsLine+=empsKeyLine[presentEmpsLen:presentEmpsLen+len(gF.empsDics[gF.soundDicsIndex[checkInitial]][newWord])]
             else:
-                print('fnF:', gF.lineno(), 'not quantum')
+                #print('fnF:', gF.lineno(), 'not quantum')
                 empsLine+=gF.empsDics[gF.soundDicsIndex[checkInitial]][newWord]
         gF.soundsLine = fonoLine, vocsLine, consLine, empsLine
-        print('fnF:', gF.lineno(), '| ', newWord, empsLine)
+        #print('fnF:', gF.lineno(), '| ', newWord, empsLine)
         return 'gotIt'
     except KeyError:
-        print('fnF:', gF.lineno(), '| loadFono() - keyError - fono not found')
-        print('fnF:', gF.lineno(), '| loadFono() -', newWord, empsLine)
+        #print('fnF:', gF.lineno(), '| loadFono() - keyError - fono not found')
+        #print('fnF:', gF.lineno(), '| loadFono() -', newWord, empsLine)
         return 'noInfo'
 
 
 def addFonoLine(empsKeyLine, pWord):
     newWord = pWord[0]
-    print('fnF:', gF.lineno(), newWord, gF.soundsLine[3])
+    #print('fnF:', gF.lineno(), newWord, gF.soundsLine[3])
     if len(newWord) > 0:
         if newWord[0].upper() in gF.upperAlphabet:
             checkInitial = newWord[0].upper()
         else:
             checkInitial = 'Q'
-        print('fnF:', gF.lineno(), '| addFonoLine() - loading fonoInfo')
+        #print('fnF:', gF.lineno(), '| addFonoLine() - loading fonoInfo')
         fonoLoad = loadFonoWordData(empsKeyLine, newWord, checkInitial)
     else:
         return 'noInfo'
     if fonoLoad == 'noInfo':
         gF.soundCursor.execute("SELECT * FROM mastFono"+checkInitial+" WHERE word=?", (newWord,))
-        print('fnF:', gF.lineno(), '| addFonoLine()', gF.soundsLine[3])
+        #print('fnF:', gF.lineno(), '| addFonoLine()', gF.soundsLine[3])
         soundInfo = gF.soundCursor.fetchone()
-        print('fnF:', gF.lineno(), soundInfo)
+        #print('fnF:', gF.lineno(), soundInfo)
         if soundInfo is not None:
             if gF.fonoSwitch == True:
                 gF.fonoDics[gF.soundDicsIndex[checkInitial]][newWord] = soundInfo[1].split('^')
@@ -72,10 +72,10 @@ def addFonoLine(empsKeyLine, pWord):
                         boolEmps.append(bool(False))
                 gF.empsDics[gF.soundDicsIndex[checkInitial]][newWord] = boolEmps
             loadFonoWordData(empsKeyLine, newWord, checkInitial)
-            print('fnF:', gF.lineno(), '| found:', newWord, gF.soundsLine[3])
+            #print('fnF:', gF.lineno(), '| found:', newWord, gF.soundsLine[3])
             return 'gotIt'
         else:    
-            print('fnF:', gF.lineno(), '| noInfo:', newWord, gF.soundsLine[3])
+            #print('fnF:', gF.lineno(), '| noInfo:', newWord, gF.soundsLine[3])
             return 'noInfo'
     else:
         return 'gotIt'

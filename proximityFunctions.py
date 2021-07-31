@@ -76,7 +76,7 @@ def proxNewBuild():
                     tablekey = 'Q'
                 proxNumerator, proxDicCounter, proxMax = int(1), int(0), len(gF.proxMinusLista)
                 if words in gF.endPunx:
-                    print('pxF:', gF.lineno(), ' | firstWord:', newSplitText[splitTIndex+1]) 
+                    #print('pxF:', gF.lineno(), ' | firstWord:', newSplitText[splitTIndex+1]) 
                     firstWord = newSplitText[splitTIndex+1]
                     if firstWord not in gF.firstWords:
                         gF.firstWords.append(firstWord)
@@ -113,7 +113,7 @@ def proxNewBuild():
 
     for word in fullList:
         if len(word) > 0:
-            print('pxF:', gF.lineno(), word)
+            #print('pxF:', gF.lineno(), word)
             entry = word
             if entry[0].upper() in gF.upperAlphabet:
                 tableKey = entry[0].upper()
@@ -132,7 +132,7 @@ def proxNewBuild():
                     proxEntry+=(proxKeys+'^')
                 superProxEntry.append(proxEntry[:-1])
 
-            print('pxF:', gF.lineno(), superProxEntry)
+            #print('pxF:', gF.lineno(), superProxEntry)
             
             try:        
                 gF.proxCursor.execute('''INSERT INTO mastProx'''+tableKey+''' (word,
@@ -163,7 +163,7 @@ def proxNewBuild():
                 continue
 
     gF.proxConn.commit()
-    input('paused...')
+    #input('paused...')
 
 def proxDataBuilder(qLine, limitNum):  #  Takes the qLine and builds proxData up to a certain length
     print('pxF:', gF.lineno(), '| proxDataBuilder() - qLine:', qLine) # , qLineIndexList, proxDicIndexList)

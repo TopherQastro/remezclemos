@@ -13,7 +13,7 @@ def gov():
         gF.lang = 'eng'
         gF.accent = 'USen'
         gF.empMode = 'empsEven'
-        gF.textFile = 'genesisZ'
+        gF.textFile = 'bibleZ'
         gF.poemQuota = 100
         gF.stanzaQuota = 1
         gF.proxMinDial = int(3)
