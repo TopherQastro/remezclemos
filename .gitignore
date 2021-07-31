@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 eng/data/textLibrary/textData/archive/beyondGoodAndEvil_prox.sqlite
 eng/data/textLibrary/textData/archive/beyondGoodAndEvil-firstFile.txt
 eng/data/textLibrary/textData/archive/beyondGoodAndEvil-proxM.csv
@@ -31,3 +32,8 @@ eng/data/textLibrary/textData/archive/superBible-thesaurusFile.csv
 eng/data/textLibrary/textData/archive/ulysses_prox.sqlite
 eng/data/textLibrary/textData/archive/ulysses-thesaurusFile.csv
 eng/data/USen/archive/contractionSwitches.csv
+=======
+eng/data/textLibrary/textData
+eng/data/USen/archive/contractionSwitches.csv
+
+>>>>>>> d14b777ed08be759b3fbd8d881d8cbe4185e031a
