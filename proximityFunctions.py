@@ -207,6 +207,7 @@ def snipProxData(proxExpress, qLine, runLine):
 
 
 def proxGrabber(thisWord, proxIndex):
+    #->! need to insure doubles are both registered and not repeated
     print('pxF:', gF.lineno(), '| proxGrabbing:', thisWord, gF.proxPlusStrings[proxIndex])
     print('pxF:', gF.lineno(), '| pulling from SQL database', gF.proxPlusLista[proxIndex][thisWord])
     tablekey = thisWord[0].upper()
@@ -215,6 +216,11 @@ def proxGrabber(thisWord, proxIndex):
             tablekey = 'Q'
         elif gF.lang == 'esp':
             tablekey = 'K'
+    if '(0)' in thisWord:  #  If this is a doubled word, accept the first version's prox, skip rest
+        thisWord = thisWord[:-3]
+        print('pxF:', gF.lineno(), '| doubledWord:', thisWord)
+    elif '(' in thisWord:  #  If this is another doubled, we already got the prox
+        return []
     gF.proxCursor.execute('''SELECT '''+gF.proxPlusStrings[proxIndex]+''' FROM mastProx'''+tablekey+''' WHERE word=?''', (thisWord,))
     proxInfo = gF.proxCursor.fetchone()
     print('pxF:', gF.lineno(), '| proxInfo:', proxInfo)

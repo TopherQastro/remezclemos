@@ -48,7 +48,7 @@ def gov(empsKeyLine, qLine, qAnteLine, proxExpress):
                     print('mLF:', gF.lineno(), '| ', popWord, doubInt, str(doubInt))
                     gF.printGlobalData(qLine)
                     popWord = (popWord[0][:-3]+'('+str(doubInt)+')', popWord[1][:-3]+'('+str(doubInt)+')')
-                    gF.expressList.insert(0, popWord[1])
+                    gF.expressList[-1].append(popWord[1])  #  Insert the doubled word into the last expressList
                     fonoResult = gF.fonoFunk.addFonoLine(empsKeyLine, popWord)
                     if fonoResult != 'gotIt':
                         popWord = (popWord[0][:-3]+'(0)', popWord[1][:-3]+'(0)')

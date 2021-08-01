@@ -10,6 +10,7 @@ def veto():  #  Resets values in a line to
             lists.pop()
         #print('lnF:', gF.lineno(), listInt, lists)
         listInt+=1
+    gF.soundsLine = [[],[],[],[]]
     gF.printGlobalData([[],[]])
     return ([],[])
           # qLine
