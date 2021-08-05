@@ -1,244 +1,89 @@
 
+#  This next section was organized as follows:
+##  tVocs (or, 't') = 
+
 import globalFunctions as gF
 
-def rhymeMainSQLBuild():
-
-    print('fnF:', gF.lineno(), ' | begin rhymeSQLBuild()')
-
-    for letter in gF.upperAlphabet:  #  Creating SQL database grouped by initial letter
-        gF.rhymeCursor.execute('''CREATE TABLE mastRhyme'''+letter+'''(word TEXT,
-        t01r01 TEXT, t02r01 TEXT, t03r01 TEXT, t04r01 TEXT, t05r01 TEXT, t06r01 TEXT, 
-        t07r01 TEXT, t08r01 TEXT, t09r01 TEXT, t10r01 TEXT, 
-        t02r02 TEXT, t03r02 TEXT, t04r02 TEXT, t05r02 TEXT, t06r02 TEXT, t07r02 TEXT, 
-        t08r02 TEXT, t09r02 TEXT, t10r02 TEXT, 
-        t03r03 TEXT, t04r03 TEXT, t05r03 TEXT, t06r03 TEXT, t07r03 TEXT, t08r03 TEXT, 
-        t09r03 TEXT, t10r03 TEXT, 
-        t04r04 TEXT, t05r04 TEXT, t06r04 TEXT, t07r04 TEXT, t08r04 TEXT, t09r04 TEXT, 
-        t10r04 TEXT, 
-        t05r05 TEXT, t06r05 TEXT, t01r01 TEXT, t01r01 TEXT, t01r01 TEXT, t01r01 TEXT, 
-        t06r06 TEXT, t07r06 TEXT, t08r06 TEXT, t09r06 TEXT, t10r06 TEXT, 
-        t07r07 TEXT, t08r07 TEXT, t09r07 TEXT, t10r07 TEXT, 
-        t08r08 TEXT, t09r08 TEXT, t10r08 TEXT, 
-        t09r09 TEXT, t10r09 TEXT, 
-        t10r10 TEXT)''')
-
-    #  Open exhaustive list of words
-    fullList = []
-
-    for word in fullList:
-        if len(word) > 0:
-            print('pxF:', gF.lineno(), word)
-            entry = word
-            if entry[0].upper() in gF.upperAlphabet:
-                tableKey = entry[0].upper()
-            else:
-                tableKey = 'Q'
-            
-            try:        
-                gF.fonoCursor.execute('''INSERT INTO mastProx'''+tableKey+''' (word TEXT,
-                fono TEXT, emps TEXT, vocs TEXT, cons TEXT)
-                VALUES(?,?,?,?,?)''', (word, fono, emps, vocs, cons))
-
-            except KeyError:
-                print('pxF:', gF.lineno(), ' | fuckery:', entry)
-                continue
-
-    gF.fonoConn.commit()
-    input('paused...')
-
-
-def rhyBuild_USen():
-
-    rhyDic0 = defaultdict(list)
-    rhyDic1 = defaultdict(list)
-
-    #  In this emp data, the '1' signifies the dominant stress, which may be confusing
-    #  since '2' is numerically greater but emphasized quieter, and the '0' remains
-    #  lesser in both cases...
-
-    fCons = 'B', 'D', 'G', 'JH', 'L', 'N', 'P', 'S', 'T', 'V', 'ZH', 'CH', 'DH', 'F', 'HH', 'K', 'M', 'NG', 'R', 'SH', 'TH', 'W', 'Z'
-    fVocs = ['AA0', 'AH0', 'AW0', 'EH0', 'EY0', 'IH0', 'OW0', 'UH0', 'AE0', 'AO0', 'AY0', 'ER0', 'IY0', 'OY0', 'UW0', 'Y0',
-            'AA1', 'AH1', 'AW1', 'EH1', 'EY1', 'IH1', 'OW1', 'UH1', 'AE1', 'AO1', 'AY1', 'ER1', 'IY1', 'OY1', 'UW1', 'Y1']
+softRhySwitches = {'G':'K', 'D':'T', 'S':'TH', 'JH':'CH', 'F':'V'}  #  Voiced/unvoiced constantants (See: Korean language)
+fCons = 'B', 'D', 'G', 'JH', 'L', 'N', 'P', 'S', 'T', 'V', 'ZH', 'CH', 'DH', 'F', 'HH', 'K', 'M', 'NG', 'R', 'SH', 'TH', 'W', 'Z'
+fVocs = ['AA0', 'AH0', 'AW0', 'EH0', 'EY0', 'IH0', 'OW0', 'UH0', 'AE0', 'AO0', 'AY0', 'ER0', 'IY0', 'OY0', 'UW0', 'Y0',
+         'AA1', 'AH1', 'AW1', 'EH1', 'EY1', 'IH1', 'OW1', 'UH1', 'AE1', 'AO1', 'AY1', 'ER1', 'IY1', 'OY1', 'UW1', 'Y1']
             
 
-    phonoFile = open('data/USen/phonoLib-USen.txt', "r")
-
-
-    print('rhyDic start')
-    for line in phonoFile:
-        dicData = line[:-1].split(' ')
-        theseVocs = []
-        for each in dicData[2:]:
-            if '2' in each:
-                thisVoc = each.replace('2', '1')
-            else:
-                thisVoc = each
-            theseVocs.append(thisVoc)
-        #print(dicData[0].lower(), theseVocs)
-        rhyDic0[dicData[0].lower()] = theseVocs
-        rhyDic1[dicData[0].lower()] = theseVocs
-    print('rhyDic complete')
-
-
-    totalVs = int(1)
-
-
-def rhyMaker(totalVs, rSyls):
-    tName = str(totalVs)
-    rName = str(rSyls)
-    if totalVs < 10:
-        tName = '0'+tName
-    if rSyls < 10:
-        rName = '0'+rName
-    try:
-        libFile = gF.csv.reader(open('eng/data/USen/rhymes/rhymeLib-t'+tName+"r"+rName+".csv", "r"))
-        print('rhymeLib-t'+tName+"r"+rName+" already exists")
-    except IOError:
-        dicFile = gF.csv.writer(open('eng/data/USen/rhymes/rhymeLib-t'+tName+"r"+rName+".csv", 'w+', encoding='latin-1'))
-        print('rhymeLib-t'+tName+"r"+rName+" beginning....")
-        yaFound = []
-        thisRhyDic = {}
-        for key, val in rhyDic0.items():
-            keyList, valList = [], []
-            keyString, valString = str(), str()
-            if key not in yaFound:
-                #print('finding:', key, val)
-                vocCount  = int(0)
-                presentVocs = []
-                for all in fVocs:
-                    if all in val:
-                        #print('voc:', all)
-                        presentVocs.append(all)
-                        vocCount+=val.count(all)
-                        #if val.count(all) > 1:
-                            #print('FLAG THIS')
-                #print('vocCount=', vocCount)
-                if vocCount >= totalVs:
-                    if vocCount == totalVs:
-                        valList.append(key)
-                    else:
-                        keyList.append(key)
-                    vocList = []
-                    for all in presentVocs:
-                        #print('trying:', all)
-                        vocIndexer, vocTarget = int(0), int(0)
-                        try:
-                            while vocIndexer < totalVs:
-                                #print(vocTarget, vocIndexer)
-                                vocTarget=val[vocIndexer:].index(all)
-                                vocList.append(vocTarget+vocIndexer)
-                                vocIndexer+=(vocTarget+1)
-                        except IndexError:
-                            #print('iE')
-                            vocIndexer = totalVs
-                            continue
-                        except ValueError:
-                            #print('vE')
-                            continue
-                    vocList.sort()
-                    #print('vocSpots:', key, val, vocList)
+def rhySeeker(rhymeWord):
+    #rhymeWord = input('Type word: ').upper()
+    rhymeWord = rhymeWord.upper()  #  The file is in all caps
+    rhymeList = []  #  Will contain lists of all suitable rhymes
+    fonoFile = open('eng/data/USen/USen-primaryFono.txt', "r")
+    for line in fonoFile:
+        if rhymeWord+'  ' == line[0:len(rhymeWord)+2]:
+            rhymeFono = line[len(rhymeWord)+2:].rstrip('\n')
+            rhyListFono = rhymeFono.split(' ')
+            break
+    #print('ryF: |', rhymeWord, '=', rhyListFono)
+    fonoFile = open('eng/data/USen/USen-primaryFono.txt', "r")  #  Need to reopen the file or it starts list from inputted rhymeWord
+    for line in fonoFile:
+        lineSplitSpot = line.index('  ')
+        checkWord = line[:lineSplitSpot]
+        checkFono = line[lineSplitSpot+2:].rstrip('\n')
+        checkFono = checkFono.replace('2', '0')  #  Changes the secondary emphasis to easier matches
+        listFono = checkFono.split(' ')
+        rhyCheckFono = rhymeFono.split(' ')  #  This replenishes every loop for the word
+        if gF.consMode == 'softRhy':  #  Consonant sounds that sound similar
+            for key, val in softRhySwitches.items():
+                listFono = listFono.replace(key, val)  #  Changes the cons to their matches, equalizing them
+        elif gF.consMode == 'ignore':
+            rCons = 0
+            for cons in fCons:
+                if cons in listFono:
+                    listFono.remove(cons)
+        #else:  It's 'fullList'
+        #print('ryF: | listFono: ', checkWord, ':', listFono)
+        theseSyls, theseCons = int(0), int(0)  #  Resets counts as every new word is processed
+        while (len(rhyCheckFono) > 0) and (len(listFono) > 0):
+            popCheckFono = listFono.pop()
+            rhyPopCheckFono = rhyCheckFono.pop()
+            #print('ryF: | ', popCheckFono, 'v.', rhyPopCheckFono)
+            if popCheckFono == rhyPopCheckFono:
+                if rhyPopCheckFono in fVocs:
+                    #print('ryF: | sylsMatch')
+                    theseSyls+=1
+                    if theseSyls >= gF.rSyls:  #  If we find the number of syllables necessary
+                        rhymeList.append(checkWord.lower())
+                        #print('ryF: | rhyme found:', checkWord)
+                        break
+                else:
+                    theseCons+=1
+                    #print('ryF: | consMatch', theseCons, rCons)
+            elif (popCheckFono in fCons) or (rhyPopCheckFono in fCons):
+                if rCons > theseCons:  #  If we haven't surpassed the minimum consonant count, break without adding
+                    #print('ryF: | consBreak')
+                    break
+                else:
                     try:
-                        rCutter = val[vocList[-rSyls]:]
-                        #print('rCutter:', rCutter)
-                        yaFound.append(key)
-                        for key, val in rhyDic1.items():
-                            try:
-                                #print('tester:', key, val[-len(rCutter):])
-                                if val[-len(rCutter):] == rCutter:
-                                    #print('match found:', key)
-                                    yaFound.append(key)
-                                    vocCount = int(0)
-                                    for all in fVocs:
-                                        if all in val:
-                                            vocCount+=val.count(all)
-                                    #print('vocCount:', vocCount, totalVs, rSyls)
-                                    if vocCount >= totalVs:
-                                        if vocCount == totalVs:
-                                            valList.append(key)
-                                            # print('addVal')
-                                        else:
-                                            keyList.append(key)
-                                        #print('addKey')
-                            except IndexError:
-                                continue
-                        #print('foundthese', len(keyList), len(valList))
+                        while popCheckFono in fCons:
+                            popCheckFono = listFono.pop()
+                        while rhyPopCheckFono in fCons:
+                            rhyPopCheckFono = rhyCheckFono.pop()
+                        #print('ryF: | newPops:', popCheckFono, rhyPopCheckFono)
+                        if popCheckFono == rhyPopCheckFono:
+                            #print('ryF: | sylsMatch')
+                            theseSyls+=1
+                            if theseSyls >= gF.rSyls:  #  If we find the number of syllables necessary
+                                rhymeList.append(checkWord.lower())
+                                #print('ryF: | rhyme found:', checkWord)
+                                break
                     except IndexError:
-                        continue
-                #print('writing to file:', len(keyList), len(valList))
-                if len(valList) > 0:
-                    for all in keyList:
-                        keyString+=(all+'^')
-                    for all in valList:
-                        valString+=(all+'^')
-                    #print(keyString, valString)
-                    dicFile.writerow([keyString[:-1], valString[:-1]])
-        print('rhyDic complete')
+                        #print('ryF: | ran out', rhyListFono, '-', listFono)
+                        break
+            else:
+                #print('ryF: | mismatched, cancelled')
+                break
+    print('ryF: | rhymeList for', checkWord, '\n', rhymeList)
+    return rhymeList
+    
 
-
-for totalVs in range(1, 11):
-    for rSyls in range(1, 11):
-        if rSyls <= totalVs:
-            rhyMaker(totalVs, rSyls)
-
-
-
-def rhyDictator(lang, pWord, maxTotalVs, maxRSyls): # Find rhymes of a particular word
-    print('ryF:', gF.lineno(), '| entering rhyDictator() w/', pWord)
-    print('ryF:', gF.lineno(), '| len(gF.splitText):', len(gF.splitText))
-    #$input('paused...')
-    matchBox, finalRhys = [], []
-    totalVs, rSyls = int(1), int(1)
-    while totalVs < maxTotalVs:
-        while (rSyls <= totalVs):
-            tName, rName = str(totalVs), str(rSyls)
-            #$print('ryF:', gF.lineno(), '| rhy:', pWord, str(totalVs), str(rSyls))
-            if totalVs < 10:
-                tName = '0'+tName
-            if rSyls < 10:
-                rName = '0'+rName
-            try:
-                #$print('ryF:', gF.lineno(), '| tName, rName:', tName, rName)
-                dicFile = gF.csv.reader(open(lang+'/data/USen/rhymes/rhymeLib-t'+tName+"r"+rName+".csv", "r"))
-                for line in dicFile:
-                    strikeList = []
-                    keyChain = line[0].split('^')
-                    valChain = line[1].split('^')
-                    #$if len(keyChain) > 0:
-                        #$print('ryF:', gF.lineno(), '| keyChain:', keyChain)
-                    #$if len(valChain) > 0:
-                        #$print('ryF:', gF.lineno(), '| valChain:', valChain)
-                    if (pWord in keyChain) or (pWord in valChain):
-                        if pWord in valChain:
-                            valChain.remove(pWord)
-                        matchBox = valChain
-                        #$print('ryF:', gF.lineno(), '| matchBox:', matchBox)
-                        for matches in matchBox:
-                            if '(' in matches:
-                                newWord = matches[:-3]
-                                matchBox.append(newWord)
-                                strikeList.append(matches)
-                            if matches not in gF.splitText:
-                                #$print('ryF:', gF.lineno(), '| striking:', matches)
-                                strikeList.append(matches)
-                            #$else:
-                                #$print('ryF:', gF.lineno(), '| keeping:', matches)
-                        for strikes in strikeList:
-                            if strikes in matchBox:
-                                matchBox.remove(strikes)
-                        strikeList = []                        
-                    for finalMatches in matchBox:
-                        if finalMatches not in finalRhys:
-                            finalRhys.append(finalMatches)
-                    #$print('ryF:', gF.lineno(), 'len(finalRhys):', len(finalRhys))
-            except IOError:
-                return []
-            rSyls+=1
-        totalVs+=1
-        rSyls = int(1)
-    finalRhys.sort()
-    print('ryF:', gF.lineno(), '| finalRhys:', len(finalRhys))
-    #$input('paused...')
-    return finalRhys
+#rhySeeker(2)
 
 
 def rhymeLiner(empLine, proxExpress, qAnteLine, rhymeList):

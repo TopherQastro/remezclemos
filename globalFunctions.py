@@ -146,8 +146,7 @@ def begin():
     startTime = time.time()
     stopTime = time.time()
 
-    global rSyls
-    rSyls = 2
+    global tSyls, rSyls, rhyMode
 
     global unknownWords, doubles
     unknownWords, doubles = [], []
@@ -254,11 +253,8 @@ def begin():
     sound_file = 'eng/data/USen/USen_fonoDB.db'
     soundConn = sqlite3.connect(sound_file)
     soundCursor = soundConn.cursor()
+
     global prox_file, proxConn, proxCursor
-    global rhyme_file, rhyme_conn, rhymeCursor
-    # rhyme_file = sqlite3.connect(#sql database)
-    # rhymeConn = sqlite3.connect(rhyme_file)
-    # rhymeCursor = rhymeConn.cursor()
 
 
 def printGlobalData(qLine):

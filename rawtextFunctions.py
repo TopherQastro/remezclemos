@@ -24,6 +24,9 @@ def gov():
         gF.metSwitch = True
         gF.thesSwitch = True
         gF.rhyMap = 'aa'
+        gF.rhyMode = 'fullList'
+        gF.rSyls = int(2)
+        gF.tSyls = int(2)
         gF.empMap = [[bool(1), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
                      [bool(1), bool(0), bool(0), bool(1), bool(0), bool(1), bool(0), bool(1)],
                      [bool(1), bool(0), bool(1), bool(0), bool(1), bool(0), bool(1)],
