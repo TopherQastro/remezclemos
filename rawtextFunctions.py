@@ -13,7 +13,7 @@ def gov():
         gF.lang = 'eng'
         gF.accent = 'USen'
         gF.empMode = 'empsEven'
-        gF.textFile = 'superBible'
+        gF.textFile = 'genesisZ'
         gF.poemQuota = 100
         gF.stanzaQuota = 1
         gF.proxMinDial = int(3)
@@ -27,6 +27,8 @@ def gov():
         gF.rhyMode = 'fullList'
         gF.rSyls = int(2)
         gF.tSyls = int(2)
+        gF.consMode = 'fullList'
+        gF.rCons = int(2)
         gF.empMap = [[bool(1), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
                      [bool(1), bool(0), bool(0), bool(1), bool(0), bool(1), bool(0), bool(1)],
                      [bool(1), bool(0), bool(1), bool(0), bool(1), bool(0), bool(1)],

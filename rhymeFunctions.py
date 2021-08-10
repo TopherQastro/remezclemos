@@ -12,6 +12,8 @@ fVocs = ['AA0', 'AH0', 'AW0', 'EH0', 'EY0', 'IH0', 'OW0', 'UH0', 'AE0', 'AO0', '
 
 def rhySeeker(rhymeWord):
     #rhymeWord = input('Type word: ').upper()
+    if '(0)' in rhymeWord:  #  info should exist for '(1)' and above
+        rhymeWord = rhymeWord[:-3]
     rhymeWord = rhymeWord.upper()  #  The file is in all caps
     rhymeList = []  #  Will contain lists of all suitable rhymes
     fonoFile = open('eng/data/USen/USen-primaryFono.txt', "r")
@@ -20,7 +22,7 @@ def rhySeeker(rhymeWord):
             rhymeFono = line[len(rhymeWord)+2:].rstrip('\n')
             rhyListFono = rhymeFono.split(' ')
             break
-    #print('ryF: |', rhymeWord, '=', rhyListFono)
+    print('ryF: |', rhymeWord, '=', rhyListFono)
     fonoFile = open('eng/data/USen/USen-primaryFono.txt', "r")  #  Need to reopen the file or it starts list from inputted rhymeWord
     for line in fonoFile:
         lineSplitSpot = line.index('  ')
@@ -28,12 +30,13 @@ def rhySeeker(rhymeWord):
         checkFono = line[lineSplitSpot+2:].rstrip('\n')
         checkFono = checkFono.replace('2', '0')  #  Changes the secondary emphasis to easier matches
         listFono = checkFono.split(' ')
+        rhymeFono = line[len(rhymeWord)+2:].rstrip('\n')
         rhyCheckFono = rhymeFono.split(' ')  #  This replenishes every loop for the word
         if gF.consMode == 'softRhy':  #  Consonant sounds that sound similar
             for key, val in softRhySwitches.items():
                 listFono = listFono.replace(key, val)  #  Changes the cons to their matches, equalizing them
         elif gF.consMode == 'ignore':
-            rCons = 0
+            gF.rCons = 0
             for cons in fCons:
                 if cons in listFono:
                     listFono.remove(cons)
@@ -54,9 +57,9 @@ def rhySeeker(rhymeWord):
                         break
                 else:
                     theseCons+=1
-                    #print('ryF: | consMatch', theseCons, rCons)
+                    #print('ryF: | consMatch', theseCons, gF.rCons)
             elif (popCheckFono in fCons) or (rhyPopCheckFono in fCons):
-                if rCons > theseCons:  #  If we haven't surpassed the minimum consonant count, break without adding
+                if gF.rCons > theseCons:  #  If we haven't surpassed the minimum consonant count, break without adding
                     #print('ryF: | consBreak')
                     break
                 else:
@@ -81,30 +84,26 @@ def rhySeeker(rhymeWord):
                 break
     print('ryF: | rhymeList for', checkWord, '\n', rhymeList)
     return rhymeList
-    
-
-#rhySeeker(2)
 
 
-def rhymeLiner(empLine, proxExpress, qAnteLine, rhymeList):
-    print('ryF:', gF.lineno(), '| rhymeLiner() - start\nPrevious:', qAnteLine, '\nempLine:', empLine)
+def rhymeLiner(empsKeyLine, proxExpress, qAnteLine, rhymeList):
+    print('ryF:', gF.lineno(), '| rhymeLiner() - start\nPrevious:', qAnteLine, '\nempKey:', empsKeyLine)
     qLine = [[], []]
-    pLEmps = []
     while (len(qLine[0]) == 0) or (qLine[0][-1] not in rhymeList):
         if gF.metSwitch == True:
-            qLine, killSwitch = gF.meterFunk.gov(empLine, pLEmps, qLine, qAnteLine, proxExpress)
+            qLine, killSwitch = gF.meterFunk.gov(empsKeyLine, qLine, qAnteLine, proxExpress)
         else:
-            qLine, killSwitch = gF.plainFunk.gov(empLine, pLEmps, qLine, qAnteLine, proxExpress)
+            qLine, killSwitch = gF.plainFunk.gov(empsKeyLine, qLine, qAnteLine, proxExpress)
         if killSwitch == True:
             return qLine, killSwitch
         else:
             if qLine[0][-1] in gF.allPunx:
                 if qLine[0][-2] not in rhymeList:
-                    pLEmps, qLine, qAnteLine = gF.lineFunk.removeWordR(empLine, qLine, qAnteLine)
-                    pLEmps, qLine, qAnteLine = gF.lineFunk.removeWordR(empLine, qLine, qAnteLine)
+                    pLEmps, qLine, qAnteLine = gF.lineFunk.removeWordR(qLine, qAnteLine)
+                    pLEmps, qLine, qAnteLine = gF.lineFunk.removeWordR(qLine, qAnteLine)
                 else:
                     return qLine, killSwitch
             elif qLine[0][-1] not in rhymeList:  #  Words that don't sound good as the last word of a line, such as conjunctions without something else to connect
-                pLEmps, qLine, qAnteLine = gF.lineFunk.removeWordR(empLine, qLine, qAnteLine)
+                pLEmps, qLine, qAnteLine = gF.lineFunk.removeWordR(qLine, qAnteLine)
     print('ryF:', gF.lineno(), '| rhymeLiner() - out:', qLine, 'len(gF.superPopList):', len(gF.superPopList), 'killSwitch:', killSwitch)
     return qLine, killSwitch

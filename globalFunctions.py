@@ -51,9 +51,10 @@ def begin():
     poemQuota, stanzaQuota, proxMaxDial, proxMinDial, punxDial = int(0), int(0), int(0), int(0), int(0)
     rhyMap, empMap, usedList, firstWords, firstPopList = [], [], [], [], []
 
-    global superList, superPopList, expressList, thesList, dynaList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList
-    superList, superPopList, expressList, thesList, dynaList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList = [], [], [], [], [], [], [], [], [], []
+    global superList, superPopList, expressList, thesList, dynaList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList, firstBlackList
+    superList, superPopList, expressList, thesList, dynaList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList, firstBlackList = [], [], [], [], [], [], [], [], [], [], []
     superList = superPopList, expressList, thesList, dynaList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList
+     # Indexes: 0             1            2         3         4         5         6               7               8                firstBlackList is independent from this set            
 
     global quantumList, nonEnders, upperAlphabet, lowerAlphabet, allPunx, midPunx, endPunx, deadPunx #  List of words used for quantum emp patterns
     quantumList = ['was', 'be', 'and', 'to', 'for', 'a', 'the', 'in', 'at', 'but', 'an',
@@ -146,7 +147,7 @@ def begin():
     startTime = time.time()
     stopTime = time.time()
 
-    global tSyls, rSyls, rhyMode
+    global tSyls, rSyls, rhyMode, consMode, rCons
 
     global unknownWords, doubles
     unknownWords, doubles = [], []
@@ -171,6 +172,7 @@ def begin():
 
     global soundsLine
     soundsLine = [[],[],[],[]]
+    #  0=fono, 1=vocs, 2=cons, 3=emps
 
     # fono, vocs, cons, and emps are organized into alphabetical dictionaries
     global soundDicsIndex
@@ -263,7 +265,7 @@ def printGlobalData(qLine):
     #     print('gF:', lineno(), 'printGlobalData() |', superPopList[-1], expressList[-1])
     print('gF:', lineno(), '| printGlobalData() - sPpL, expL, thes, dyna, cont, pnxL, sBkL, qLIL, pLDL')
     indInt = int(0)
-    print(qLineIndexList, proxDicIndexList)
+    print('gF:', lineno(), qLineIndexList, proxDicIndexList)
     for lists in superList:
         if len(lists) > 0:
             listsLenLine = []
@@ -276,6 +278,7 @@ def printGlobalData(qLine):
             #           len(listsLenLine), str(qLine1Int))
             #     input('paused')
         indInt+=1
+    print('gF:', lineno(), 'firstBlackListlen:', len(firstBlackList), '\n', firstBlackList)
 
 
 begin()

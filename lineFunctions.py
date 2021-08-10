@@ -1,9 +1,13 @@
 
 import globalFunctions as gF
 
-def veto():  #  Resets values in a line to
-    print('lnF:', gF.lineno(), '| veto()')
+def veto(firstWord):  #  Resets values in a line to
+    print('lnF:', gF.lineno(), '| veto()', firstWord)
     listInt = int(0)
+    #gF.superList = [[],[],[],[],[],[],[],[],[]]
+    if len(firstWord) > 0:
+        gF.firstBlackList.append(firstWord)
+    gF.superList[6].append(gF.firstBlackList)
     for lists in gF.superList:
         #print('lnF:', gF.lineno(), listInt, lists)
         while len(lists) > 0:
@@ -12,6 +16,7 @@ def veto():  #  Resets values in a line to
         listInt+=1
     gF.soundsLine = [[],[],[],[]]
     gF.printGlobalData([[],[]])
+
     return ([],[])
           # qLine
           
@@ -137,7 +142,7 @@ def lineStarter(qAnteLine, proxExpress):  #  Starts the values for the lineMaker
 
 def gov(empsKeyLine, rhymeThisLine, rhymeList, qAnteLine):
     print('lnF:', gF.lineno(), '| gov() start', rhymeThisLine)
-    qLine = veto()  #  Start with empty variables declared. This function is also a reset button if lines are to be scrapped.
+    qLine = veto(str())  #  Start with empty variables declared. This function is also a reset button if lines are to be scrapped.
     proxExpress = []
     if rhymeThisLine == True:
         print('lnF:', gF.lineno(), '| gov() - len(rhymeList):', len(rhymeList))
@@ -153,7 +158,7 @@ def gov(empsKeyLine, rhymeThisLine, rhymeList, qAnteLine):
                 except KeyError:
                     continue
             print('lnF:', gF.lineno(), '| gov() - len(proxExpress):', len(proxExpress))
-            qLine, killSwitch = gF.rhyFunk.rhymeLiner(proxExpress, qAnteLine, rhymeList)
+            qLine, killSwitch = gF.rhyFunk.rhymeLiner(empsKeyLine, proxExpress, qAnteLine, rhymeList)
         else:
             print('lnF:', gF.lineno(), '| gov() - no rhymes')
             return ([],[]), True  #  qLine, killSwitch
@@ -166,7 +171,12 @@ def gov(empsKeyLine, rhymeThisLine, rhymeList, qAnteLine):
         qLine, killSwitch = plainLinerLtoR(qAnteLine)
     if killSwitch == True:
         print('lnF:', gF.lineno(), 'gov() - killSwitch')
-        qLine, pLEmps = veto()
+        if len(qLine[0]) > 0:
+            print('lnF:', gF.lineno(), 'kill0', qLine)
+            qLine = veto(qLine[0][0])
+        else:
+            print('lnF:', gF.lineno(), 'kill1')
+            qLine = veto(str())
         return qLine, True
     else:
         print('lnF:', gF.lineno(), '| gov() - last else', qLine)

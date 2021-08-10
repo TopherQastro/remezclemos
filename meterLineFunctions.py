@@ -17,7 +17,7 @@ def gov(empsKeyLine, qLine, qAnteLine, proxExpress):
     gF.stopTime = gF.time.time()
     killSwitch = False
     if gF.stopTime > (gF.startTime + 300):
-        qLine = gF.lineFunk.veto()
+        qLine = gF.lineFunk.veto(str())
         print('mLF:', gF.lineno(), gF.soundsLine, qLine)
         stanza, qAnteLine, lineCt, rhymeThisLine, killSwitch = gF.stanzaFunk.veto()
         gF.startTime = gF.time.time()
@@ -35,7 +35,7 @@ def gov(empsKeyLine, qLine, qAnteLine, proxExpress):
         popWord = gF.popFunk.popWordPicker(qLine)
         if (len(popWord[0]) == 0) and (len(gF.superPopList[-1]+gF.expressList[-1]+gF.thesList[-1]+gF.contList[-1]) == 0):
             print('mLF:', gF.lineno(), '| gov() - qLine and popLists out')
-            return ([],[]), True  #  qLine, killSwitch
+            return qLine, True  #  qLine, killSwitch
         print('mLF:', gF.lineno(), '| gov() - popWord:', popWord)
         print('mLF:', gF.lineno(), '| gov() - runLine:', runLine)
         print('mLF:', gF.lineno(), '| gov() - qLine:', qLine)
@@ -69,7 +69,7 @@ def gov(empsKeyLine, qLine, qAnteLine, proxExpress):
                 gF.fonoFunk.subtractFonoLine(popWord) 
         if len(gF.superPopList[-1]+gF.expressList[-1]+gF.thesList[-1]+gF.contList[-1]+gF.punxList[-1]+gF.dynaList[-1]) == 0:
             if len(gF.qLineIndexList[-1]) > gF.proxMinDial:
-                gF.proxFunk.snipProxData(empsKeyLine, gF.soundsLine[3], proxExpress, qLine, runLine)
+                gF.proxFunk.snipProxData(proxExpress, qLine, runLine)
             else:
                 qLine, runLine = gF.lineFunk.removeWordR(qLine, runLine)
         if len(gF.superPopList) == 0:
