@@ -2,26 +2,20 @@
 import globalFunctions as gF
 
 def veto():
-    if len(gF.superBlackList) > 0: #  Roundabout way of taking off everything except 1st blackList
-        firstBlacks = []  
-        for blackWords in gF.superBlackList[0]:
-            firstBlacks.append(blackWords)
     for lists in gF.superList:
         lists = []
-    if len(gF.superBlackList) > 0:    
-        gF.superBlackList.append(firstBlacks)
+    gF.linesCount = int(0)
     gF.printGlobalData(([],[]))
-    return [], ([],[]), int(0), False, False
-          #stanza, qAnteLine, lineCt, rhymeThisLine, killSwitch
+    return [], ([],[]), False, False
+          #stanza, qAnteLine, rhymeThisLine, killSwitch
 
 
 def removeLine(stanza):
     print('stF:', gF.lineno(), '| removeLine in | len(stanza):', len(stanza))
     if len(stanza) > 0:
         stanzaSnip = stanza.pop()  #  Remove the last line of the stanza
-        gF.superBlackList[0].append(stanzaSnip[0][0])  #  Add the first word of the line to blacklist to ensure the repeat doesn't happen
         print('stF:', gF.lineno(), '| stanzaSnip:', stanzaSnip)
-    print('stF:', gF.lineno(), '| removeLine', len(gF.superBlackList))
+    print('stF:', gF.lineno(), '| removeLine')
     qAnteLine = ([],[])  #  Rebuild qAnteLine, meant to direct the proceeding line(s). Returns empty if stanza empty
     if len(stanza) > 1:
         for word in stanza[-1][0]:
@@ -36,57 +30,45 @@ def acceptLine(stanza, newLine):
     print('stF:', gF.lineno(), '| acceptLine in | len(stanza):', len(stanza),
           '\nnewLine:', newLine)
     stanza.append(newLine)
-    #gF.superBlackList = [[]]  #  Reset superBlackList to apply to next line
     print('stF:', gF.lineno(), '| acceptLine out | len(stanza):', len(stanza))
     return stanza, newLine
           #stanza, qAnteLine
 
 
 def gov():
-    print('stF:', gF.lineno(), '| gov begin len(rhyMap):', len(gF.rhyMap), 
-          'len(gF.empMap):', len(gF.empMap))
-    stanza, qAnteLine, lineCt, rhymeThisLine, killSwitch = veto()  #  Creates a fresh stanza, no usedList
-    while lineCt < len(gF.rhyMap):
-        anteRhyme = lineCt
+    print('stF:', gF.lineno(), '| gov begin len(rhyMap):', len(gF.rhyMap), 'len(gF.empMap):', len(gF.empMap))
+    if len(gF.firstBlackList) == 0:  #  It's only 0 when you first start the program
+        for lineCount in gF.rhyMap:  #  
+            gF.firstBlackList.append([])
+    stanza, qAnteLine, rhymeThisLine, killSwitch = veto()  #  Creates a fresh stanza, no usedList
+    while gF.linesCount < len(gF.rhyMap):
+        rhymeList, qAnteFonoLine = [], []
         if gF.rhySwitch == True:
-            anteRhyme = gF.rhyMap.index(gF.rhyMap[lineCt])  #  Use the length of the stanza with rhyMap to determine if a previous line should be rhymed with the current
-            print('stF:', gF.lineno(), '| -', anteRhyme, lineCt)
-            for each in stanza:
-                print(each)
-            if anteRhyme < lineCt:  #  If you hit a matching letter that comes before current line, grab rhys from that line. Otherwise, go straight to forming a metered line
-                rhymeLine = stanza[anteRhyme][0]  #  Find line tuple, then select the first part of the tuple
-                lastWordIndex = int(-1)
-                rhymeWord = rhymeLine[lastWordIndex]
-                rhymeList = []
-                while rhymeLine[lastWordIndex] in gF.allPunx:  #  Start from the end and bypass all punctuation
+            rhymeThisLine = False
+            anteRhyme = gF.rhyMap.index(gF.rhyMap[gF.linesCount])  #  Use the length of the stanza with rhyMap to determine if a previous line should be rhymed with the current
+            rhymeLine = []
+            print('stF:', gF.lineno(), '| -', anteRhyme, gF.linesCount)
+            for lines in stanza:
+                print('stF:', gF.lineno(), '|', lines)
+            if anteRhyme < gF.linesCount:  #  If you hit a matching letter that comes before current line, grab rhys from that line. Otherwise, go straight to forming a metered line
+                print('stF:', gF.lineno(), '| rhyme search started')
+                rhymeLine += stanza[anteRhyme][0]  #  Find line tuple, then select the first part of the tuple
+                qAnteFonoLine = gF.fonoFunk.fonoLiner(rhymeLine)
+                rhymeWord = rhymeLine.pop()
+                while rhymeWord in gF.allPunx:  #  Start from the end and bypass all punctuation
                     try:
-                        lastWordIndex-=1  #  Subtraction pulls the index back until we're not looking at a puncuation mark
-                        rhymeWord = rhymeLine[lastWordIndex]  #  Picking the last word
+                        rhymeWord = rhymeLine.pop()  #  Picking the last word
                     except IndexError:
-                        print('stF:', gF.lineno(), "| iE:", rhymeLine, lastWordIndex)
+                        print('stF:', gF.lineno(), "| iE:", rhymeLine)
                         return  [], True  #  killSwitch event
                 print('stF:', gF.lineno(), '| rhymeWord:', rhymeWord)
                 print('stF:', gF.lineno(), '| len(gF.splitText):', len(gF.splitText))
-                rhymeList = gF.rhyFunk.rhySeeker(rhymeWord)  #  Syllable length can be varied, 10 returns all
+                rhymeList = gF.rhyFunk.rhyWordLister(rhymeWord)  #  Syllable length can be varied, 10 returns all
                 rhymeThisLine = True
-                if len(rhymeList) > 0:  #  Ensure that this produced some rhymes
-                    print('stF:', gF.lineno(), '| rhymer', rhymeWord, '|', rhymeList)
-                    newLine, killSwitch = gF.lineFunk.gov(gF.empMap[lineCt], rhymeThisLine, rhymeList, qAnteLine)  #  If so, we try to create rhyming lines
-                else:  #  Our lines created nothing, so we hit a killSwitch event
-                    print('stF:', gF.lineno(), 'rhymeList:', rhymeList)
-                    return [], True
-            else:  #  Then you don't need rhymes
-                rhymeList = []
-                print('stF:', gF.lineno(), '| -', qAnteLine, gF.usedList, False, rhymeList, gF.empMap[lineCt])
-                newLine, killSwitch = gF.lineFunk.gov(gF.empMap[lineCt], False, rhymeList, qAnteLine)  #
-        elif gF.metSwitch == False:
-            newLine, killSwitch = plainLinerLtoR(qAnteLine,  rhymeList, gF.empMap[lineCt])
-        else:
-            print('stF:', gF.lineno(), '| - lineGov')
-            newLine, killSwitch = gF.lineFunk.gov(gF.empMap[lineCt], rhymeThisLine, [], qAnteLine)
+        newLine, killSwitch = gF.lineFunk.gov(gF.empMap[gF.linesCount], rhymeThisLine, rhymeList, qAnteLine, qAnteFonoLine) 
         if killSwitch == True:  #  Not an elif because any of the above could trigger this; must be separate if statement
             print('stF:', gF.lineno(), '| - killSwitch')
-            stanza, qAnteLine, lineCt, rhymeThisLine, killSwitch = veto()
+            stanza, qAnteLine, rhymeThisLine, killSwitch = veto()
         elif len(newLine[1]) > 0:  #  Line-building functions will either return a valid, nonzero-length line, or trigger a subtraction in the stanza with empty list
             print('stF:', gF.lineno(), '| - newLine:', newLine)
             stanza, qAnteLine = acceptLine(stanza, newLine)
@@ -94,9 +76,9 @@ def gov():
             stanza, qAnteLine = removeLine(stanza)
         else:  #  Redundant, as the stanza should logically be vetoed already, but just to clean house
             print('stF:', gF.lineno(), '| - vetoStanza')
-            #stanza, qAnteLine, gF.usedList, lineCt, rhymeThisLine, killSwitch = vetoStanza([])
-            stanza, qAnteLine, lineCt, rhymeThisLine, killSwitch = veto()
-        lineCt = len(stanza)  #  Count the length of the stanza, provided no killSwitch events occurred...
-        print('stF:', gF.lineno(), 'end whileloop', lineCt)
+            #stanza, qAnteLine, gF.usedList, rhymeThisLine, killSwitch = vetoStanza([])
+            stanza, qAnteLine, rhymeThisLine, killSwitch = veto()
+        gF.linesCount = len(stanza)  #  Count the length of the stanza, provided no killSwitch events occurred...
+        print('stF:', gF.lineno(), 'end whileloop', gF.linesCount)
 
     return stanza, killSwitch

@@ -51,10 +51,13 @@ def begin():
     poemQuota, stanzaQuota, proxMaxDial, proxMinDial, punxDial = int(0), int(0), int(0), int(0), int(0)
     rhyMap, empMap, usedList, firstWords, firstPopList = [], [], [], [], []
 
-    global superList, superPopList, expressList, thesList, dynaList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList, firstBlackList
-    superList, superPopList, expressList, thesList, dynaList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList, firstBlackList = [], [], [], [], [], [], [], [], [], [], []
-    superList = superPopList, expressList, thesList, dynaList, contList, punxList, superBlackList, qLineIndexList, proxDicIndexList
-     # Indexes: 0             1            2         3         4         5         6               7               8                firstBlackList is independent from this set            
+    global superList, superPopList, expressList, thesList, dynaList, contList, punxList, qLineIndexList, proxDicIndexList, firstBlackList
+    superList, superPopList, expressList, thesList, dynaList, contList, punxList, qLineIndexList, proxDicIndexList, firstBlackList = [], [], [], [], [], [], [], [], [], []
+    superList = superPopList, expressList, thesList, dynaList, contList, punxList, qLineIndexList, proxDicIndexList
+     # Indexes: 0             1            2         3         4         5         6               7               firstBlackLists is independent from this set
+    global blackListInt
+    blackListInt = int(0)
+
 
     global quantumList, nonEnders, upperAlphabet, lowerAlphabet, allPunx, midPunx, endPunx, deadPunx #  List of words used for quantum emp patterns
     quantumList = ['was', 'be', 'and', 'to', 'for', 'a', 'the', 'in', 'at', 'but', 'an',
@@ -87,9 +90,9 @@ def begin():
 
 
     global rawText
-    global splitText
+    global splitText, splitTextList
     rawText = str()
-    splitText = []
+    splitText, splitTextList = [], []
 
     #  These dictionaries organize the splitText words alphabetically based on 1st letter
     global splitTextA, splitTextB, splitTextC, splitTextD, splitTextE, splitTextF, splitTextG
@@ -146,6 +149,9 @@ def begin():
     global startTime, stopTime
     startTime = time.time()
     stopTime = time.time()
+
+    global linesCount
+    linesCount = int(0)
 
     global tSyls, rSyls, rhyMode, consMode, rCons
 
@@ -261,8 +267,6 @@ def begin():
 
 def printGlobalData(qLine):
     print('gF:', lineno(), '| printGlobalData() -', len(qLine[1]), qLine[1])
-    # if len(superPopList) > 0:
-    #     print('gF:', lineno(), 'printGlobalData() |', superPopList[-1], expressList[-1])
     print('gF:', lineno(), '| printGlobalData() - sPpL, expL, thes, dyna, cont, pnxL, sBkL, qLIL, pLDL')
     indInt = int(0)
     print('gF:', lineno(), qLineIndexList, proxDicIndexList)
@@ -272,13 +276,9 @@ def printGlobalData(qLine):
             for subList in lists:
                 listsLenLine.append(len(subList))
             print('gF:', lineno(), '|', indInt, 'len:', len(listsLenLine), '|', listsLenLine)
-            # qLine1Int = len(qLine[1]) + 2
-            # if len(listsLenLine) > qLine1Int:
-            #     print('gF:', lineno(), '| printGlobalData() - fuckery -->', 
-            #           len(listsLenLine), str(qLine1Int))
-            #     input('paused')
         indInt+=1
-    print('gF:', lineno(), 'firstBlackListlen:', len(firstBlackList), '\n', firstBlackList)
+    for firstBlackLists in firstBlackList:
+        print('gF:', lineno(), 'firstBlackListLen:', len(firstBlackLists))
 
 
 begin()

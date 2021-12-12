@@ -132,6 +132,28 @@ def fonoBuild_USen():
 
     return fonoDics, fullList
 
+
+def fonoLiner(qLine):
+    fonoLine = []
+    for qWords in qLine[0]:
+        fonoFile = open('eng/data/USen/USen-primaryFono.txt', "r")
+        fonoInt = int(1)  #  Use this to check for words with >1 pronunciations
+        if '(0)' in qWords:  #  info should exist for '(1)' and above
+            qWords = qWords[:-3]
+        qWords = qWords.upper()  #  The file is in all caps
+        fonoString = str()
+        for line in fonoFile:
+            if qWords+'  ' == line[0:len(qWords)+2]:
+                fonoString = line[len(qWords)+2:].rstrip('\n')
+                break
+        fonoListFono = fonoString.split(' ')
+        for fonoBits in fonoListFono:
+            fonoLine.append(fonoBits)
+    print('fnF:', gF.lineno(), '| fonoLine =', fonoLine)
+    #input('paused')
+    return fonoLine
+
+
 def fonoBuild_UKen():
     fono, vocs, cons, empsFull, empsEven, empsUnik
     return fono, vocs, cons, empsFull, empsEven, empsUnik

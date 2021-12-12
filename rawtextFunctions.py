@@ -13,7 +13,7 @@ def gov():
         gF.lang = 'eng'
         gF.accent = 'USen'
         gF.empMode = 'empsEven'
-        gF.textFile = 'genesisZ'
+        gF.textFile = 'beyondGoodAndEvil'
         gF.poemQuota = 100
         gF.stanzaQuota = 1
         gF.proxMinDial = int(3)
@@ -28,7 +28,7 @@ def gov():
         gF.rSyls = int(2)
         gF.tSyls = int(2)
         gF.consMode = 'fullList'
-        gF.rCons = int(2)
+        gF.rCons = int(1)
         gF.empMap = [[bool(1), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
                      [bool(1), bool(0), bool(0), bool(1), bool(0), bool(1), bool(0), bool(1)],
                      [bool(1), bool(0), bool(1), bool(0), bool(1), bool(0), bool(1)],
@@ -37,6 +37,9 @@ def gov():
 
     gF.rawText = str(open(gF.lang+'/data/textLibrary/'+gF.textFile+'.txt', 'r', 
                     encoding='utf-8').read())
+
+    # while 1>0:
+    #     gF.rhyFunk.rhyWordLister(('', ''))
 
     nullSpace = ''  #  Certain characters will be replaced by null character
     nullReplace = ['- \n', '-\n']  #  Hyphen at the end of lines indicates words that are broken
@@ -64,6 +67,10 @@ def gov():
                 gF.splitDics[gF.lowerAlphabet.index(splitWords[0])].append(splitWords)
             else:
                 gF.splitDics[gF.lowerAlphabet.index('q')].append(splitWords)
+
+    for splits in splitWords:
+        if splits not in gF.splitWordsList:
+            gF.splitWordsList.append(splits)
 
 
     #$input('paused...')

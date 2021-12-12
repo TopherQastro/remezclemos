@@ -166,43 +166,41 @@ def proxNewBuild():
     #input('paused...')
 
 def proxDataBuilder(qLine, limitNum):  #  Takes the qLine and builds proxData up to a certain length
-    print('pxF:', gF.lineno(), '| proxDataBuilder() - qLine:', qLine) # , qLineIndexList, proxDicIndexList)
+    print('pxF:', gF.lineno(), '| proxDataBuilder() - qLine:', qLine) # , superList[6], proxDicIndexList)
     qLineLen = len(qLine[1])
     proxInt = int(0)  #  Starts the proxData
-    print('pxF:', gF.lineno(), '| proxDataBuilder() - proxData:', gF.qLineIndexList, gF.proxDicIndexList)
+    print('pxF:', gF.lineno(), '| proxDataBuilder() - proxData:', gF.superList[6], gF.superList[7])
     if len(qLine[1]) > 0:
-        # gF.qLineIndexList.append([0])
-        # gF.proxDicIndexList.append([0])
+        # gF.superList[6].append([0])
+        # gF.superList[7].append([0])
         while proxInt < qLineLen:  #  Creates a list of indexes and the reverse list to index proxDics
-            gF.proxDicIndexList[-1].append(proxInt)
-            gF.qLineIndexList[-1].insert(0, proxInt)
+            gF.superList[7][-1].append(proxInt)
+            gF.superList[6][-1].insert(0, proxInt)
             proxInt+=1
     print('pxF:', gF.lineno(), '| proxDataBuilder() - qLine:', qLine, 
-                               '- proxData:', gF.qLineIndexList, gF.proxDicIndexList)
+                               '- proxData:', gF.superList[6], gF.superList[7])
 
 
 def snipProxData(proxExpress, qLine, runLine):
     print('pxF:', gF.lineno(), '| snipProxData() start', qLine)
     if len(qLine[1]) > 0:
         print('pxF:', gF.lineno(), '| len(qLine[1]) > 0')
-        if (len(gF.qLineIndexList[-1]) > gF.proxMinDial) and (len(runLine[1]+qLine[1]) > gF.proxMinDial):
-            print('pxF:', gF.lineno(), '| snip qLineIndex in:', gF.qLineIndexList, 
-                    gF.proxDicIndexList, runLine[1], qLine[1])
-            gF.qLineIndexList[-1].pop()
-            gF.proxDicIndexList[-1].pop()
-            print('pxF:', gF.lineno(), '| snip qLineIndex out:', 
-                    gF.qLineIndexList, gF.proxDicIndexList)
-            # for eachList in gF.superList[:-2]:
-            #     if len(eachList) > 0:
-            #         eachList.pop()
-            # gF.printGlobalData(qLine)
-            # if len(gF.superBlackList) > (len(gF.superPopList) + 1):
-            #     print('pxF:', gF.lineno(), '| superBlackPop')
-            #     gF.superBlackList.pop()
-            # qLine, runLine, killSwitch = gF.popFunk.superPopListMaker(empLine, pLEmps, proxExpress, qLine, runLine)
+        if (len(gF.superList[6][-1]) > gF.proxMinDial) and (len(runLine[1]+qLine[1]) > gF.proxMinDial):
+            print('pxF:', gF.lineno(), '| snip qLineIndex in:', gF.superList[6], gF.superList[7], runLine[1], qLine[1])
+            gF.superList[6][-1].pop()
+            gF.superList[7][-1].pop()
+            print('pxF:', gF.lineno(), '| snip qLineIndex out:')
         else: #and len(qLine[1]) > gF.proxMinDial:  #  If we have enough words, then we can remove rightmost element and metadata, then try again
-            print('pxF:', gF.lineno(), '| snipLine', qLine, '|', runLine, len(gF.superPopList))
+            print('pxF:', gF.lineno(), '| snipLine', qLine, '|', runLine, len(gF.superList[1]))
             qLine, runLine = gF.lineFunk.removeWordR(qLine, runLine)
+    else:
+        qLine, runLine = gF.lineFunk.removeWordR(qLine, runLine)  #  If qLine is out, it'll cut runLine, or initiate killSwitch later
+        for indexes in gF.superList[6:8]:
+            while len(indexes) > 0:
+                indexes.pop()
+            indexes.append([])        
+        proxDataBuilder(runLine, 24)
+
     return qLine, runLine
 
 

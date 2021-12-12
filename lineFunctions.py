@@ -5,14 +5,13 @@ def veto(firstWord):  #  Resets values in a line to
     print('lnF:', gF.lineno(), '| veto()', firstWord)
     listInt = int(0)
     #gF.superList = [[],[],[],[],[],[],[],[],[]]
-    if len(firstWord) > 0:
+    if (len(firstWord) > 0) and (firstWord not in gF.firstBlackList):
         gF.firstBlackList.append(firstWord)
-    gF.superList[6].append(gF.firstBlackList)
     for lists in gF.superList:
-        #print('lnF:', gF.lineno(), listInt, lists)
+        print('lnF:', gF.lineno(), listInt, lists)
         while len(lists) > 0:
             lists.pop()
-        #print('lnF:', gF.lineno(), listInt, lists)
+        print('lnF:', gF.lineno(), listInt, lists)
         listInt+=1
     gF.soundsLine = [[],[],[],[]]
     gF.printGlobalData([[],[]])
@@ -37,28 +36,18 @@ def removeWordR(qLine, runLine):  #  Remove the rightmost word from line
         minusWord0 = qLine[0].pop()  #  Remove word from first part of line
         minusWord1 = qLine[1].pop()  #  Until better method introduced, cut rLine here
         gF.fonoFunk.subtractFonoLine((minusWord0, minusWord1))
-        print('lnF:', gF.lineno(), '| len(superBlackList):', len(gF.superBlackList))
         print('lnF:', gF.lineno(), '| minusWord0:', minusWord0)
-        gF.superBlackList.append([])  #  Add one to remove, because this was easiest in code
         for lists in gF.superList:
             if len(lists) > 0:
                 lists.pop()
             elif len(qLine[1]) > 0:
                 print('lnF:', gF.lineno(), '| qLine:', qLine)
-        try:  #  This 'try' setup shouldn't be part of the program, just the next line
-            if len(gF.superBlackList) > (len(gF.expressList) + 1):
-                gF.superBlackList.pop()
-            else:
-                gF.superBlackList[-1].append(minusWord0)  #  Add to blackList at correct point
-        except IndexError:  #  Investigate why an IndexError occurred. It's not supposed to.
-            print('lnF:', gF.lineno(), '| superBlackList IndexError:\n', 
-                  'len(superBlackList):', len(gF.superBlackList),
-                  gF.superBlackList)
-            input('paused...')
+        if (len(qLine[0]) == 0) and (len(runLine) == 0):  #  If this was a line-starting word that doesn't fit
+            gF.firstBlackList[gF.linesCount].append(minusWord0)
         gF.printGlobalData(qLine)
     else:
         gF.soundsLine = [], [], [], []
-    #if len(gF.superPopList) > (len(qLine[1]) + 1):  #  If we've gone further than checking the list of next words
+    #if len(gF.superList[1]) > (len(qLine[1]) + 1):  #  If we've gone further than checking the list of next words
     print('lnF:', gF.lineno(), '| removeWordR() out - qLine:', qLine)
     gF.printGlobalData(qLine)
     return qLine, runLine
@@ -85,8 +74,6 @@ def acceptWordR(runLine, qLine, nextWord):  #  Add word to right side of line
     qLine[0].append(nextWord[0])
     qLine[1].append(nextWord[1])
     print('lnF:', gF.lineno(), qLine)
-    #gF.proxFunk.proxDataBuilder(gF.qLineIndexList, proxDicIndexList, qLine, len(qLine[1]))
-    #if len(gF.superBlackList) == len(qLine[1]):  #  We don't have any blackListed words that far ahead
     print('lnF:', gF.lineno(), '| acceptWordR - adding superList items')
     gF.printGlobalData(qLine)
     for lists in gF.superList:
@@ -97,78 +84,43 @@ def acceptWordR(runLine, qLine, nextWord):  #  Add word to right side of line
     print('lnF:', gF.lineno(), qLine)
     qLine, runLine, killSwitch = gF.popFunk.superPopListMaker([], qLine, runLine)
     print('lnF:', gF.lineno(), qLine)
-    print('lnF:', gF.lineno(), '| acceptWordR-out:', qLine, '|', nextWord, gF.qLineIndexList, gF.proxDicIndexList)
+    print('lnF:', gF.lineno(), '| acceptWordR-out:', qLine, '|', nextWord, gF.superList[6], gF.superList[7])
     return qLine, killSwitch
 
 
 def lineStarter(qAnteLine, proxExpress):  #  Starts the values for the lineMakers
     print('lnF:', gF.lineno(), '| lineStarter() start')
-    runLine = ([],[])
-    for anteWords in qAnteLine[0]:  #  qAnteLine gets appended to runLine because this function will be cutting from it when it doesn't yield results
-        runLine[0].append(anteWords)
-    for anteWords in qAnteLine[1]:
-        runLine[1].append(anteWords)
-    gF.printGlobalData(([],[]))
-    print('lnF:', gF.lineno(), '| superList:', gF.superList,
-                                 '\nlen(thesList):', len(gF.thesList),
-                                 '\nlen(contList):', len(gF.contList),
-                                 '\nlen(superBlackList):', len(gF.superBlackList), 
-                                 '\nlen(qLineIndexList):', len(gF.qLineIndexList), 
-                                 '\nlen(proxDicIndexList):', len(gF.proxDicIndexList))
-    for lists in gF.superList:  #  All the global lists except for 
-        lists.append([])             #  qLineIndexList, proxDataIndexList
-    gF.printGlobalData(([],[]))
-    print('lnF:', gF.lineno(), '| superList:', gF.superList,
-                                 '\nlen(thesList):', len(gF.thesList),
-                                 '\nlen(contList):', len(gF.contList),
-                                 '\nlen(superBlackList):', len(gF.superBlackList), 
-                                 '\nlen(qLineIndexList):', len(gF.qLineIndexList), 
-                                 '\nlen(proxDicIndexList):', len(gF.proxDicIndexList))
-    print('lnF:', gF.lineno(), '| lineStarter() - runLine:', runLine)
-    gF.superBlackList.append([])
-    print(len(gF.superBlackList))
-    gF.proxFunk.proxDataBuilder(runLine, len(runLine[1]))
-    print('lnF:', gF.lineno(), '| lineStarter() - firstWord start')
-    for all in gF.firstWords:
-        if all not in gF.superBlackList[0]:
-            if all in proxExpress:
-                gF.expressList[0].append(all)
-            else:
-                gF.superPopList[0].append(all)
-    print('lnF:', gF.lineno(), '| len(superPopList[0]):', len(gF.superPopList[0]), 'len(expressList[0]):', len(gF.expressList[0]))
-    return runLine, ([],[])
-          #runLine, qLine
+    for lists in gF.superList:  
+        lists.append([])        
+    if (gF.linesCount == 0) or (len(qAnteLine) == 0):
+        for all in gF.firstWords:
+            if all not in gF.firstBlackList[gF.linesCount]:
+                if all in proxExpress:
+                    gF.superList[0][0].append(all)
+                else:
+                    gF.superList[1][0].append(all)
+        qLine = ([],[])
+    else:
+        gF.proxFunk.proxDataBuilder(qAnteLine, len(qAnteLine[1]))
+        qLine, runLine, killSwitch = gF.popFunk.superPopListMaker(proxExpress, ([],[]), qAnteLine)
+    gF.printGlobalData(qLine)
+    return qAnteLine, qLine
 
 
-def gov(empsKeyLine, rhymeThisLine, rhymeList, qAnteLine):
+def gov(empsKeyLine, rhymeThisLine, rhymeList, qAnteLine, qAnteFonoLine):
     print('lnF:', gF.lineno(), '| gov() start', rhymeThisLine)
     qLine = veto(str())  #  Start with empty variables declared. This function is also a reset button if lines are to be scrapped.
     proxExpress = []
-    if rhymeThisLine == True:
+    if gF.metSwitch == True:
         print('lnF:', gF.lineno(), '| gov() - len(rhymeList):', len(rhymeList))
-        if (len(rhymeList) > 0):  #  This dictates whether stanzaGovernor sent a rhyming line. An empty line indicates metered-only, or else it would've been a nonzero population
-            proxExpress = []
-            for rhymers in rhymeList:  #  Find words that come before rhymeWords, so you direct it towards that one
-                try:
-                    for words in gF.proxMinusLista[:len(gF.soundsLine)]:  #  Only go as far as the soundsLine, as if all words are one-syllable long
-                        thisProxList = words[rhymers]
-                        for proxWord in thisProxList:
-                            if (proxWord not in proxExpress) and (proxWord not in gF.quantumList):
-                                proxExpress.append(proxWord)
-                except KeyError:
-                    continue
-            print('lnF:', gF.lineno(), '| gov() - len(proxExpress):', len(proxExpress))
-            qLine, killSwitch = gF.rhyFunk.rhymeLiner(empsKeyLine, proxExpress, qAnteLine, rhymeList)
-        else:
-            print('lnF:', gF.lineno(), '| gov() - no rhymes')
-            return ([],[]), True  #  qLine, killSwitch
-    elif gF.metSwitch == True:  #  If metSwitch is off, then we wouldn't have either rhyme or meter
-        print('lnF:', gF.lineno(), '| gov() - gF.meterFunk.gov activate')
-        qLine, killSwitch = gF.meterFunk.gov(empsKeyLine, ([], []), qAnteLine, proxExpress)
-                                              #  empsKeyLine, qLine, runLine, proxExpress
+        for rhymes in rhymeList:
+            if rhymes in gF.splitTextList:
+                proxExpress.append(rhymes)
+        print('lnF:', gF.lineno(), '| gov() - len(proxExpress):', len(proxExpress))
+        qLine, killSwitch = gF.meterFunk.gov(empsKeyLine, rhymeThisLine, qLine, qAnteLine, qAnteFonoLine, proxExpress)
     else:
         print('lnF:', gF.lineno(), '| gov() - plainLiner activate')
-        qLine, killSwitch = plainLinerLtoR(qAnteLine)
+        qLine, killSwitch = gF.plainFunk.plainLinerLtoR(qAnteLine)
     if killSwitch == True:
         print('lnF:', gF.lineno(), 'gov() - killSwitch')
         if len(qLine[0]) > 0:
