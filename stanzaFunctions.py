@@ -63,7 +63,7 @@ def gov():
                         return  [], True  #  killSwitch event
                 print('stF:', gF.lineno(), '| rhymeWord:', rhymeWord)
                 print('stF:', gF.lineno(), '| len(gF.splitText):', len(gF.splitText))
-                rhymeList = gF.rhyFunk.rhyWordLister(rhymeWord)  #  Syllable length can be varied, 10 returns all
+                rhymeList = gF.rhyFunk.rhyWordLister([rhymeWord])  #  Syllable length can be varied, 10 returns all
                 rhymeThisLine = True
         newLine, killSwitch = gF.lineFunk.gov(gF.empMap[gF.linesCount], rhymeThisLine, rhymeList, qAnteLine, qAnteFonoLine) 
         if killSwitch == True:  #  Not an elif because any of the above could trigger this; must be separate if statement

@@ -16,11 +16,13 @@ def gov(empsKeyLine, rhymeThisLine, qLine, qAnteLine, qAnteFonoLine, proxExpress
     print('mLF:', gF.lineno(), '| gov() - gF.soundsLine:', gF.soundsLine, 'qAnteLine:', qAnteLine, '- qLine:', qLine)
     gF.stopTime = gF.time.time()
     killSwitch = False
-    if gF.stopTime > (gF.startTime + 300):
-        qLine = gF.lineFunk.veto(str())
-        print('mLF:', gF.lineno(), gF.soundsLine, qLine)
-        print('mLF:', gF.lineno(), '| gov() - timeout restart:', str(gF.time.ctime())[11:20])
-        return qLine, True  #  qLine, killSwitch
+    # if gF.stopTime > (gF.startTime + 300):
+    #     gF.startTime = gF.time.time()
+    #     gF.stopTime = gF.time.time() + 300
+    #     qLine = gF.lineFunk.veto(str())
+    #     print('mLF:', gF.lineno(), gF.soundsLine, qLine)
+    #     print('mLF:', gF.lineno(), '| gov() - timeout restart:', str(gF.time.ctime())[11:20])
+    #     return qLine, True  #  qLine, killSwitch
     runLine = ([],[])
     for words in qAnteLine[0]:
         runLine[0].append(words)

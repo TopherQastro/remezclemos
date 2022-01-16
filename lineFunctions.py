@@ -109,6 +109,7 @@ def lineStarter(qAnteLine, proxExpress):  #  Starts the values for the lineMaker
 
 def gov(empsKeyLine, rhymeThisLine, rhymeList, qAnteLine, qAnteFonoLine):
     print('lnF:', gF.lineno(), '| gov() start', rhymeThisLine)
+    #if rhymeList
     qLine = veto(str())  #  Start with empty variables declared. This function is also a reset button if lines are to be scrapped.
     proxExpress = []
     if gF.metSwitch == True:

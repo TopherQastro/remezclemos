@@ -78,14 +78,16 @@ def rhyLiner(fonoLine0, fonoLine1):
 
 
 def rhyWordLister(yLine):  #  This finds any words that rhyme to be placed in the expressList later    
+    print('ryF:', gF.lineno(), '| rhyWordLister(', yLine, ')')
     rhyWordLine = []
-    for yWords in yLine[0]:
+    for yWords in yLine:
         rhyWordLine.append(yWords)
     while rhyWordLine[-1] in gF.allPunx:
         rhyWordLine = rhyWordLine[:-1]
     rhymeWord = rhyWordLine[-1]
     if '(0)' in rhymeWord:  #  info should exist for '(1)' and above
         rhymeWord = rhymeWord[:-3]
+    print('ryF:', gF.lineno(), '| rhymeWord:', rhymeWord) 
     rhymeWord = rhymeWord.upper()  #  The file is in all caps
     #rhymeWord = input('Type word: ').upper()
     rhymeFono = str()
