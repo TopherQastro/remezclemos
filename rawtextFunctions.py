@@ -29,8 +29,8 @@ def gov():
         gF.tSyls = int(2)
         gF.consMode = 'fullList'
         gF.rCons = int(1)
-        gF.empMap = [[bool(0), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
-                     [bool(0), bool(1), bool(0), bool(1), bool(0), bool(1), bool(0), bool(1)],
+        gF.empMap = [[bool(1), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
+                     [bool(1), bool(0), bool(1), bool(1), bool(0), bool(1), bool(0), bool(1)],
                      [bool(0), bool(0), bool(1), bool(0), bool(1), bool(0), bool(1)],
                     #[bool(0), bool(1), bool(0), bool(0), bool(1)],
                      [bool(1), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)]]

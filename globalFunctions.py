@@ -51,11 +51,18 @@ def begin():
     poemQuota, stanzaQuota, proxMaxDial, proxMinDial, punxDial = int(0), int(0), int(0), int(0), int(0)
     rhyMap, empMap, usedList, firstWords, firstPopList = [], [], [], [], []
 
-    global superList, superPopList, expressList, thesList, dynaList, contList, punxList, qLineIndexList, proxDicIndexList, firstBlackList
+    global stanza, qAnteFonoLine, empsKeyLine, fonoStanza
+    stanza, qAnteFonoLine, empsKeyLine, fonoStanza = [], [], [], []
+
+    global qLine, qAnteLine
+    qLine, qAnteLine = ([],[]), ([],[])
+
+    global superList, superPopList, expressList, thesList, dynaList, contList, punxList, qLineIndexList, proxDicIndexList, firstBlackList, superBlackList
     superList, superPopList, expressList, thesList, dynaList, contList, punxList, qLineIndexList, proxDicIndexList, firstBlackList = [], [], [], [], [], [], [], [], [], []
     superList = superPopList, expressList, thesList, dynaList, contList, punxList, qLineIndexList, proxDicIndexList
      # Indexes: 0             1            2         3         4         5         6               7               firstBlackLists is independent from this set
     global blackListInt
+    superBlackList = [[]]
     blackListInt = int(0)
 
 
@@ -64,7 +71,8 @@ def begin():
                 'not', 'is', 'do', 'did', 'can', 'could', 'will', 'does', 'of', 'as',
                 'when', 'than', 'then', 'my', 'your', 'too', 'would', 'should', 'he', 'him',
                 'his', 'she', 'her', 'hers', 'they', 'them', 'their', "they're", 'there',
-                'have', 'had', 'has', 'must', 'with', 'i', 'from', 'through', 'now', 'on'] 
+                'have', 'had', 'has', 'must', 'with', 'i', 'from', 'through', 'now', 'on',
+                'how', 'much', 'this', 'that', 'or'] 
     nonEnders = ['and', 'or', 'a', 'but', 'the', 'an', ',', ';', ':', '--'] #  Words that don't sound well ending a sentence
     upperAlphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
                      'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -265,8 +273,10 @@ def begin():
     global prox_file, proxConn, proxCursor
 
 
-def printGlobalData(qLine):
+def printGlobalData():
     print('gF:', lineno(), '| printGlobalData() -', len(qLine[1]), qLine[1])
+    print('gF:', lineno(), '| printGlobalData() -', empsKeyLine)
+    print('gF:', lineno(), '| printGlobalData() -', soundsLine[3])
     print('gF:', lineno(), '| printGlobalData() - sPpL, expL, thes, dyna, cont, pnxL, sBkL, qLIL, pLDL')
     indInt = int(0)
     print('gF:', lineno(), qLineIndexList, proxDicIndexList)
@@ -277,6 +287,10 @@ def printGlobalData(qLine):
                 listsLenLine.append(len(subList))
             print('gF:', lineno(), '|', indInt, 'len:', len(listsLenLine), '|', listsLenLine)
         indInt+=1
+    superBlackListString = str()
+    for each in superBlackList:
+        superBlackListString+=(str(len(each))+', ')
+    print('gF:', lineno(), '| len(superBlackList) -', superBlackListString[:-2])
     for firstBlackLists in firstBlackList:
         print('gF:', lineno(), 'firstBlackListLen:', len(firstBlackLists))
 

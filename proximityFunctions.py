@@ -44,7 +44,7 @@ def proxNewBuild():
         if words in gF.doubles:
             words+='(0)'
             #print('pxF:', gF.lineno(), '| doubled:', words)
-        dicCheck = gF.fonoFunk.addFonoLine([], (words, words))
+        dicCheck = gF.fonoFunk.addFonoLine((words, words))
         #print('pxF:', gF.lineno(), '| result:', dicCheck, '-', words)
         if dicCheck == 'gotIt' or words in gF.allPunx:
             if '(0)' in words:
@@ -165,43 +165,42 @@ def proxNewBuild():
     gF.proxConn.commit()
     #input('paused...')
 
-def proxDataBuilder(qLine, limitNum):  #  Takes the qLine and builds proxData up to a certain length
-    print('pxF:', gF.lineno(), '| proxDataBuilder() - qLine:', qLine) # , superList[6], proxDicIndexList)
-    qLineLen = len(qLine[1])
+def proxDataBuilder(xLine):  #  Takes the gF.qLine and builds proxData up to a certain length
+    print('pxF:', gF.lineno(), '| proxDataBuilder(\n', xLine, '\n):')
+    gF.printGlobalData()
     proxInt = int(0)  #  Starts the proxData
-    print('pxF:', gF.lineno(), '| proxDataBuilder() - proxData:', gF.superList[6], gF.superList[7])
-    if len(qLine[1]) > 0:
+    if len(xLine[1]) > 0:
         # gF.superList[6].append([0])
         # gF.superList[7].append([0])
-        while proxInt < qLineLen:  #  Creates a list of indexes and the reverse list to index proxDics
+        while proxInt < min(len(xLine[1]), 24):  #  Creates a list of indexes and the reverse list to index proxDics
             gF.superList[7][-1].append(proxInt)
             gF.superList[6][-1].insert(0, proxInt)
             proxInt+=1
-    print('pxF:', gF.lineno(), '| proxDataBuilder() - qLine:', qLine, 
+    print('pxF:', gF.lineno(), '| proxDataBuilder() - xLine:', xLine, 
                                '- proxData:', gF.superList[6], gF.superList[7])
 
 
-def snipProxData(proxExpress, qLine, runLine):
-    print('pxF:', gF.lineno(), '| snipProxData() start', qLine)
-    if len(qLine[1]) > 0:
-        print('pxF:', gF.lineno(), '| len(qLine[1]) > 0')
-        if (len(gF.superList[6][-1]) > gF.proxMinDial) and (len(runLine[1]+qLine[1]) > gF.proxMinDial):
-            print('pxF:', gF.lineno(), '| snip qLineIndex in:', gF.superList[6], gF.superList[7], runLine[1], qLine[1])
+def snipProxData(proxExpress, runLine):
+    print('pxF:', gF.lineno(), '| snipProxData() start', gF.qLine)
+    if len(gF.qLine[1]) > 0:
+        print('pxF:', gF.lineno(), '| len(gF.qLine[1]) > 0')
+        if (len(gF.superList[6][-1]) > gF.proxMinDial) and (len(runLine[1]+gF.qLine[1]) > gF.proxMinDial):
+            print('pxF:', gF.lineno(), '| snip gF.qLineIndex in:', gF.superList[6], gF.superList[7], runLine[1], gF.qLine[1])
             gF.superList[6][-1].pop()
             gF.superList[7][-1].pop()
-            print('pxF:', gF.lineno(), '| snip qLineIndex out:')
-        else: #and len(qLine[1]) > gF.proxMinDial:  #  If we have enough words, then we can remove rightmost element and metadata, then try again
-            print('pxF:', gF.lineno(), '| snipLine', qLine, '|', runLine, len(gF.superList[1]))
-            qLine, runLine = gF.lineFunk.removeWordR(qLine, runLine)
+            print('pxF:', gF.lineno(), '| snip gF.qLineIndex out:')
+        else: #and len(gF.qLine[1]) > gF.proxMinDial:  #  If we have enough words, then we can remove rightmost element and metadata, then try again
+            print('pxF:', gF.lineno(), '| snipLine', gF.qLine, '|', runLine, len(gF.superList[1]))
+            runLine = gF.lineFunk.removeWordR(runLine)
     else:
-        qLine, runLine = gF.lineFunk.removeWordR(qLine, runLine)  #  If qLine is out, it'll cut runLine, or initiate killSwitch later
+        runLine = gF.lineFunk.removeWordR(runLine)  #  If gF.qLine is out, it'll cut runLine, or initiate killSwitch later
         for indexes in gF.superList[6:8]:
             while len(indexes) > 0:
                 indexes.pop()
             indexes.append([])        
-        proxDataBuilder(runLine, 24)
+        proxDataBuilder(runLine)
 
-    return qLine, runLine
+    return runLine
 
 
 def proxGrabber(thisWord, proxIndex):

@@ -1,12 +1,10 @@
 
 import globalFunctions as gF
 
-def veto(firstWord):  #  Resets values in a line to
-    print('lnF:', gF.lineno(), '| veto()', firstWord)
+def veto():  #  Resets values in a line to
+    print('lnF:', gF.lineno(), '| veto()')
     listInt = int(0)
     #gF.superList = [[],[],[],[],[],[],[],[],[]]
-    if (len(firstWord) > 0) and (firstWord not in gF.firstBlackList):
-        gF.firstBlackList.append(firstWord)
     for lists in gF.superList:
         print('lnF:', gF.lineno(), listInt, lists)
         while len(lists) > 0:
@@ -14,51 +12,60 @@ def veto(firstWord):  #  Resets values in a line to
         print('lnF:', gF.lineno(), listInt, lists)
         listInt+=1
     gF.soundsLine = [[],[],[],[]]
-    gF.printGlobalData([[],[]])
+    gF.printGlobalData()
 
-    return ([],[])
-          # qLine
-          
 
-def removeWordL(superPopList, qLine):  #  Remove the leftmost word from line
+def makeYLine(quantumLine0, quantumLine1):
+    print('lnF:', gF.lineno(), 'makeYLine begin:', quantumLine0, quantumLine1)
+    yLine = ([],[])
+    for pWords in quantumLine0[0]+quantumLine1[0]:
+        yLine[0].append(pWords)
+    for rWords in quantumLine0[1]+quantumLine1[1]:
+        yLine[1].append(rWords)
+    print('lnF:', gF.lineno(), 'makeYLine ended:', yLine)
+    return yLine
+      
+
+def removeWordL(superPopList):  #  Remove the leftmost word from line
     # do something
     return data
 
 
-def removeWordR(qLine, runLine):  #  Remove the rightmost word from line
-    print('lnF:', gF.lineno(), '| removeWordR-in', 'qLine:', qLine, 'runLine:', runLine)
-    if len(qLine[0]) == 0 and len(runLine[0]) > 0:  #  Cut runLine
+def removeWordR(runLine):  #  Remove the rightmost word from line
+    print('lnF:', gF.lineno(), '| removeWordR-in', 'gF.qLine:', gF.qLine, 'runLine:', runLine)
+    if len(gF.qLine[0]) == 0 and len(runLine[0]) > 0:  #  Cut runLine
         print('lnF:', gF.lineno(), "| rMR - if0")
         minusWordX = runLine[0].pop(0)  #  Since the previous line didn't yield any following line
         minusWordY = runLine[1].pop(0)  #  minusWordX just holds whatever is getting popped
-    if len(qLine[0]) > 0:
+    if len(gF.qLine[0]) > 0:
         print('lnF:', gF.lineno(), "| rMR - if1")
-        minusWord0 = qLine[0].pop()  #  Remove word from first part of line
-        minusWord1 = qLine[1].pop()  #  Until better method introduced, cut rLine here
+        minusWord0 = gF.qLine[0].pop()  #  Remove word from first part of line
+        minusWord1 = gF.qLine[1].pop()  #  Until better method introduced, cut rLine here
+        gF.superBlackList[len(gF.qLine[0])].append(minusWord1)
         gF.fonoFunk.subtractFonoLine((minusWord0, minusWord1))
         print('lnF:', gF.lineno(), '| minusWord0:', minusWord0)
         for lists in gF.superList:
             if len(lists) > 0:
                 lists.pop()
-            elif len(qLine[1]) > 0:
-                print('lnF:', gF.lineno(), '| qLine:', qLine)
-        if (len(qLine[0]) == 0) and (len(runLine) == 0):  #  If this was a line-starting word that doesn't fit
+            elif len(gF.qLine[1]) > 0:
+                print('lnF:', gF.lineno(), '| gF.qLine:', gF.qLine)
+        if (len(gF.qLine[0]) == 0) and (len(runLine) == 0):  #  If this was a line-starting word that doesn't fit
             gF.firstBlackList[gF.linesCount].append(minusWord0)
-        gF.printGlobalData(qLine)
+        gF.printGlobalData()
     else:
         gF.soundsLine = [], [], [], []
-    #if len(gF.superList[1]) > (len(qLine[1]) + 1):  #  If we've gone further than checking the list of next words
-    print('lnF:', gF.lineno(), '| removeWordR() out - qLine:', qLine)
-    gF.printGlobalData(qLine)
-    return qLine, runLine
+    #if len(gF.superList[1]) > (len(gF.qLine[1]) + 1):  #  If we've gone further than checking the list of next words
+    print('lnF:', gF.lineno(), '| removeWordR() out - gF.qLine:', gF.qLine)
+    gF.printGlobalData()
+    return runLine
 
 
-def acceptWordL(qLine, nextWord):  #  Add the rightmost word to line
+def acceptWordL(nextWord):  #  Add the rightmost word to line
 
 ##  INVERT THESE VALUES
 
-    print('lnF:', gF.lineno(), '| acceptWord:', qLine, '-', nextWord)
-    qLine[0].append(nextWord)
+    print('lnF:', gF.lineno(), '| acceptWord:', gF.qLine, '-', nextWord)
+    gF.qLine[0].append(nextWord)
     if len(gF.proxNumList) > 0:
         proxNum = gF.proxNumList[-1] + 1
     else:
@@ -66,51 +73,57 @@ def acceptWordL(qLine, nextWord):  #  Add the rightmost word to line
     gF.proxNumList.append(proxNum)
     proxLineNum = gF.proxLineNumList[0] + 1
     gF.proxLineNumList.insert(0, proxLineNum)
-    return qLine
 
 
-def acceptWordR(runLine, qLine, nextWord):  #  Add word to right side of line
-    print('lnF:', gF.lineno(), '| acceptWordR-in:', qLine, '|', nextWord, 'runLine:', runLine)
-    qLine[0].append(nextWord[0])
-    qLine[1].append(nextWord[1])
-    print('lnF:', gF.lineno(), qLine)
+def acceptWordR(runLine, nextWord):  #  Add word to right side of line
+    print('lnF:', gF.lineno(), '| acceptWordR-in:', gF.qLine, '|', nextWord, 'runLine:', runLine)
+    gF.qLine = makeYLine(gF.qLine, nextWord)
+    while len(gF.superBlackList) < (len(gF.qLine[0])+1):
+        gF.superBlackList.append([])
+    print('lnF:', gF.lineno(), gF.qLine)
     print('lnF:', gF.lineno(), '| acceptWordR - adding superList items')
-    gF.printGlobalData(qLine)
+    gF.printGlobalData()
     for lists in gF.superList:
         lists.append([])
-    gF.printGlobalData(qLine)
-    print('lnF:', gF.lineno(), qLine, (runLine[0]+qLine[0], runLine[1]+qLine[1]))
-    gF.proxFunk.proxDataBuilder((runLine[0]+qLine[0], runLine[1]+qLine[1]), len(runLine[1]+qLine[1]))
-    print('lnF:', gF.lineno(), qLine)
-    qLine, runLine, killSwitch = gF.popFunk.superPopListMaker([], qLine, runLine)
-    print('lnF:', gF.lineno(), qLine)
-    print('lnF:', gF.lineno(), '| acceptWordR-out:', qLine, '|', nextWord, gF.superList[6], gF.superList[7])
-    return qLine, killSwitch
+    gF.printGlobalData()
+    print('lnF:', gF.lineno(), '| runline:', runLine)
+    print('lnF:', gF.lineno(), gF.qLine)
+    gF.proxFunk.proxDataBuilder([runLine, gF.qLine])
+    print('lnF:', gF.lineno(), gF.qLine)
+    runLine, killSwitch = gF.popFunk.superPopListMaker([], makeYLine(runLine, gF.qLine), runLine)
+    print('lnF:', gF.lineno(), gF.qLine)
+    print('lnF:', gF.lineno(), '| acceptWordR-out:', gF.qLine, '|', nextWord, gF.superList[6], gF.superList[7])
+    return killSwitch
 
 
-def lineStarter(qAnteLine, proxExpress):  #  Starts the values for the lineMakers
+def lineStarter(proxExpress):  #  Starts the values for the lineMakers
     print('lnF:', gF.lineno(), '| lineStarter() start')
     for lists in gF.superList:  
         lists.append([])        
-    if (gF.linesCount == 0) or (len(qAnteLine) == 0):
+    if (gF.linesCount == 0) or (len(gF.qAnteLine[1]) == 0):
         for all in gF.firstWords:
             if all not in gF.firstBlackList[gF.linesCount]:
                 if all in proxExpress:
                     gF.superList[0][0].append(all)
                 else:
                     gF.superList[1][0].append(all)
-        qLine = ([],[])
+        gF.qLine, runLine = ([],[]), ([],[])
+        killSwitch = False
+    elif len(gF.qAnteLine[1]) > 0:
+        runLine = makeYLine(gF.qAnteLine, ([],[]))
+        gF.proxFunk.proxDataBuilder(runLine)
+        runLine, killSwitch = gF.popFunk.superPopListMaker(proxExpress, runLine, runLine)
     else:
-        gF.proxFunk.proxDataBuilder(qAnteLine, len(qAnteLine[1]))
-        qLine, runLine, killSwitch = gF.popFunk.superPopListMaker(proxExpress, ([],[]), qAnteLine)
-    gF.printGlobalData(qLine)
-    return qAnteLine, qLine
+        gF.proxFunk.proxDataBuilder(([],[]))
+        runLine, killSwitch = gF.popFunk.superPopListMaker(proxExpress, gF.qLine, ([],[]))
+    gF.printGlobalData()
+    return runLine, killSwitch
 
 
-def gov(empsKeyLine, rhymeThisLine, rhymeList, qAnteLine, qAnteFonoLine):
-    print('lnF:', gF.lineno(), '| gov() start', rhymeThisLine)
+def gov(rhymeSwitch, rhymeList):
+    print('lnF:', gF.lineno(), '| gov() start', rhymeSwitch)
     #if rhymeList
-    qLine = veto(str())  #  Start with empty variables declared. This function is also a reset button if lines are to be scrapped.
+    veto()  #  Start with empty variables declared. This function is also a reset button if lines are to be scrapped.
     proxExpress = []
     if gF.metSwitch == True:
         print('lnF:', gF.lineno(), '| gov() - len(rhymeList):', len(rhymeList))
@@ -118,19 +131,33 @@ def gov(empsKeyLine, rhymeThisLine, rhymeList, qAnteLine, qAnteFonoLine):
             if rhymes in gF.splitTextList:
                 proxExpress.append(rhymes)
         print('lnF:', gF.lineno(), '| gov() - len(proxExpress):', len(proxExpress))
-        qLine, killSwitch = gF.meterFunk.gov(empsKeyLine, rhymeThisLine, qLine, qAnteLine, qAnteFonoLine, proxExpress)
+        killSwitch = gF.meterFunk.gov(rhymeSwitch, proxExpress)
     else:
         print('lnF:', gF.lineno(), '| gov() - plainLiner activate')
-        qLine, killSwitch = gF.plainFunk.plainLinerLtoR(qAnteLine)
+        killSwitch = gF.plainFunk.plainLinerLtoR(gF.qAnteLine)
     if killSwitch == True:
         print('lnF:', gF.lineno(), 'gov() - killSwitch')
-        if len(qLine[0]) > 0:
-            print('lnF:', gF.lineno(), 'kill0', qLine)
-            qLine = veto(qLine[0][0])
-        else:
+        if len(gF.qLine[0]) > 0:
+            print('lnF:', gF.lineno(), 'kill0', gF.qLine)
+            veto()
+        elif len(gF.qAnteLine) > 0:  #  If the previous sentence was almost there, go back and continue with the last word removed
             print('lnF:', gF.lineno(), 'kill1')
-            qLine = veto(str())
-        return qLine, True
+            gF.qLine = ([],[])
+            gF.qAnteLine = removeWordR(gF.qAnteLine)
+            for anteWords0 in gF.qAnteLine[0]:
+                gF.qLine[0].append(anteWords0)
+            for anteWords1 in gF.qAnteLine[1]:
+                gF.qLine[1].append(anteWords1)
+            if len(gF.stanza) > 0:
+                for anteEmps in gF.empMap[len(gF.stanza)-1]:
+                    gF.soundsLine[3].append(anteEmps)
+            gF.stanza.pop()
+            gF.qAnteFonoLine = []
+            return False
+        else:
+            print('lnF:', gF.lineno(), 'kill2')
+            veto()
+        return True
     else:
-        print('lnF:', gF.lineno(), '| gov() - last else', qLine)
-        return qLine, False  #  usedList, qLine, killSwitch
+        print('lnF:', gF.lineno(), '| gov() - last else', gF.qLine)
+        return False  #  usedList, killSwitch

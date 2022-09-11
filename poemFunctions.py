@@ -11,18 +11,18 @@ def gov():  #  Outlines the parameters of the poem
     print(gF.rhyMap, '+', gF.empMap, '+', len(gF.usedList))
     poem, gF.usedList, stanzaCt, killSwitch = veto()
     while len(poem) < gF.stanzaQuota:
-        stanza, killSwitch = gF.stanzaFunk.gov()
-        if len(stanza) == len(gF.rhyMap):
+        killSwitch = gF.stanzaFunk.gov()
+        if len(gF.stanza) == len(gF.rhyMap):
             print('poF:', gF.lineno(), 'gotStanza\n')
             writtenStanza = str()
-            for each in stanza:
+            for each in gF.stanza:
                 thisString = str()
                 for all in each[0]:
                     thisString= thisString+' '+all
                 for all in gF.allPunx:
                     thisString = thisString.replace(' '+all, all)  #  Get rid of whitespace character in front of puncuation
-                if each == stanza[-1]:
-                    if stanza[-1][-1] in gF.allPunx:  #  Make sure a mid-sentence puncuation doesn't end the last line.
+                if each == gF.stanza[-1]:
+                    if gF.stanza[-1][-1] in gF.allPunx:  #  Make sure a mid-sentence puncuation doesn't end the last line.
                         thisString = thisString[:-1]
                     thisString+='.'  #  Add a period to the last line
                 for all in gF.endPunx:
@@ -39,7 +39,7 @@ def gov():  #  Outlines the parameters of the poem
                 gF.usedList = ['']
             if killSwitch == True:
                 gF.usedList, lastList, stanzaCt, killSwitch = veto()
-            elif len(stanza) == 0 and len(poem) > 0:
+            elif len(gF.stanza) == 0 and len(poem) > 0:
                 poem = poem[:-1]
             else:
                 poem.append(writtenStanza)
