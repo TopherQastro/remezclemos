@@ -1,52 +1,54 @@
-import praw
-import pandas as pd
- 
-reddit_read_only = praw.Reddit(client_id="wMfPLvhn-uxA2YmxwlRq6w",         # your client id
-                               client_secret="aI2GNGd5MhfWq6fVyCMrqX-ou7IF-g",      # your client secret
-                               user_agent="wemyx_TQ")        # your user agent
- 
- 
-subreddit = reddit_read_only.subreddit("fifthWorldProblems")
- 
-# Display the name of the Subreddit
-print("Display Name:", subreddit.display_name)
- 
-# Display the title of the Subreddit
-print("Title:", subreddit.title)
- 
-# Display the description of the Subreddit
-print("Description:", subreddit.description)
+import globalFunctions as gF
 
-for post in subreddit.hot(limit=5):
-    print(post.title)
-    print()
+def login():
+    reddit = gF.praw.Reddit(
+        user_agent="sandboxing (by u/wemyx_TQ)",
+        client_id="wMfPLvhn-uxA2YmxwlRq6w",
+        client_secret='aI2GNGd5MhfWq6fVyCMrqX-ou7IF-g',
+        username="wemyx_TQ",
+        password="14789653eddiT!!",
+    )
+    return reddit
+
+def getPosts(redSubName):
+    posts = []
+    redTexts = []
+    reddit = login()
+    thisSubreddit = reddit.subreddit(redSubName[2:])
+
+    for post in thisSubreddit.top():
+        print('rdF:', gF.lineno(), ' |', post.title)
+        redTexts.append(post.title)
+        try:
+            submission = reddit.submission(url=post.url)
+        except:
+            print('rdF:', gF.lineno(), ' | ERROR_URL:', post.url)
+            continue
+        #submission.comments.replace_more(limit=100)
+        for comment in submission.comments.list():
+            try:
+                redTexts.append(comment.body)
+                print('rdF:', gF.lineno(), ' |', comment.body)
+            except:
+                print('rdF:', gF.lineno(), ' | ERROR_comment.body')
+                continue
+
+    return redTexts
+
+def writeRedTxtFile(redSubName, redTexts):
+    redFile = open('eng/data/textLibrary/'+redSubName+'.txt', 'w+', encoding='utf-8')
+    for texts in redTexts:
+        try:
+            redFile.write(texts+'\n')
+        except:
+            print('rdF:', gF.lineno(), ' | ', texts)
+            continue
+## [post.title, post.score, post.id, post.subreddit, post.url,
+##  post.num_comments, post.selftext, post.created])
 
 
-posts = subreddit.top("month")
-# Scraping the top posts of the current month
- 
-posts_dict = {"Title": [], "Post Text": [],
-              "ID": [], "Score": [],
-              "Total Comments": [], "Post URL": []
-              }
- 
-for post in posts:
-    # Title of each post
-    posts_dict["Title"].append(post.title)
-     
-    # Text inside a post
-    posts_dict["Post Text"].append(post.selftext)
-     
-    # Unique ID of each post
-    posts_dict["ID"].append(post.id)
-     
-    # The score of a post
-    posts_dict["Score"].append(post.score)
-     
-    # Total number of comments inside the post
-    posts_dict["Total Comments"].append(post.num_comments)
-     
-    # URL of each post
-    posts_dict["Post URL"].append(post.url)
 
-print(posts_dict)
+##    submission.comments.replace_more(limit=None)
+##    for top_level_comment in submission.comments:
+##        print(top_level_comment.body)
+

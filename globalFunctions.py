@@ -12,6 +12,8 @@ import datetime
 import inspect
 import nltk
 from nltk.corpus import wordnet as wn
+import pandas as pd
+import praw
 import pygubu
 import random
 import shelve
@@ -33,6 +35,7 @@ import poemFunctions as poemFunk
 import popFunctions as popFunk
 import proximityFunctions as proxFunk
 import rawtextFunctions as rawtextFunk
+import redditFunctions as redFunk
 import rhymeFunctions as rhyFunk
 import stanzaFunctions as stanzaFunk
 

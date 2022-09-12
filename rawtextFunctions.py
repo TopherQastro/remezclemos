@@ -8,12 +8,20 @@ def gov():
     gF.vocsSwitch = False
     gF.consSwitch = False
     gF.empsSwitch = True
+    internet = True
 
     if gF.defaultSwitch == True:
+
         gF.lang = 'eng'
         gF.accent = 'USen'
         gF.empMode = 'empsEven'
-        gF.textFile = 'bibleZ'
+        if internet == True:
+            gF.textFile = 'r/fifthworldproblems'
+            print('rtF:',  gF.lineno(), 'beginning reddit scrape')
+            redTexts = gF.redFunk.getPosts(gF.textFile)
+            gF.redFunk.writeRedTxtFile(gF.textFile, redTexts)
+        else:
+            gF.textFile = 'ulysses'
         gF.poemQuota = 100
         gF.stanzaQuota = 1
         gF.proxMinDial = int(3)
@@ -23,7 +31,7 @@ def gov():
         gF.rhySwitch = True
         gF.metSwitch = True
         gF.thesSwitch = True
-        gF.rhyMap = 'aa'
+        gF.rhyMap = 'aba'
         gF.rhyMode = 'fullList'
         gF.rSyls = int(2)
         gF.tSyls = int(2)
