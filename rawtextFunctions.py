@@ -16,7 +16,7 @@ def gov():
         gF.accent = 'USen'
         gF.empMode = 'empsEven'
         if internet == True:
-            gF.textFile = 'r/fifthworldproblems'
+            gF.textFile = 'r/AskReddit'
             print('rtF:',  gF.lineno(), 'beginning reddit scrape')
             redTexts = gF.redFunk.getPosts(gF.textFile)
             gF.redFunk.writeRedTxtFile(gF.textFile, redTexts)
