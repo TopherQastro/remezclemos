@@ -8,7 +8,7 @@ def gov():
     gF.vocsSwitch = False
     gF.consSwitch = False
     gF.empsSwitch = True
-    internet = True
+    internet = False
 
     if gF.defaultSwitch == True:
 
