@@ -68,6 +68,8 @@ def begin():
     superBlackList = [[]]
     blackListInt = int(0)
 
+    global lastWord, anteLastWord
+    lastWord, anteLastWord = str(), str()
 
     global quantumList, nonEnders, upperAlphabet, lowerAlphabet, allPunx, midPunx, endPunx, deadPunx #  List of words used for quantum emp patterns
     quantumList = ['was', 'be', 'and', 'to', 'for', 'a', 'the', 'in', 'at', 'but', 'an',

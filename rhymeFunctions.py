@@ -30,6 +30,13 @@ def rhyLinePrep(rawRhyLine):  #  Prepares the line to be analyzed for potential 
 
 
 def rhyLiner(fonoLine0, fonoLine1):
+    lastInt = int(-1)
+    while gF.qLine[0][lastInt] in gF.allPunx:
+        lastInt-=1
+    checkWord = gF.qLine[0][lastInt]
+    print('ryF: | checkWord/anteLastWord:', checkWord,'/',gF.anteLastWord)
+    if checkWord == gF.anteLastWord:
+        return False
     print('ryF: |', 'rhyLiner0(', '\nfonoLine0:', fonoLine0, '\nfonoLine1:', fonoLine1)
     rhymeAns = False  #  So that the variable is declared False if it never hits a 'return True'
     rhyLine0 = rhyLinePrep(fonoLine0)
@@ -83,7 +90,7 @@ def rhyLiner(fonoLine0, fonoLine1):
 
 
 
-def rhyWordLister(rhyFonoLine):  #  This finds any words that rhyme to be placed in the expressList later    
+def rhyWordLister(rhyFonoLine, lastWord):  #  This finds any words that rhyme to be placed in the expressList later    
     print('ryF: |', gF.lineno(), '| rhyWordLister(', rhyFonoLine, ')')
     rhyListFono = rhyLinePrep(rhyFonoLine)
     #fonoFile = open('eng/data/USen/USen-primaryFono.txt', "r")
@@ -99,64 +106,70 @@ def rhyWordLister(rhyFonoLine):  #  This finds any words that rhyme to be placed
         for rhyPoppers in rhyListFono:
             rhyPopFono.append(rhyPoppers)
         lineSplitSpot = line.index('  ')
-        checkWord = line[:lineSplitSpot]
-        checkFono = line[lineSplitSpot+2:].rstrip('\n')
-        checkPopFono = checkFono.split(' ')
-        checkPopFono = rhyLinePrep(checkPopFono)
-        #print('ryF: |', gF.lineno(), ' listFono: ', checkWord, ':', checkPopFono)
-        theseSyls, theseCons = int(0), int(0)  #  Resets counts as every new word is processed
-        if checkWord[0] in gF.lowerAlphabet:
-            checkInitial = checkWord[0].upper()
-        else:
-            checkInitial = 'Q'
-        while (len(rhyPopFono) > 0) and (len(checkPopFono) > 0):
-            checkBit = checkPopFono.pop()
-            rhymeBit = rhyPopFono.pop()
-            #print('ryF: |', gF.lineno(), ' ', checkBit, 'v.', rhymeBit)
-            if checkBit == rhymeBit:
-                if rhymeBit in fVocs:
-                    #print('ryF: |', gF.lineno(), ' sylsMatch')
-                    theseSyls+=1 
-                    if theseSyls >= gF.rSyls:  #  If we find the number of syllables necessary
-                        finalRhymeList.append(checkWord.lower())
-                        #print('ryF: |', gF.lineno(), 'rhyme found:', checkWord, '\nfinalRhymeList:', finalRhymeList)
-                        break
-                else:
-                    theseCons+=1
-                    #print('ryF: |', gF.lineno(), ' consMatch', theseCons, gF.rCons)
-                if (len(checkPopFono) == 0) or (len(rhyPopFono) == 0):
-                    finalRhymeList.append(checkWord.lower())
-                    #print('ryF: |', gF.lineno(), 'shortrhyme found:', checkWord, '\nfinalRhymeList:', finalRhymeList)
-                    break
-            elif (checkBit in fCons) or (rhymeBit in fCons):
-                if gF.rCons >= theseCons:  #  If we haven't surpassed the minimum consonant count, break without adding
-                    #print('ryF: |', gF.lineno(), ' consBreak')
-                    break
-                else:
-                    try:
-                        while checkBit in fCons:
-                            checkBit = checkPopFono.pop()
-                        while rhymeBit in fCons:
-                            rhymeBit = rhyPopFono.pop()
-                        #print('ryF: |', gF.lineno(), ' newPops:', checkBit, rhymeBit)
-                        if checkBit == rhymeBit:
-                            #print('ryF: |', gF.lineno(), ' sylsMatch')
-                            theseSyls+=1
-                            if theseSyls >= gF.rSyls:  #  If we find the number of syllables necessary
-                                #print('ryF: |', gF.lineno(), 'rhyme found:', checkWord, '\nfinalRhymeList:', finalRhymeList)
-                                break
-                            if (len(checkPopFono) == 0) or (len(rhyPopFono) == 0):  #  If the word has no more sounds, but they all match
-                                finalRhymeList.append(checkWord.lower())
-                                #print('ryF: |', gF.lineno(), 'shortrhyme found:', checkWord, '\nfinalRhymeList:', finalRhymeList)
-                                break
-                    except IndexError:
-                        #print('ryF: |', gF.lineno(), ' ran out', rhyListFono, '-', checkPopFono)
-                        break
+        #  This is where we stop before we add the same word to its own rhyList
+        if '(' in line:  #  Check to see if double
+            checkWord = line[:line.index('(')].lower()  #  Remove '(X)' from end of word
+        else:  #  Ends at '  '
+            checkWord = line[:lineSplitSpot].lower()
+        #print('ryF: |', gF.lineno(), '| checkWord/lastWord=', checkWord, '/', lastWord)
+        if checkWord != lastWord:
+            checkFono = line[lineSplitSpot+2:].rstrip('\n')
+            checkPopFono = checkFono.split(' ')
+            checkPopFono = rhyLinePrep(checkPopFono)
+            #print('ryF: |', gF.lineno(), ' listFono: ', checkWord, ':', checkPopFono)
+            theseSyls, theseCons = int(0), int(0)  #  Resets counts as every new word is processed
+            if checkWord[0] in gF.lowerAlphabet:
+                checkInitial = checkWord[0].upper()
             else:
-                #print('ryF: |', gF.lineno(), ' mismatched, cancelled')
-                break
+                checkInitial = 'Q'
+            while (len(rhyPopFono) > 0) and (len(checkPopFono) > 0):
+                checkBit = checkPopFono.pop()
+                rhymeBit = rhyPopFono.pop()
+                #print('ryF: |', gF.lineno(), ' ', checkBit, 'v.', rhymeBit)
+                if checkBit == rhymeBit:
+                    if rhymeBit in fVocs:
+                        #print('ryF: |', gF.lineno(), ' sylsMatch')
+                        theseSyls+=1 
+                        if theseSyls >= gF.rSyls:  #  If we find the number of syllables necessary
+                            finalRhymeList.append(checkWord.lower())
+                            #print('ryF: |', gF.lineno(), 'rhyme found:', checkWord, '\nfinalRhymeList:', finalRhymeList)
+                            break
+                    else:
+                        theseCons+=1
+                        #print('ryF: |', gF.lineno(), ' consMatch', theseCons, gF.rCons)
+                    if (len(checkPopFono) == 0) or (len(rhyPopFono) == 0):
+                        finalRhymeList.append(checkWord.lower())
+                        #print('ryF: |', gF.lineno(), 'shortrhyme found:', checkWord, '\nfinalRhymeList:', finalRhymeList)
+                        break
+                elif (checkBit in fCons) or (rhymeBit in fCons):
+                    if gF.rCons >= theseCons:  #  If we haven't surpassed the minimum consonant count, break without adding
+                        #print('ryF: |', gF.lineno(), ' consBreak')
+                        break
+                    else:
+                        try:
+                            while checkBit in fCons:
+                                checkBit = checkPopFono.pop()
+                            while rhymeBit in fCons:
+                                rhymeBit = rhyPopFono.pop()
+                            #print('ryF: |', gF.lineno(), ' newPops:', checkBit, rhymeBit)
+                            if checkBit == rhymeBit:
+                                #print('ryF: |', gF.lineno(), ' sylsMatch')
+                                theseSyls+=1
+                                if theseSyls >= gF.rSyls:  #  If we find the number of syllables necessary
+                                    #print('ryF: |', gF.lineno(), 'rhyme found:', checkWord, '\nfinalRhymeList:', finalRhymeList)
+                                    break
+                                if (len(checkPopFono) == 0) or (len(rhyPopFono) == 0):  #  If the word has no more sounds, but they all match
+                                    finalRhymeList.append(checkWord.lower())
+                                    #print('ryF: |', gF.lineno(), 'shortrhyme found:', checkWord, '\nfinalRhymeList:', finalRhymeList)
+                                    break
+                        except IndexError:
+                            #print('ryF: |', gF.lineno(), ' ran out', rhyListFono, '-', checkPopFono)
+                            break
+                else:
+                    #print('ryF: |', gF.lineno(), ' mismatched, cancelled')
+                    break
         
-    #print('ryF: |', gF.lineno(), '| finalRhymeList:', finalRhymeList)
+        #print('ryF: |', gF.lineno(), '| finalRhymeList:', finalRhymeList)
 
     return finalRhymeList
 

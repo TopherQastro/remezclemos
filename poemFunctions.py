@@ -8,7 +8,11 @@ def veto():
 
 def gov():  #  Outlines the parameters of the poem
     print('poF:', gF.lineno(), 'poemGovernor initialized\n'+str(gF.time.ctime())+'\n')
-    print(gF.rhyMap, '+', gF.empMap, '+', len(gF.usedList))
+    print('poF:', gF.lineno(), gF.textFile)
+    print('poF:', gF.lineno(), gF.rhyMap)
+    for empMapLines in gF.empMap:
+        print(empMapLines)
+    print('poF:', gF.lineno(), 'gF.usedList:', len(gF.usedList))
     poem, gF.usedList, stanzaCt, killSwitch = veto()
     while len(poem) < gF.stanzaQuota:
         killSwitch = gF.stanzaFunk.gov()
@@ -44,7 +48,7 @@ def gov():  #  Outlines the parameters of the poem
             else:
                 poem.append(writtenStanza)
         if killSwitch == True:
-            print('poF:', gF.lineno(), 'killSwitch\n - stanza:', stanza)
+            print('poF:', gF.lineno(), 'killSwitch\n - stanza:', gF.stanza)
             poem, gF.usedList, stanzaCt, killSwitch = veto()
 
     return poem

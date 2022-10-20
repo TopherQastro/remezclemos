@@ -1,6 +1,7 @@
 
 from fonoFunctions import fonoLiner
 import globalFunctions as gF
+from lineFunctions import compareLastWords
 
 
 def testMeterWord(qWord):  #  A subfunction of metPopDigester, which tests words given to it

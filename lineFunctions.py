@@ -30,6 +30,19 @@ def removeWordL(superPopList):  #  Remove the leftmost word from line
     # do something
     return data
 
+def compareLastWords(qLineA, qLineB):
+    lastInt = int(-1)
+    while qLineA[0][lastInt] in gF.allPunx:
+        lastInt-=1
+    checkWordA = qLineA[0][lastInt]
+    lastInt = int(-1)    
+    while qLineB[0][lastInt] in gF.allPunx:
+        lastInt-=1
+    checkWordB = qLineB[0][lastInt]
+    if checkWordA == checkWordB:
+        return True
+    else:
+        return False
 
 def removeWordR(runLine):  #  Remove the rightmost word from line
     print('lnF:', gF.lineno(), '| removeWordR-in', 'gF.qLine:', gF.qLine, 'runLine:', runLine)
@@ -151,7 +164,7 @@ def gov(rhymeSwitch, rhymeList):
             if len(gF.stanza) > 0:
                 for anteEmps in gF.empMap[len(gF.stanza)-1]:
                     gF.soundsLine[3].append(anteEmps)
-            gF.stanza.pop()
+                gF.stanza.pop()
             gF.qAnteFonoLine = []
             return False
         else:

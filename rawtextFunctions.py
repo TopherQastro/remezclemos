@@ -8,7 +8,7 @@ def gov():
     gF.vocsSwitch = False
     gF.consSwitch = False
     gF.empsSwitch = True
-    internet = False
+    internet = True
 
     if gF.defaultSwitch == True:
 
@@ -31,12 +31,12 @@ def gov():
         gF.rhySwitch = True
         gF.metSwitch = True
         gF.thesSwitch = True
-        gF.rhyMap = 'aba'
+        gF.rhyMap = 'abab'
         gF.rhyMode = 'fullList'
-        gF.rSyls = int(2)
-        gF.tSyls = int(2)
+        gF.rSyls = int(1)
+        gF.tSyls = int(1)
         gF.consMode = 'fullList'
-        gF.rCons = int(1)
+        gF.rCons = int(2)
         gF.empMap = [[bool(1), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
                      [bool(1), bool(0), bool(1), bool(1), bool(0), bool(1), bool(0), bool(1)],
                      [bool(0), bool(0), bool(1), bool(0), bool(1), bool(0), bool(1)],
