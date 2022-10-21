@@ -298,7 +298,9 @@ def printGlobalData():
     print('gF:', lineno(), '| len(superBlackList) -', superBlackListString[:-2])
     for firstBlackLists in firstBlackList:
         print('gF:', lineno(), 'firstBlackListLen:', len(firstBlackLists))
-
+    print('gF:', lineno(), '| fonoLines:')
+    for fonoLines in fonoStanza:
+        print('gF:', lineno(), '|', fonoLines)
 
 begin()
 print('gloFunk loaded')

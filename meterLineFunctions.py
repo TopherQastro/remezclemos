@@ -13,7 +13,7 @@ def testMeterWord(qWord):  #  A subfunction of metPopDigester, which tests words
     return testAns
       
 
-def gov(rhymeSwitch, proxExpress):
+def gov(proxExpress):
     print('mLF:', gF.lineno(), '| gov() - gF.soundsLine:', gF.soundsLine, 'gF.qAnteLine:', gF.qAnteLine, '- gF.qLine:', gF.qLine)
     gF.stopTime = gF.time.time()
     killSwitch = False
@@ -87,7 +87,8 @@ def gov(rhymeSwitch, proxExpress):
         #     print('mLF:', gF.lineno(), '| gov() - superPopList out, killSwitch')
         #     return ([],[]), True
         print('mLF:', gF.lineno(), '| gov() - gF.qLine:', gF.qLine, gF.soundsLine[3])
-        if (gF.soundsLine[3] == gF.empsKeyLine) and (rhymeSwitch == True):
+        rhymeSpot = gF.rhyMap.index(gF.rhyMap[len(gF.stanza)])
+        if (gF.soundsLine[3] == gF.empsKeyLine) and (rhymeSpot < len(gF.stanza)): #  Check rhyMap to see if this is the first line in rhyming matches
             thisFonoLine = fonoLiner(gF.qLine)
             rhymeAns = gF.rhyFunk.rhyLiner(thisFonoLine, gF.qAnteFonoLine)
             if rhymeAns == True:

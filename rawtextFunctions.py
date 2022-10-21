@@ -8,7 +8,7 @@ def gov():
     gF.vocsSwitch = False
     gF.consSwitch = False
     gF.empsSwitch = True
-    internet = True
+    internet = False
 
     if gF.defaultSwitch == True:
 
@@ -31,17 +31,17 @@ def gov():
         gF.rhySwitch = True
         gF.metSwitch = True
         gF.thesSwitch = True
-        gF.rhyMap = 'abab'
+        gF.rhyMap = 'aba'
         gF.rhyMode = 'fullList'
         gF.rSyls = int(1)
         gF.tSyls = int(1)
         gF.consMode = 'fullList'
-        gF.rCons = int(2)
-        gF.empMap = [[bool(1), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
-                     [bool(1), bool(0), bool(1), bool(1), bool(0), bool(1), bool(0), bool(1)],
-                     [bool(0), bool(0), bool(1), bool(0), bool(1), bool(0), bool(1)],
+        gF.rCons = int(3)
+        gF.empMap = [[bool(1), bool(0), bool(1), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
+                     [bool(1), bool(0), bool(1), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
+                     [bool(1), bool(0), bool(1), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
                     #[bool(0), bool(1), bool(0), bool(0), bool(1)],
-                     [bool(1), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)]]
+                     [bool(1), bool(0), bool(1), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)]]
 
     gF.rawText = str(open(gF.lang+'/data/textLibrary/'+gF.textFile+'.txt', 'r', 
                     encoding='utf-8').read())

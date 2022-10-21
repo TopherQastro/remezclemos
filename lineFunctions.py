@@ -133,8 +133,8 @@ def lineStarter(proxExpress):  #  Starts the values for the lineMakers
     return runLine, killSwitch
 
 
-def gov(rhymeSwitch, rhymeList):
-    print('lnF:', gF.lineno(), '| gov() start', rhymeSwitch)
+def gov(rhymeList):
+    print('lnF:', gF.lineno(), '| gov() start', gF.rhySwitch)
     #if rhymeList
     veto()  #  Start with empty variables declared. This function is also a reset button if lines are to be scrapped.
     proxExpress = []
@@ -144,7 +144,7 @@ def gov(rhymeSwitch, rhymeList):
             if rhymes in gF.splitTextList:
                 proxExpress.append(rhymes)
         print('lnF:', gF.lineno(), '| gov() - len(proxExpress):', len(proxExpress))
-        killSwitch = gF.meterFunk.gov(rhymeSwitch, proxExpress)
+        killSwitch = gF.meterFunk.gov(proxExpress)
     else:
         print('lnF:', gF.lineno(), '| gov() - plainLiner activate')
         killSwitch = gF.plainFunk.plainLinerLtoR(gF.qAnteLine)
@@ -165,7 +165,7 @@ def gov(rhymeSwitch, rhymeList):
                 for anteEmps in gF.empMap[len(gF.stanza)-1]:
                     gF.soundsLine[3].append(anteEmps)
                 gF.stanza.pop()
-            gF.qAnteFonoLine = []
+            #gF.qAnteFonoLine = []
             return False
         else:
             print('lnF:', gF.lineno(), 'kill2')

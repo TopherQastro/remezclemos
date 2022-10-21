@@ -122,9 +122,12 @@ class GUIstart:
         gF.punxDial = int(self.punxDial.get())
 
         gF.rawtextFunk.gov()
-        writtenPoem = gF.poemFunk.gov()
-        print('Poem:\n', writtenPoem)
-        #input('paused')
+        poemCt = int(1)
+        while poemCt <= gF.poemQuota:
+            writtenPoem = gF.poemFunk.gov()
+            print('Poem #'+str(poemCt)+'\n', writtenPoem)
+            poemCt+=1
+            #input('paused')
     
 
 def start():
