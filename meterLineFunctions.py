@@ -1,7 +1,5 @@
 
-from fonoFunctions import fonoLiner
 import globalFunctions as gF
-from lineFunctions import compareLastWords
 
 
 def testMeterWord(qWord):  #  A subfunction of metPopDigester, which tests words given to it
@@ -71,7 +69,7 @@ def gov(proxExpress):
                 print('mLF:', gF.lineno(), '| gov() - gF.qLine:', gF.qLine)
                 killSwitch = gF.lineFunk.acceptWordR(runLine, ([popWord[0]], [popWord[1]]))
                 print('mLF:', gF.lineno(), gF.qLine)
-            elif fonoResult == 'gotIt':
+            elif fonoResult == 'gotIt' and popWord[0] not in gF.allPunx:
                 gF.fonoFunk.subtractFonoLine(popWord)
         print('mLF:', gF.lineno(), '| gov() - len(gF.superList[6][-1]) > gF.proxMinDial')
         gF.printGlobalData()
@@ -89,9 +87,9 @@ def gov(proxExpress):
         print('mLF:', gF.lineno(), '| gov() - gF.qLine:', gF.qLine, gF.soundsLine[3])
         rhymeSpot = gF.rhyMap.index(gF.rhyMap[len(gF.stanza)])
         if (gF.soundsLine[3] == gF.empsKeyLine) and (rhymeSpot < len(gF.stanza)): #  Check rhyMap to see if this is the first line in rhyming matches
-            thisFonoLine = fonoLiner(gF.qLine)
+            thisFonoLine = gF.fonoFunk.fonoLiner(gF.qLine)
             rhymeAns = gF.rhyFunk.rhyLiner(thisFonoLine, gF.qAnteFonoLine)
-            if rhymeAns == True:
+            if rhymeAns:
                 print('mLF:', gF.lineno(), '| gov() - lines rhyme:', thisFonoLine, 
                       '==', gF.qAnteSoundsLine)
                 return gF.qLine, False
@@ -116,7 +114,7 @@ def gov(proxExpress):
 
         # try:  
         #     if len(gF.superList[1]) == 0 and len(gF.qLine[1]) == 0 and len(runLine[0]) == 0:
-        #         print('mLF:', gF.lineno(), '| gov() | killSwitch == True')
+        #         print('mLF:', gF.lineno(), '| gov() | killSwitch')
         #         return gF.qLine, True #  killSwitch event
         # except IndexError:  #  Either the lists are empty, or they don't exist at all
         #     print('mLF:', gF.lineno(), '| gov() | iE:', gF.qLine, runLine)

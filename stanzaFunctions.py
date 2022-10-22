@@ -27,7 +27,7 @@ def removeLine():
             gF.qAnteLine[0].append(word)
         for word in gF.stanza[-1][1]:
             gF.qAnteLine[1].append(word)
-    gF.fonoStanza = gF.fonoStanza[:len(stanza)]
+    gF.fonoStanza = gF.fonoStanza[:len(gF.stanza)]
     print('stF:', gF.lineno(), '| fonoStanza:', gF.fonoStanza)
     print('stF:', gF.lineno(), '| removeLine out | len(gF.stanza):', len(gF.stanza))
 
@@ -52,7 +52,7 @@ def gov():
     while gF.linesCount < len(gF.rhyMap):
         print('stF:', gF.lineno(), '| stanzaLoop begin')
         rhymeList, gF.qAnteSoundsLine = [], []
-        if gF.rhySwitch == True:
+        if gF.rhySwitch:
             rhymeThisLine = gF.rhyMap.index(gF.rhyMap[gF.linesCount])  #  Use the length of the gF.stanza with rhyMap to determine if a previous line should be rhymed with the current
             print('stF:', gF.lineno(), '| ', rhymeThisLine, gF.linesCount)
             for lines in gF.stanza:
@@ -81,7 +81,7 @@ def gov():
                 rhymeList = gF.rhyFunk.rhyWordLister(gF.qAnteFonoLine, gF.anteLastWord)  #  Syllable length can be varied, 10 returns all
         gF.empsKeyLine = gF.empMap[gF.linesCount]
         killSwitch = gF.lineFunk.gov(rhymeList) 
-        if killSwitch == True:  #  Not an elif because any of the above could trigger this; must be separate if statement
+        if killSwitch:  #  Not an elif because any of the above could trigger this; must be separate if statement
             print('stF:', gF.lineno(), '| - killSwitch')
             killSwitch = veto()
         elif len(gF.qLine[1]) > 0:  #  Line-building functions will either return a valid, nonzero-length line, or trigger a subtraction in the gF.stanza with empty list

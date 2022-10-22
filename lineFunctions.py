@@ -26,9 +26,9 @@ def makeYLine(quantumLine0, quantumLine1):
     return yLine
       
 
-def removeWordL(superPopList):  #  Remove the leftmost word from line
+#def removeWordL(superPopList):  #  Remove the leftmost word from line
     # do something
-    return data
+    #return data
 
 def compareLastWords(qLineA, qLineB):
     lastInt = int(-1)
@@ -55,7 +55,8 @@ def removeWordR(runLine):  #  Remove the rightmost word from line
         minusWord0 = gF.qLine[0].pop()  #  Remove word from first part of line
         minusWord1 = gF.qLine[1].pop()  #  Until better method introduced, cut rLine here
         gF.superBlackList[len(gF.qLine[0])].append(minusWord1)
-        gF.fonoFunk.subtractFonoLine((minusWord0, minusWord1))
+        if minusWord0 not in gF.allPunx:
+            gF.fonoFunk.subtractFonoLine((minusWord0, minusWord1))
         print('lnF:', gF.lineno(), '| minusWord0:', minusWord0)
         for lists in gF.superList:
             if len(lists) > 0:
@@ -138,7 +139,7 @@ def gov(rhymeList):
     #if rhymeList
     veto()  #  Start with empty variables declared. This function is also a reset button if lines are to be scrapped.
     proxExpress = []
-    if gF.metSwitch == True:
+    if gF.metSwitch:
         print('lnF:', gF.lineno(), '| gov() - len(rhymeList):', len(rhymeList))
         for rhymes in rhymeList:
             if rhymes in gF.splitTextList:
@@ -148,7 +149,7 @@ def gov(rhymeList):
     else:
         print('lnF:', gF.lineno(), '| gov() - plainLiner activate')
         killSwitch = gF.plainFunk.plainLinerLtoR(gF.qAnteLine)
-    if killSwitch == True:
+    if killSwitch:
         print('lnF:', gF.lineno(), 'gov() - killSwitch')
         if len(gF.qLine[0]) > 0:
             print('lnF:', gF.lineno(), 'kill0', gF.qLine)

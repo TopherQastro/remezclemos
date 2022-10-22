@@ -41,13 +41,13 @@ def gov():  #  Outlines the parameters of the poem
             print('\n')
             if gF.usedSwitch == 1:
                 gF.usedList = ['']
-            if killSwitch == True:
+            if killSwitch:
                 gF.usedList, lastList, stanzaCt, killSwitch = veto()
             elif len(gF.stanza) == 0 and len(poem) > 0:
                 poem = poem[:-1]
             else:
                 poem.append(writtenStanza)
-        if killSwitch == True:
+        if killSwitch:
             print('poF:', gF.lineno(), 'killSwitch\n - stanza:', gF.stanza)
             poem, gF.usedList, stanzaCt, killSwitch = veto()
 

@@ -10,18 +10,18 @@ def gov():
     gF.empsSwitch = True
     internet = False
 
-    if gF.defaultSwitch == True:
+    if gF.defaultSwitch:
 
         gF.lang = 'eng'
         gF.accent = 'USen'
         gF.empMode = 'empsEven'
-        if internet == True:
+        if internet:
             gF.textFile = 'r/AskReddit'
             print('rtF:',  gF.lineno(), 'beginning reddit scrape')
             redTexts = gF.redFunk.getPosts(gF.textFile)
             gF.redFunk.writeRedTxtFile(gF.textFile, redTexts)
         else:
-            gF.textFile = 'ulysses'
+            gF.textFile = 'superBible'
         gF.poemQuota = 100
         gF.stanzaQuota = 1
         gF.proxMinDial = int(3)
@@ -36,7 +36,7 @@ def gov():
         gF.rSyls = int(1)
         gF.tSyls = int(1)
         gF.consMode = 'fullList'
-        gF.rCons = int(3)
+        gF.rCons = int(1)
         gF.empMap = [[bool(1), bool(0), bool(1), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
                      [bool(1), bool(0), bool(1), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
                      [bool(1), bool(0), bool(1), bool(0), bool(1), bool(0), bool(0), bool(1), bool(0), bool(1)],
@@ -84,10 +84,10 @@ def gov():
     #$input('paused...')
 
     #  Prepares switches to contractions
-    if gF.contSwitch == True:
+    if gF.contSwitch:
         gF.altFunk.contractionLoad()
 
-    if gF.thesSwitch == True:
+    if gF.thesSwitch:
        gF.dynaFunk.thisThesLoad()
 
     print(gF.lineno(), "rhySwitch =", gF.rhySwitch)

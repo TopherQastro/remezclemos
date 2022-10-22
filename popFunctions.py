@@ -4,18 +4,17 @@ import globalFunctions as gF
 
 # Organizes expressList and superPopList words to cont, thes, punx
 def popWordScanner(popWord):
-    print('ppF:', gF.lineno(), ' | popWordScanner() thisList:', len(thisList))
-    gF.printGlobalData(gF.qLine)
     print('ppF:', gF.lineno(), ' | testExPop:', popWord)
+    gF.printGlobalData(gF.qLine)
     # popWord is the same word unless the phonetic data doesn't match the 'real' data
     qWord = ([popWord], [popWord])
     # This line will place contractions in a special list to be switched if nothing works
-    if (gF.contSwitch == True) and (popWord in gF.contractionList) and (popWord[:-2] != "'s") and (popWord[-1] != "'") and (popWord[:2] != ("o'" or "d'")):
+    if (gF.contSwitch) and (popWord in gF.contractionList) and (popWord[:-2] != "'s") and (popWord[-1] != "'") and (popWord[:2] != ("o'" or "d'")):
         gF.contList[-1].append(popWord)
     elif popWord in gF.allPunx:
         gF.superList[5][-1].append(popWord)
     elif popWord not in gF.allPunx:  # A zero-length emps value is an unrecognized word
-        if (gF.thesSwitch == True) and (popWord not in gF.quantumList) and (popWord not in gF.thesList[-1]):
+        if (gF.thesSwitch) and (popWord not in gF.quantumList) and (popWord not in gF.thesList[-1]):
             gF.thesList[-1].append(popWord)
     print('ppF:', gF.lineno(), gF.soundLine[3], gF.qLine, qWord)
 
@@ -44,7 +43,7 @@ def popWordPicker():  # Digests words that fit a particular meter
                 return (popWord, popWord)
         print('ppF:', gF.lineno(), ' | gF.contSwitch:', gF.contSwitch)
         # If any contractions were found in the gF.superList[1] we just tried
-        if (gF.contSwitch == True) and (len(gF.contList[-1]) > 0):
+        if (gF.contSwitch) and (len(gF.contList[-1]) > 0):
             print('ppF:', gF.lineno(), ' | gF.contList[-1]:', gF.contList[-1])
             pWord = gF.contList[-1].pop(gF.random.choice(range(0,
                                         len(gF.contList[-1]))))
@@ -57,7 +56,7 @@ def popWordPicker():  # Digests words that fit a particular meter
             print('ppF:', gF.lineno(), ' | contraction attempt:', qWord)
             return qWord
         print('ppF:', gF.lineno(), ' | gF.thesSwitch:', gF.thesSwitch)
-        if (gF.thesSwitch == True) and (len(gF.contList[-1]) > 0):
+        if (gF.thesSwitch) and (len(gF.contList[-1]) > 0):
             if len(gF.dynaList[-1]) > 0:
                 return gF.dynaList[-1].pop(gF.random.choice(range(0, len(gF.dynaList[-1]))))
             else:
@@ -190,8 +189,8 @@ def superPopListMaker(proxExpress, testLine, runLine):
         print('ppF:', gF.lineno(), 'kE:', testLine,
               'len(gF.superList[1]):', len(gF.superList[1]))
         input('paused...')
-        unknownWords.write(gF.qLine[1][-1])
-        pLEmps, runLine = gF.lineFunk.removeWordR(empLine, runLine)
+        gF.unknownWords.write(gF.qLine[1][-1])
+        runLine = gF.lineFunk.removeWordR(runLine)
         #gF.proxFunk.proxDataBuilder(gF.qLine, len(gF.qLine[0]))
         return runLine, killSwitch
     print('ppF:', gF.lineno(), 'sPM lastfinish', gF.qLine)

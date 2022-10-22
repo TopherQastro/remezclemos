@@ -4,18 +4,20 @@ def loadFonoWordData(newWord, checkInitial):
     fonoLine, vocsLine, consLine, empsLine = gF.soundsLine
     print('fnF:', gF.lineno(), empsLine)
     try:
-        if gF.fonoSwitch == True:
+        if gF.fonoSwitch:
             fonoLine+=gF.fonoDics[gF.soundDicsIndex[checkInitial]][newWord]
-        if gF.vocsSwitch == True:    
+        if gF.vocsSwitch:    
             vocsLine+=gF.vocsDics[gF.soundDicsIndex[checkInitial]][newWord]
-        if gF.consSwitch == True:
+        if gF.consSwitch:
             consLine+=gF.consDics[gF.soundDicsIndex[checkInitial]][newWord]
-        if gF.empsSwitch == True:
+        if gF.empsSwitch:
             presentEmpsLen = len(empsLine)
             if '(' in newWord:
                 quantumCheck = newWord[:-3]
             else:
                 quantumCheck = newWord
+            if newWord in gF.allPunx:
+                return 'gotIt'
             if quantumCheck in gF.quantumList:
                 print('fnF:', gF.lineno(), 'quantumFono')
                 presentEmpsLen = len(gF.soundsLine[3])
@@ -55,13 +57,13 @@ def addFonoLine(pWord):
         soundInfo = gF.soundCursor.fetchone()
         print('fnF:', gF.lineno(), soundInfo)
         if soundInfo is not None:
-            if gF.fonoSwitch == True:
+            if gF.fonoSwitch:
                 gF.fonoDics[gF.soundDicsIndex[checkInitial]][newWord] = soundInfo[1].split('^')
-            if gF.vocsSwitch == True:
+            if gF.vocsSwitch:
                 gF.vocsDics[gF.soundDicsIndex[checkInitial]][newWord] = soundInfo[2].split('^')
-            if gF.consSwitch == True:
+            if gF.consSwitch:
                 gF.consDics[gF.soundDicsIndex[checkInitial]][newWord] = soundInfo[3].split('^')
-            if gF.empsSwitch == True:
+            if gF.empsSwitch:
                 boolEmps = []
                 if gF.empMode == 'empsFull':
                     thisEmps = soundInfo[4]
@@ -94,13 +96,13 @@ def subtractFonoLine(pWord):
     else:
         checkInitial = "Q"
     fonoLine, vocsLine, consLine, empsLine = gF.soundsLine
-    if gF.fonoSwitch == True:
+    if gF.fonoSwitch:
         fonoLine = fonoLine[:-len(gF.fonoDics[gF.soundDicsIndex[checkInitial]][newWord])]
-    if gF.vocsSwitch == True:    
+    if gF.vocsSwitch:    
         vocsLine = vocsLine[:-len(gF.vocsDics[gF.soundDicsIndex[checkInitial]][newWord])]
-    if gF.consSwitch == True:
+    if gF.consSwitch:
         consLine = consLine[:-len(gF.consDics[gF.soundDicsIndex[checkInitial]][newWord])]
-    if gF.empsSwitch == True:
+    if gF.empsSwitch:
         print('fnF:', gF.lineno(), '| ', len(gF.empsDics), checkInitial, len(gF.empsDics[gF.soundDicsIndex[checkInitial]]), newWord)
         empsLine = empsLine[:-len(gF.empsDics[gF.soundDicsIndex[checkInitial]][newWord])]
     gF.soundsLine = fonoLine, vocsLine, consLine, empsLine
@@ -158,13 +160,13 @@ def fonoLiner(qLine):
     return fonoLine
 
 
-def fonoBuild_UKen():
-    fono, vocs, cons, empsFull, empsEven, empsUnik
-    return fono, vocs, cons, empsFull, empsEven, empsUnik
+#def fonoBuild_UKen():
+#    fono, vocs, cons, empsFull, empsEven, empsUnik
+#    return fono, vocs, cons, empsFull, empsEven, empsUnik
 
-def fonoBuild_ESes():
-    fono, vocs, cons, empsFull, empsEven, empsUnik
-    return fono, vocs, cons, empsFull, empsEven, empsUnik
+#def fonoBuild_ESes():
+#    fono, vocs, cons, empsFull, empsEven, empsUnik
+#    return fono, vocs, cons, empsFull, empsEven, empsUnik
 
 
 def fonoBuild_SQLmain(fonoDics, fullList):
